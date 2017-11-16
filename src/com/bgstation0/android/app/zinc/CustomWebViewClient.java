@@ -4,6 +4,7 @@ package com.bgstation0.android.app.zinc;
 //パッケージのインポート
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
@@ -19,6 +20,21 @@ public class CustomWebViewClient extends WebViewClient {
 			
 		// 引数をメンバにセット.
 		mContext = context;	// mContextにcontextをセット.
+			
+	}
+	
+	// ページのロードが開始された時.
+	public void onPageStarted(WebView view, String url, Bitmap favicon){
+			
+		// 既定の処理
+		super.onPageStarted(view, url, favicon);	// 親クラスのonPageStartedを呼ぶ.
+			
+		// mContextからActivityを取得し,　そこから各Viewを取得.
+		if (mContext != null){	// mContextがnullでなければ.
+			Activity activity = (Activity)mContext;	// mContextをActivityにキャストし, activityに格納.
+			EditText etUrl = (EditText)activity.findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
+			etUrl.setText(url);	// etUrl.SetTextでURLバーのetUrlにurlをセット.
+		}
 			
 	}
 		
