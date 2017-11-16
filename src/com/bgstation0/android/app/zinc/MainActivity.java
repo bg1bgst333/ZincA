@@ -34,6 +34,21 @@ public class MainActivity extends Activity implements OnClickListener {	// View.
         
     }
     
+    // バックキーが押された時.
+    @Override
+    public void onBackPressed(){
+    	
+    	// 戻れる場合は, 1つ前のページに戻る.
+    	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
+    	if (webView.canGoBack()){	// バック可能な場合.
+    		webView.goBack();	// webView.goBackで戻る.
+    	}
+    	else{	// そうでない時.
+    		super.onBackPressed();	// 親クラスのonBackPressedを呼ぶ.
+    	}
+    	
+    }
+    
     // メニューが作成された時.
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
