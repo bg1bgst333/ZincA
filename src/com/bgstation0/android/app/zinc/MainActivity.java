@@ -4,6 +4,7 @@ package com.bgstation0.android.app.zinc;
 //パッケージのインポート
 import android.app.Activity;
 import android.os.Bundle;
+import android.provider.Browser;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,7 +55,7 @@ public class MainActivity extends Activity implements OnClickListener {	// View.
     public boolean onCreateOptionsMenu(Menu menu){
     	
     	// リソースからメニューを作成.
-    	//getMenuInflater().inflate(R.menu.menu_main, menu);	// getMenuInflater().inflateでR.menu.menu_mainからメニューを作成.
+    	getMenuInflater().inflate(R.menu.menu_main, menu);	// getMenuInflater().inflateでR.menu.menu_mainからメニューを作成.
     	return true;	// trueを返す.
     	
     }
@@ -66,10 +67,17 @@ public class MainActivity extends Activity implements OnClickListener {	// View.
     	// 選択されたメニューアイテムごとに振り分ける.
     	int id = item.getItemId();	// item.getItemIdで選択されたメニューアイテムのidを取得.
     	if (id == R.id.menu_item_bookmark_add){	// R.id.menu_item_bookmark_add("ブックマークの追加")の時.
-    		// URLをトーストで表示.
-    		EditText etUrl = (EditText)findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
-    		Toast.makeText(this, etUrl.getText(), Toast.LENGTH_LONG).show();	// etUrl.getText()で取得したURLをToastで表示.
+
+    		// ブックマークの追加.
+    		WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
+    		String title = webView.getTitle();	// webView.getTitleでタイトルを取得.
+    		String url = webView.getUrl();	// webView.getUrlでURLを取得.
+    		Browser.saveBookmark(this, title, url);	// Browser.saveBookmarkでブックマークに追加.
+    		Toast.makeText(this, title + "(" + url + ")", Toast.LENGTH_LONG).show();	// 追加したブックマークのtitleとurlをToastで表示.
+    		
     	}
+    	
+    	// あとは既定の処理に任せる.
     	return super.onOptionsItemSelected(item);	// 親クラスのonOptionsItemSelectedを呼ぶ.
     	
     }
