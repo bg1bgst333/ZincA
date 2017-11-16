@@ -5,13 +5,17 @@ package com.bgstation0.android.app.zinc;
 import java.util.ArrayList;
 import java.util.List;
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.Browser;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 // ブックマークアクティビティクラスBookmarkActivity
-public class BookmarkActivity extends Activity {
+public class BookmarkActivity extends Activity implements OnItemClickListener {	// AdapterView.OnItemClickListenerインターフェースの追加.
 
 	// アクティビティが作成された時.
     @Override
@@ -53,6 +57,27 @@ public class BookmarkActivity extends Activity {
         c.close();	// c.closeで閉じる.
         adapter.notifyDataSetChanged();	// adapter.notifyDataSetChangedで更新.
         
+        // AdapterView.OnItemClickListenerのセット.
+        lvBookmark.setOnItemClickListener(this);	// this(自身)をセット.
+        
+    }
+    
+    // リストビューのアイテムが選択された時.
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+    	
+    	// 選択されたアイテムの取得.
+    	final ListView lv = (ListView)parent;	// parentをListViewオブジェクトlvにキャスト.
+    	final BookmarkItem item = (BookmarkItem)lv.getItemAtPosition(position);	// lv.getItemAtPositionでitemを取得.
+    	
+    	// 送り返すインテントを準備し, finishすることで戻った先にデータが返る.
+    	Intent data = new Intent();	// Intentオブジェクトdataの作成.
+    	Bundle bundle = new Bundle();	// Bundleオブジェクトbundleの作成.
+    	bundle.putString("title", item.title);	// bundle.putStringでキー"title", 値item.titleを登録.
+    	bundle.putString("url", item.url);	// bundle.putStringでキー"url", 値item.urlを登録.
+    	data.putExtras(bundle);	// data.putExtrasでbundleを登録.
+    	setResult(RESULT_OK, data);	// setResultでRESULT_OKとdataをセット.
+    	finish();	// finishでこのアクティビティを閉じる.
+    	
     }
     
 }
