@@ -34,13 +34,18 @@ public class BookmarkActivity extends Activity {
         lvBookmark.setAdapter(adapter);	//  lvBookmark.setAdapterでadapterをセット.
         
         // 全てのブックマークを取得し, アイテムに追加.
-        Cursor c = Browser.getAllBookmarks(getContentResolver());	// getContentResolver()で取得したContentResolverをBrowser.getAllBookmarksに渡して, ブックマークのカーソルを取得.
+        String[] projection = new String[]{	// 取得したいカラム名の配列projection.
+        		Browser.BookmarkColumns._ID,	// ID.
+        		Browser.BookmarkColumns.TITLE,	// タイトル.
+        		Browser.BookmarkColumns.URL	// URL.
+        };
+        Cursor c = getContentResolver().query(Browser.BOOKMARKS_URI, projection, null, null, Browser.BookmarkColumns._ID + " desc");	// getContentResolver().queryでブックマーク取得.(Browser.BookmarkColumns._ID + " desc"で降順ソート.)
         if (c.moveToFirst()){	// 最初の位置に移動.
         	do{
-        		//String title = c.getString(c.getColumnIndex(Browser.BookmarkColumns.TITLE));	// titleの取得.(実際には-1が返り, タイトルが取得できない.)
+        		String title = c.getString(c.getColumnIndex(Browser.BookmarkColumns.TITLE));	// titleの取得.
         		String url = c.getString(c.getColumnIndex(Browser.BookmarkColumns.URL));	// urlの取得.
         		BookmarkItem item = new BookmarkItem();	// itemを生成.
-                item.title = "";//title;	// item.titleにtitleをセット.(タイトルを取得できないので, とりあえず空欄にする.)
+                item.title = title;	// item.titleにtitleをセット.
                 item.url = url;	// item.urlにurlをセット.
                 adapter.add(item);	// adapter.addでitemを追加.
         	} while(c.moveToNext());	// 次へ移動.
