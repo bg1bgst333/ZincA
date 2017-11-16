@@ -30,7 +30,7 @@ public class MainActivity extends Activity implements OnClickListener {	// View.
         
         // CustomWebViewClientのセット.
         WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
-        webView.setWebViewClient(new CustomWebViewClient());	// newで生成したCustomWebViewClientオブジェクトをwebView.setWebViewClientでセット.
+        webView.setWebViewClient(new CustomWebViewClient(this));	// newで生成したCustomWebViewClientオブジェクト(コンストラクタの引数にthisを渡す.)をwebView.setWebViewClientでセット.
         
     }
     
