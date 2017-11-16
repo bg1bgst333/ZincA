@@ -3,5 +3,6 @@
 
     <string name="app_name">Zinc</string>
     <string name="hello_world">Hello Zinc!</string>
-
+	<string name="menu_item_bookmark_add_text">ブックマークの追加</string>
+	
 </resources>
