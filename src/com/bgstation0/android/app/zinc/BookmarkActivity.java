@@ -5,7 +5,9 @@ package com.bgstation0.android.app.zinc;
 import java.util.ArrayList;
 import java.util.List;
 import android.app.Activity;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.Browser;
 import android.widget.ListView;
 
 // ブックマークアクティビティクラスBookmarkActivity
@@ -31,19 +33,19 @@ public class BookmarkActivity extends Activity {
         // リストビューにアダプタをセット.
         lvBookmark.setAdapter(adapter);	//  lvBookmark.setAdapterでadapterをセット.
         
-        // 仮アイテムの追加.
-        BookmarkItem item1 = new BookmarkItem();	// item1を生成.
-        item1.title = "test1";	// titleは"test1".
-        item1.url = "http://test1.com";	// urlは"http://test1.com"
-        BookmarkItem item2 = new BookmarkItem();	// item2を生成.
-        item2.title = "test2";	// titleは"test2".
-        item2.url = "http://test2.com";	// urlは"http://test2.com"
-        BookmarkItem item3 = new BookmarkItem();	// item3を生成.
-        item3.title = "test3";	// titleは"test3".
-        item3.url = "http://test3.com";	// urlは"http://test3.com"
-        adapter.add(item1);	// adapter.addでitem1を追加.
-        adapter.add(item2);	// adapter.addでitem2を追加.
-        adapter.add(item3);	// adapter.addでitem3を追加.
+        // 全てのブックマークを取得し, アイテムに追加.
+        Cursor c = Browser.getAllBookmarks(getContentResolver());	// getContentResolver()で取得したContentResolverをBrowser.getAllBookmarksに渡して, ブックマークのカーソルを取得.
+        if (c.moveToFirst()){	// 最初の位置に移動.
+        	do{
+        		//String title = c.getString(c.getColumnIndex(Browser.BookmarkColumns.TITLE));	// titleの取得.(実際には-1が返り, タイトルが取得できない.)
+        		String url = c.getString(c.getColumnIndex(Browser.BookmarkColumns.URL));	// urlの取得.
+        		BookmarkItem item = new BookmarkItem();	// itemを生成.
+                item.title = "";//title;	// item.titleにtitleをセット.(タイトルを取得できないので, とりあえず空欄にする.)
+                item.url = url;	// item.urlにurlをセット.
+                adapter.add(item);	// adapter.addでitemを追加.
+        	} while(c.moveToNext());	// 次へ移動.
+        }
+        c.close();	// c.closeで閉じる.
         adapter.notifyDataSetChanged();	// adapter.notifyDataSetChangedで更新.
         
     }
