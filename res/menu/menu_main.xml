@@ -4,4 +4,8 @@
         android:title="@string/menu_item_bookmark_add_text"
         android:orderInCategory="101"
         android:showAsAction="never" />
+    <item android:id="@+id/menu_item_bookmark_show"
+        android:title="@string/menu_item_bookmark_show_text"
+        android:orderInCategory="102"
+        android:showAsAction="never" />
 </menu>

@@ -3,6 +3,7 @@ package com.bgstation0.android.app.zinc;
 
 //パッケージのインポート
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Browser;
 import android.view.Menu;
@@ -74,6 +75,15 @@ public class MainActivity extends Activity implements OnClickListener {	// View.
     		String url = webView.getUrl();	// webView.getUrlでURLを取得.
     		Browser.saveBookmark(this, title, url);	// Browser.saveBookmarkでブックマークに追加.
     		Toast.makeText(this, title + "(" + url + ")", Toast.LENGTH_LONG).show();	// 追加したブックマークのtitleとurlをToastで表示.
+    		
+    	}
+    	else if (id == R.id.menu_item_bookmark_show){	// R.id.menu_item_bookmark_show("ブックマークの一覧")の時.
+    		
+    		// ブックマークアクティビティを起動する.
+    		String packageName = getPackageName();	//  getPackageNameでpackageNameを取得.
+    		Intent intent = new Intent();	// Intentオブジェクトintentを作成.
+    		intent.setClassName(packageName, packageName + ".BookmarkActivity");	// intent.setClassNameで".BookmarkActivity"をセット.
+    		startActivity(intent);	// startActivityにintentを渡して, BookmarkActivityを起動.
     		
     	}
     	
