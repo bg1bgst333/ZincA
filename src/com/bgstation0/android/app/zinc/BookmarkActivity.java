@@ -41,9 +41,10 @@ public class BookmarkActivity extends Activity implements OnItemClickListener {	
         String[] projection = new String[]{	// 取得したいカラム名の配列projection.
         		Browser.BookmarkColumns._ID,	// ID.
         		Browser.BookmarkColumns.TITLE,	// タイトル.
-        		Browser.BookmarkColumns.URL	// URL.
+        		Browser.BookmarkColumns.URL,	// URL.
+        		Browser.BookmarkColumns.BOOKMARK	// ブックマークフラグ.
         };
-        Cursor c = getContentResolver().query(Browser.BOOKMARKS_URI, projection, null, null, Browser.BookmarkColumns._ID + " desc");	// getContentResolver().queryでブックマーク取得.(Browser.BookmarkColumns._ID + " desc"で降順ソート.)
+        Cursor c = getContentResolver().query(Browser.BOOKMARKS_URI, projection, Browser.BookmarkColumns.BOOKMARK + " = 1", null, Browser.BookmarkColumns._ID + " desc");	// getContentResolver().queryでブックマーク取得.(Browser.BookmarkColumns._ID + " desc"で降順ソート, 第3引数にBrowser.BookmarkColumns.BOOKMARK + " = 1"を指定するとブックマークとなる.)
         if (c.moveToFirst()){	// 最初の位置に移動.
         	do{
         		String title = c.getString(c.getColumnIndex(Browser.BookmarkColumns.TITLE));	// titleの取得.

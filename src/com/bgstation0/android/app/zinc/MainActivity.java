@@ -20,7 +20,8 @@ public class MainActivity extends Activity implements OnClickListener {	// View.
 
 	// メンバフィールドの初期化.
 	public static final int REQUEST_CODE_BOOKMARK = 1001;	// REQUEST_CODE_BOOKMARKを1001とする.
-		
+	public static final int REQUEST_CODE_HISTORY = 1002;	// REQUEST_CODE_HISTORYを1002とする.
+	
 	// アクティビティが作成された時.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +93,26 @@ public class MainActivity extends Activity implements OnClickListener {	// View.
     			// 抜ける.
     			break;	// breakで抜ける.
     			
+    		// 履歴一覧.
+    		case REQUEST_CODE_HISTORY:	// 履歴の一覧から戻ってきた場合.
+    			
+    			// REQUEST_CODE_HISTORYブロック
+    			{
+    				
+    				if (resultCode == RESULT_OK){	// RESULT_OKの場合.
+    					String title = bundle.getString("title");	// bundle.getStringでtitleを取得.
+    					String url = bundle.getString("url");	// bundle.getStringでurlを取得.
+    					EditText etUrl = (EditText)findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
+    		    		WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
+    		    		etUrl.setText(url);	// etUrl.SetTextでURLバーのetUrlにurlをセット.
+    		    		webView.loadUrl(url);	// webView.loadUrlでurlの指すWebページをロード.
+    				}
+    				
+    			}
+    			
+    			// 抜ける.
+    			break;	// breakで抜ける.
+    			
     		// それ以外の時.
     		default:
     			
@@ -142,7 +163,7 @@ public class MainActivity extends Activity implements OnClickListener {	// View.
     		String packageName = getPackageName();	// getPackageNameでpackageNameを取得.
     		Intent intent = new Intent();	// Intentオブジェクトintentを作成.
     		intent.setClassName(packageName, packageName + ".HistoryActivity");	// intent.setClassNameで".HistoryActivity"をセット.
-    		startActivity(intent);	// startActivityにintentを渡して, HistoryActivityを起動.
+    		startActivityForResult(intent, REQUEST_CODE_HISTORY);	// startActivityForResultにintentとREQUEST_CODE_HISTORYを渡す.
     		
     	}
     	
