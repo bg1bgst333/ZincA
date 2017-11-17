@@ -130,10 +130,19 @@ public class MainActivity extends Activity implements OnClickListener {	// View.
     	else if (id == R.id.menu_item_bookmark_show){	// R.id.menu_item_bookmark_show("ブックマークの一覧")の時.
     		
     		// ブックマークアクティビティを起動する.
-    		String packageName = getPackageName();	//  getPackageNameでpackageNameを取得.
+    		String packageName = getPackageName();	// getPackageNameでpackageNameを取得.
     		Intent intent = new Intent();	// Intentオブジェクトintentを作成.
     		intent.setClassName(packageName, packageName + ".BookmarkActivity");	// intent.setClassNameで".BookmarkActivity"をセット.
     		startActivityForResult(intent, REQUEST_CODE_BOOKMARK);	// startActivityForResultにintentとREQUEST_CODE_BOOKMARKを渡す.
+    		
+    	}
+    	else if (id == R.id.menu_item_history_show){	// R.id.menu_item_history_show("履歴の一覧")の時.
+    		
+    		// ヒストリーアクティビティを起動する.
+    		String packageName = getPackageName();	// getPackageNameでpackageNameを取得.
+    		Intent intent = new Intent();	// Intentオブジェクトintentを作成.
+    		intent.setClassName(packageName, packageName + ".HistoryActivity");	// intent.setClassNameで".HistoryActivity"をセット.
+    		startActivity(intent);	// startActivityにintentを渡して, HistoryActivityを起動.
     		
     	}
     	

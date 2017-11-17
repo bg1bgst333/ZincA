@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bgstation0.android.app.zinc"
-    android:versionCode="16"
-    android:versionName="0.0.2(Komagawa #16)" >
+    android:versionCode="17"
+    android:versionName="0.0.3(Komagawa #17)" >
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -28,6 +28,11 @@
         <activity
             android:name=".BookmarkActivity"
             android:label="@string/menu_item_bookmark_show_text" >
+            
+        </activity>
+        <activity
+            android:name=".HistoryActivity"
+            android:label="@string/menu_item_history_show_text" >
             
         </activity>
     </application>

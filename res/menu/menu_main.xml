@@ -8,4 +8,8 @@
         android:title="@string/menu_item_bookmark_show_text"
         android:orderInCategory="102"
         android:showAsAction="never" />
+    <item android:id="@+id/menu_item_history_show"
+        android:title="@string/menu_item_history_show_text"
+        android:orderInCategory="103"
+        android:showAsAction="never" />
 </menu>
