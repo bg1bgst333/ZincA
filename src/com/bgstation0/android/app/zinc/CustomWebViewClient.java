@@ -27,6 +27,7 @@ public class CustomWebViewClient extends WebViewClient {
 	}
 	
 	// ページのロードが開始された時.
+	@Override
 	public void onPageStarted(WebView view, String url, Bitmap favicon){
 			
 		// 既定の処理
@@ -40,24 +41,12 @@ public class CustomWebViewClient extends WebViewClient {
 			EditText etUrl = (EditText)activity.findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
 			etUrl.setText(url);	// etUrl.SetTextでURLバーのetUrlにurlをセット.
 			
-			// このURLを履歴に登録.
-			Toast.makeText(activity, url, Toast.LENGTH_LONG).show();	// Toastでurlを表示.
-			ContentValues values = new ContentValues();	// ContentValuesオブジェクトvaluesの生成.
-			values.put(Browser.BookmarkColumns.TITLE, view.getTitle());	// values.putでview.getTitleで取得したタイトルを登録.
-			values.put(Browser.BookmarkColumns.URL, url);	// values.putでurlを登録.
-			values.put(Browser.BookmarkColumns.BOOKMARK, "0");	// values.putでBOOKMARKフラグは"0"として登録.
-			try{	// tryで囲む.
-				activity.getContentResolver().insert(Browser.BOOKMARKS_URI, values);	// activity.getContentResolver().insertでvaluesを挿入.
-			}
-			catch (Exception ex){	// 例外のcatch.
-				Toast.makeText(activity, ex.getMessage(), Toast.LENGTH_LONG).show();	// ex.getMessageで取得した例外メッセージをToastで表示.
-			}
-			
 		}
 			
 	}
 		
 	// ロードするURLが変更された時.
+	@Override
 	public boolean shouldOverrideUrlLoading(WebView view, String url){
 	
 		// mContextからActivityを取得し,　そこから各Viewを取得.
@@ -70,6 +59,35 @@ public class CustomWebViewClient extends WebViewClient {
 		// Chromeなど既定のブラウザで開かないようにするにはfalseを返す.
 		return false;	// falseを返す.
 		
+	}
+	
+	// ページのロードが終了した時.
+	@Override
+	public void onPageFinished(WebView view, String url){
+		
+		// 既定の処理
+		super.onPageFinished(view, url);	// 親クラスのonPageFinishedを呼ぶ.
+		
+		// mContextからActivityを取得し, それのgetContentResolverを使う.
+		if (mContext != null){	// mContextがnullでなければ.
+			
+			// このURLを履歴に登録.
+			Activity activity = (Activity)mContext;	// mContextをActivityにキャストし, activityに格納.
+			Toast.makeText(activity, url, Toast.LENGTH_LONG).show();	// Toastでurlを表示.
+			ContentValues values = new ContentValues();	// ContentValuesオブジェクトvaluesの生成.
+			values.put(Browser.BookmarkColumns.TITLE, view.getTitle());	// values.putでview.getTitleで取得したタイトルを登録.
+			values.put(Browser.BookmarkColumns.URL, url);	// values.putでurlを登録.
+			values.put(Browser.BookmarkColumns.DATE, System.currentTimeMillis());	// 現在時刻を登録.
+			values.put(Browser.BookmarkColumns.BOOKMARK, "0");	// values.putでBOOKMARKフラグは"0"として登録.
+			try{	// tryで囲む.
+				activity.getContentResolver().insert(Browser.BOOKMARKS_URI, values);	// activity.getContentResolver().insertでvaluesを挿入.
+			}
+			catch (Exception ex){	// 例外のcatch.
+				Toast.makeText(activity, ex.getMessage(), Toast.LENGTH_LONG).show();	// ex.getMessageで取得した例外メッセージをToastで表示.
+			}
+					
+		}
+				
 	}
 	
 }

@@ -42,9 +42,9 @@ public class HistoryActivity extends Activity implements OnItemClickListener {	/
         		Browser.BookmarkColumns._ID,	// ID.
         		Browser.BookmarkColumns.TITLE,	// タイトル.
         		Browser.BookmarkColumns.URL,	// URL.
-        		Browser.BookmarkColumns.BOOKMARK	// ブックマークフラグ.
+        		Browser.BookmarkColumns.BOOKMARK,	// ブックマークフラグ.
         };
-        Cursor c = getContentResolver().query(Browser.BOOKMARKS_URI, projection, Browser.BookmarkColumns.BOOKMARK + " = 0", null, Browser.BookmarkColumns._ID + " desc");	// getContentResolver().queryで履歴取得.(Browser.BookmarkColumns._ID + " desc"で降順ソート, 第3引数にBrowser.BookmarkColumns.BOOKMARK + " = 0"を指定すると履歴となる.)
+        Cursor c = getContentResolver().query(Browser.BOOKMARKS_URI, projection, Browser.BookmarkColumns.BOOKMARK + " = 0", null, Browser.BookmarkColumns.DATE + " desc");	// getContentResolver().queryで履歴取得.(Browser.BookmarkColumns.DATE + " desc"で降順ソート, 第3引数にBrowser.BookmarkColumns.BOOKMARK + " = 0"を指定すると履歴となる.)
         if (c.moveToFirst()){	// 最初の位置に移動.
         	do{
         		String title = c.getString(c.getColumnIndex(Browser.BookmarkColumns.TITLE));	// titleの取得.
