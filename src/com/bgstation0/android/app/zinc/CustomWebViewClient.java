@@ -43,6 +43,7 @@ public class CustomWebViewClient extends WebViewClient {
 			
 			// URLバーに反映.
 			Activity activity = (Activity)mContext;	// mContextをActivityにキャストし, activityに格納.
+			Toast.makeText(activity, "onPageStarted: url = " + url, Toast.LENGTH_LONG).show();	// Toastでurlを表示.
 			EditText etUrl = (EditText)activity.findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
 			etUrl.setText(url);	// etUrl.SetTextでURLバーのetUrlにurlをセット.
 			
@@ -60,6 +61,7 @@ public class CustomWebViewClient extends WebViewClient {
 		// mContextからActivityを取得し,　そこから各Viewを取得.
 		if (mContext != null){	// mContextがnullでなければ.
 			Activity activity = (Activity)mContext;	// mContextをActivityにキャストし, activityに格納.
+			Toast.makeText(activity, "shouldOverrideUrlLoading: url = " + url, Toast.LENGTH_LONG).show();	// Toastでurlを表示.
 			EditText etUrl = (EditText)activity.findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
 			etUrl.setText(url);	// etUrl.SetTextでURLバーのetUrlにurlをセット.
 		}
@@ -84,7 +86,7 @@ public class CustomWebViewClient extends WebViewClient {
 			
 			// このURLを履歴に登録.
 			Activity activity = (Activity)mContext;	// mContextをActivityにキャストし, activityに格納.
-			Toast.makeText(activity, url, Toast.LENGTH_LONG).show();	// Toastでurlを表示.
+			Toast.makeText(activity, "onPageFinished: url = " + url, Toast.LENGTH_LONG).show();	// Toastでurlを表示.
 			ContentValues values = new ContentValues();	// ContentValuesオブジェクトvaluesの生成.
 			values.put(Browser.BookmarkColumns.TITLE, view.getTitle());	// values.putでview.getTitleで取得したタイトルを登録.
 			values.put(Browser.BookmarkColumns.URL, url);	// values.putでurlを登録.
