@@ -47,7 +47,7 @@ public class CustomWebViewClient extends WebViewClient {
 			
 			// URLバーに反映.
 			Activity activity = (Activity)mContext;	// mContextをActivityにキャストし, activityに格納.
-			Toast.makeText(activity, "onPageStarted: url = " + url, Toast.LENGTH_LONG).show();	// Toastでurlを表示.
+			//Toast.makeText(activity, "onPageStarted: url = " + url, Toast.LENGTH_LONG).show();	// Toastでurlを表示.
 			EditText etUrl = (EditText)activity.findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
 			etUrl.setText(url);	// etUrl.SetTextでURLバーのetUrlにurlをセット.
 		
@@ -69,7 +69,7 @@ public class CustomWebViewClient extends WebViewClient {
 		// mContextからActivityを取得し,　そこから各Viewを取得.
 		if (mContext != null){	// mContextがnullでなければ.
 			Activity activity = (Activity)mContext;	// mContextをActivityにキャストし, activityに格納.
-			Toast.makeText(activity, "shouldOverrideUrlLoading: url = " + url, Toast.LENGTH_LONG).show();	// Toastでurlを表示.
+			//Toast.makeText(activity, "shouldOverrideUrlLoading: url = " + url, Toast.LENGTH_LONG).show();	// Toastでurlを表示.
 			EditText etUrl = (EditText)activity.findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
 			etUrl.setText(url);	// etUrl.SetTextでURLバーのetUrlにurlをセット.
 		}
@@ -99,7 +99,7 @@ public class CustomWebViewClient extends WebViewClient {
 				if (mCount == 0){	// しかも一番最初の時.
 
 					// このURLを履歴に登録.
-					Toast.makeText(activity, "onPageFinished: url = " + url, Toast.LENGTH_LONG).show();	// Toastでurlを表示.
+					//Toast.makeText(activity, "onPageFinished: url = " + url, Toast.LENGTH_LONG).show();	// Toastでurlを表示.
 					ContentValues values = new ContentValues();	// ContentValuesオブジェクトvaluesの生成.
 					values.put(Browser.BookmarkColumns.TITLE, view.getTitle());	// values.putでview.getTitleで取得したタイトルを登録.
 					values.put(Browser.BookmarkColumns.URL, url);	// values.putでurlを登録.
@@ -112,20 +112,22 @@ public class CustomWebViewClient extends WebViewClient {
 							values.put(Browser.BookmarkColumns.DATE, System.currentTimeMillis());	// 現在時刻を登録.
 							int row = activity.getContentResolver().update(Browser.BOOKMARKS_URI, values, Browser.BookmarkColumns.URL + "=?", new String[]{url});	// activity.getContentResolver().updateでURLが同じ行を更新.
 							if (row < 0){
-								Toast.makeText(activity, "error: "+url, Toast.LENGTH_LONG).show();
+								//Toast.makeText(activity, "error: "+url, Toast.LENGTH_LONG).show();
+								Toast.makeText(activity, activity.getString(R.string.toast_message_history_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_history_regist_errorに定義されたメッセージをToastで表示.
 							}
 							else{
-								Toast.makeText(activity, "update: "+url, Toast.LENGTH_LONG).show();
+								//Toast.makeText(activity, "update: "+url, Toast.LENGTH_LONG).show();
 							}
 						}
 						else{
-							Toast.makeText(activity, "insert: "+url, Toast.LENGTH_LONG).show();
+							//Toast.makeText(activity, "insert: "+url, Toast.LENGTH_LONG).show();
 						}
 						//Toast.makeText(activity, "Uri="+uri, Toast.LENGTH_LONG).show();
 						//mFinishUrl = url;	// mFinishUrlにurlをセット.
 					}
 					catch (Exception ex){	// 例外のcatch.
-						Toast.makeText(activity, ex.getMessage(), Toast.LENGTH_LONG).show();	// ex.getMessageで取得した例外メッセージをToastで表示.
+						//Toast.makeText(activity, ex.getMessage(), Toast.LENGTH_LONG).show();	// ex.getMessageで取得した例外メッセージをToastで表示.
+						Toast.makeText(activity, activity.getString(R.string.toast_message_history_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_history_regist_errorに定義されたメッセージをToastで表示.
 					}
 					
 				}
