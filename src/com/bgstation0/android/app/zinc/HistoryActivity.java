@@ -3,6 +3,7 @@ package com.bgstation0.android.app.zinc;
 
 //パッケージのインポート
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import android.app.Activity;
 import android.content.Intent;
@@ -42,6 +43,7 @@ public class HistoryActivity extends Activity implements OnItemClickListener {	/
         		Browser.BookmarkColumns._ID,	// ID.
         		Browser.BookmarkColumns.TITLE,	// タイトル.
         		Browser.BookmarkColumns.URL,	// URL.
+        		Browser.BookmarkColumns.DATE,	// 日時.
         		Browser.BookmarkColumns.BOOKMARK,	// ブックマークフラグ.
         };
         Cursor c = getContentResolver().query(Browser.BOOKMARKS_URI, projection, Browser.BookmarkColumns.BOOKMARK + " = 0", null, Browser.BookmarkColumns.DATE + " desc");	// getContentResolver().queryで履歴取得.(Browser.BookmarkColumns.DATE + " desc"で降順ソート, 第3引数にBrowser.BookmarkColumns.BOOKMARK + " = 0"を指定すると履歴となる.)
@@ -49,9 +51,13 @@ public class HistoryActivity extends Activity implements OnItemClickListener {	/
         	do{
         		String title = c.getString(c.getColumnIndex(Browser.BookmarkColumns.TITLE));	// titleの取得.
         		String url = c.getString(c.getColumnIndex(Browser.BookmarkColumns.URL));	// urlの取得.
+        		long date = c.getLong(c.getColumnIndex(Browser.BookmarkColumns.DATE));	// dateの取得.
         		HistoryItem item = new HistoryItem();	// itemを生成.
                 item.title = title;	// item.titleにtitleをセット.
                 item.url = url;	// item.urlにurlをセット.
+                //item.date = Long.toString(date);	// dateをLong.toStringで文字列変換してitem.dateにセット.
+                Date dtDate = new Date(date);	// dateを基にDateオブジェクトdtDateを作成.
+                item.date = dtDate.toString();	// item.dateにdtDate.toStringで変換した日時文字列をセット.
                 adapter.add(item);	// adapter.addでitemを追加.
         	} while(c.moveToNext());	// 次へ移動.
         }

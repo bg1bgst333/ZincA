@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.provider.Browser;
 import android.util.Log;
 import android.webkit.WebView;
@@ -105,7 +106,22 @@ public class CustomWebViewClient extends WebViewClient {
 					values.put(Browser.BookmarkColumns.DATE, System.currentTimeMillis());	// 現在時刻を登録.
 					values.put(Browser.BookmarkColumns.BOOKMARK, "0");	// values.putでBOOKMARKフラグは"0"として登録.
 					try{	// tryで囲む.
-						activity.getContentResolver().insert(Browser.BOOKMARKS_URI, values);	// activity.getContentResolver().insertでvaluesを挿入.
+						Uri uri = activity.getContentResolver().insert(Browser.BOOKMARKS_URI, values);	// activity.getContentResolver().insertでvaluesを挿入.(Uriオブジェクトuriに格納.)
+						if (uri == null){	// 既に挿入されている場合, nullが返る模様.
+							values = new ContentValues();	// ContentValuesオブジェクトvaluesの生成.
+							values.put(Browser.BookmarkColumns.DATE, System.currentTimeMillis());	// 現在時刻を登録.
+							int row = activity.getContentResolver().update(Browser.BOOKMARKS_URI, values, Browser.BookmarkColumns.URL + "=?", new String[]{url});	// activity.getContentResolver().updateでURLが同じ行を更新.
+							if (row < 0){
+								Toast.makeText(activity, "error: "+url, Toast.LENGTH_LONG).show();
+							}
+							else{
+								Toast.makeText(activity, "update: "+url, Toast.LENGTH_LONG).show();
+							}
+						}
+						else{
+							Toast.makeText(activity, "insert: "+url, Toast.LENGTH_LONG).show();
+						}
+						//Toast.makeText(activity, "Uri="+uri, Toast.LENGTH_LONG).show();
 						//mFinishUrl = url;	// mFinishUrlにurlをセット.
 					}
 					catch (Exception ex){	// 例外のcatch.

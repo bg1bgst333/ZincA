@@ -36,8 +36,10 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
 		}
 		TextView tvTitle = (TextView)convertView.findViewById(R.id.textview_history_item_title);	// findViewByIdでR.id.textview_history_item_titleからtvTitleを取得.
 		TextView tvUrl = (TextView)convertView.findViewById(R.id.textview_history_item_url);	// findViewByIdでR.id.textview_history_item_urlからtvUrlを取得.
+		TextView tvDate = (TextView)convertView.findViewById(R.id.textview_history_item_date);	// findViewByIdでR.id.textview_history_item_dateからtvDateを取得.
 		tvTitle.setText(getItem(position).title);	// getItem(position)で取得したHistoryItemのtitleをtvTitle.setTextでセット.
 		tvUrl.setText(getItem(position).url);	// getItem(position)で取得したHistoryItemのurlをtvUrl.setTextでセット.
+		tvDate.setText(getItem(position).date);	// getItem(position)で取得したHistoryItemのdateをtvDate.setTextでセット.
 		return convertView;	// convertViewを返す.
 		
 	}

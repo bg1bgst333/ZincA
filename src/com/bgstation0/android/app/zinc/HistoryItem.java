@@ -5,4 +5,5 @@ package com.bgstation0.android.app.zinc;
 public class HistoryItem {
 	public String title;	// ƒ^ƒCƒgƒ‹
 	public String url;	// URL
+	public String date;	// “ú
 }
