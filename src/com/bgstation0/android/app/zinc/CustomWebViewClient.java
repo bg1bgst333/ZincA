@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.provider.Browser;
+import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 public class CustomWebViewClient extends WebViewClient {
 
 	// メンバフィールドの初期化
+	private static final String TAG = "CustomWebViewClient";	// TAGをCustomWebViewClientに初期化.
 	Context mContext = null;	// Context型mContextをnullに初期化.
 		
 	// 引数付きコンストラクタ
@@ -32,7 +34,10 @@ public class CustomWebViewClient extends WebViewClient {
 			
 		// 既定の処理
 		super.onPageStarted(view, url, favicon);	// 親クラスのonPageStartedを呼ぶ.
-			
+
+		// urlをログに出力.
+		Log.d(TAG, "onPageStarted: url = " + url);	// Log.dでurlを出力.
+		
 		// mContextからActivityを取得し,　そこから各Viewを取得.
 		if (mContext != null){	// mContextがnullでなければ.
 			
@@ -49,6 +54,9 @@ public class CustomWebViewClient extends WebViewClient {
 	@Override
 	public boolean shouldOverrideUrlLoading(WebView view, String url){
 	
+		// urlをログに出力.
+		Log.d(TAG, "shouldOverrideUrlLoading: url = " + url);	// Log.dでurlを出力.
+				
 		// mContextからActivityを取得し,　そこから各Viewを取得.
 		if (mContext != null){	// mContextがnullでなければ.
 			Activity activity = (Activity)mContext;	// mContextをActivityにキャストし, activityに格納.
@@ -67,7 +75,10 @@ public class CustomWebViewClient extends WebViewClient {
 		
 		// 既定の処理
 		super.onPageFinished(view, url);	// 親クラスのonPageFinishedを呼ぶ.
-		
+
+		// urlをログに出力.
+		Log.d(TAG, "onPageFinished: url = " + url);	// Log.dでurlを出力.
+			
 		// mContextからActivityを取得し, それのgetContentResolverを使う.
 		if (mContext != null){	// mContextがnullでなければ.
 			
