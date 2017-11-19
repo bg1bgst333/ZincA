@@ -19,13 +19,14 @@ public class CustomWebViewClient extends WebViewClient {
 	// メンバフィールドの初期化
 	private static final String TAG = "CustomWebViewClient";	// TAGをCustomWebViewClientに初期化.
 	Context mContext = null;	// Context型mContextをnullに初期化.
-		
+	private String mFinishUrl = "";	// mFinishUrlを""で初期化.
+	
 	// 引数付きコンストラクタ
 	CustomWebViewClient(Context context){
 			
 		// 引数をメンバにセット.
 		mContext = context;	// mContextにcontextをセット.
-			
+		
 	}
 	
 	// ページのロードが開始された時.
@@ -84,19 +85,23 @@ public class CustomWebViewClient extends WebViewClient {
 		// mContextからActivityを取得し, それのgetContentResolverを使う.
 		if (mContext != null){	// mContextがnullでなければ.
 			
-			// このURLを履歴に登録.
+			// 前回のURLと違う場合は履歴に登録.
 			Activity activity = (Activity)mContext;	// mContextをActivityにキャストし, activityに格納.
-			Toast.makeText(activity, "onPageFinished: url = " + url, Toast.LENGTH_LONG).show();	// Toastでurlを表示.
-			ContentValues values = new ContentValues();	// ContentValuesオブジェクトvaluesの生成.
-			values.put(Browser.BookmarkColumns.TITLE, view.getTitle());	// values.putでview.getTitleで取得したタイトルを登録.
-			values.put(Browser.BookmarkColumns.URL, url);	// values.putでurlを登録.
-			values.put(Browser.BookmarkColumns.DATE, System.currentTimeMillis());	// 現在時刻を登録.
-			values.put(Browser.BookmarkColumns.BOOKMARK, "0");	// values.putでBOOKMARKフラグは"0"として登録.
-			try{	// tryで囲む.
-				activity.getContentResolver().insert(Browser.BOOKMARKS_URI, values);	// activity.getContentResolver().insertでvaluesを挿入.
-			}
-			catch (Exception ex){	// 例外のcatch.
-				Toast.makeText(activity, ex.getMessage(), Toast.LENGTH_LONG).show();	// ex.getMessageで取得した例外メッセージをToastで表示.
+			if (!url.equals(mFinishUrl)){	// urlがmFinishUrlと違う場合.
+				// このURLを履歴に登録.
+				Toast.makeText(activity, "onPageFinished: url = " + url, Toast.LENGTH_LONG).show();	// Toastでurlを表示.
+				ContentValues values = new ContentValues();	// ContentValuesオブジェクトvaluesの生成.
+				values.put(Browser.BookmarkColumns.TITLE, view.getTitle());	// values.putでview.getTitleで取得したタイトルを登録.
+				values.put(Browser.BookmarkColumns.URL, url);	// values.putでurlを登録.
+				values.put(Browser.BookmarkColumns.DATE, System.currentTimeMillis());	// 現在時刻を登録.
+				values.put(Browser.BookmarkColumns.BOOKMARK, "0");	// values.putでBOOKMARKフラグは"0"として登録.
+				try{	// tryで囲む.
+					activity.getContentResolver().insert(Browser.BOOKMARKS_URI, values);	// activity.getContentResolver().insertでvaluesを挿入.
+					mFinishUrl = url;	// mFinishUrlにurlをセット.
+				}
+				catch (Exception ex){	// 例外のcatch.
+					Toast.makeText(activity, ex.getMessage(), Toast.LENGTH_LONG).show();	// ex.getMessageで取得した例外メッセージをToastで表示.
+				}
 			}
 					
 		}
