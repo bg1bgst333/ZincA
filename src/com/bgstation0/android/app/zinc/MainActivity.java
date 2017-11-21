@@ -210,7 +210,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     void loadUrl(){
     	
     	// URLを取得し, ロード.
-    	loadUrl(getUrl());	// getUrlしたURLをloadUrlでロード.
+    	loadUrlComplement(getUrl());	// getUrl()で取得したURLをloadUrlComplement()でロード.
     	
     }
     
@@ -221,6 +221,20 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
 		webView.loadUrl(url);	// webView.loadUrlでurlの指すWebページをロード.
 		
+    }
+    
+    // 指定されたURLを"http"を補完してロード.
+    void loadUrlComplement(String url){
+    	
+    	// 先頭文字列から補完するかを判定.
+    	if (url.startsWith("https://") || url.startsWith("http://")){	// "https"または"http"の時.
+    		loadUrl(url);	// loadUrl(String url)をそのまま呼ぶ.
+    	}
+    	else{
+    		String complementUrl = "http://" + url;	// 先頭に"http://"を付加.
+    		loadUrl(complementUrl);	// // loadUrl(String url)にcomplementUrlを渡す.
+    	}
+    	
     }
     
     // 選択されたURLをロード.
