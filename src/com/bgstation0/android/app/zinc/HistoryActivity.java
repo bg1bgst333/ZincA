@@ -26,19 +26,31 @@ public class HistoryActivity extends Activity implements OnItemClickListener {	/
         super.onCreate(savedInstanceState);	// 親クラスのonCreateを呼ぶ.
         setContentView(R.layout.activity_history);	// setContentViewでR.layout.activity_historyをセット.
         
-        // historyの作成
-        List<HistoryItem> history = new ArrayList<HistoryItem>();	// ブックマークhistoryの生成.
-
-        // adapterの生成
-        HistoryAdapter adapter = new HistoryAdapter(this, R.layout.adapter_history_item, history);	// アダプタadapterの生成.
+        // 履歴のロード.
+        loadHistories();	// loadHistoriesで履歴をロード.
         
-        // ListViewの取得
-        ListView lvHistory = (ListView)findViewById(R.id.listview_history);	// リストビューlvHistoryの取得.
-        
-        // リストビューにアダプタをセット.
-        lvHistory.setAdapter(adapter);	//  lvHistory.setAdapterでadapterをセット.
-        
-        // 全てのヒストリーを取得し, アイテムに追加.
+    }
+    
+    // リストビューのアイテムが選択された時.
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+    	
+    	// 選択されたアイテムの取得.
+    	final ListView lv = (ListView)parent;	// parentをListViewオブジェクトlvにキャスト.
+    	final HistoryItem item = (HistoryItem)lv.getItemAtPosition(position);	// lv.getItemAtPositionでitemを取得.
+    	
+    	// タイトルとURLを送り返す.
+    	setReturnItem(item.title, item.url);	// setReturnItemでitem.titleとitem.urlを送り返すデータとしてセット.
+    	finish();	// finishでこのアクティビティを閉じる.
+    	
+    }
+    
+    // 履歴一覧の取得.
+    public List<HistoryItem> getAllHistories(){
+    	
+    	// historiesの作成
+    	List<HistoryItem> histories = new ArrayList<HistoryItem>();	// 履歴historiesの生成.
+    
+    	// 全てのヒストリーを取得し, アイテムに追加.
         String[] projection = new String[]{	// 取得したいカラム名の配列projection.
         		Browser.BookmarkColumns._ID,	// ID.
         		Browser.BookmarkColumns.TITLE,	// タイトル.
@@ -58,10 +70,29 @@ public class HistoryActivity extends Activity implements OnItemClickListener {	/
                 //item.date = Long.toString(date);	// dateをLong.toStringで文字列変換してitem.dateにセット.
                 Date dtDate = new Date(date);	// dateを基にDateオブジェクトdtDateを作成.
                 item.date = dtDate.toString();	// item.dateにdtDate.toStringで変換した日時文字列をセット.
-                adapter.add(item);	// adapter.addでitemを追加.
+                histories.add(item);	// histories.addでitemを追加.
         	} while(c.moveToNext());	// 次へ移動.
         }
         c.close();	// c.closeで閉じる.
+        
+        // historiesを返す.
+        return histories;	// returnでhistoriesを返す.
+        
+    }
+    
+    // 履歴のロード.
+    public void loadHistories(){
+    	
+    	// adapterの生成
+        HistoryAdapter adapter = new HistoryAdapter(this, R.layout.adapter_history_item, getAllHistories());	// アダプタadapterの生成.(getAllHistories()で履歴リストを取得し, 第3引数にセット.)
+        
+        // ListViewの取得
+        ListView lvHistory = (ListView)findViewById(R.id.listview_history);	// リストビューlvHistoryの取得.
+        
+        // リストビューにアダプタをセット.
+        lvHistory.setAdapter(adapter);	//  lvHistory.setAdapterでadapterをセット.
+        
+        // 更新.
         adapter.notifyDataSetChanged();	// adapter.notifyDataSetChangedで更新.
         
         // AdapterView.OnItemClickListenerのセット.
@@ -69,21 +100,16 @@ public class HistoryActivity extends Activity implements OnItemClickListener {	/
         
     }
     
-    // リストビューのアイテムが選択された時.
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id){
-    	
-    	// 選択されたアイテムの取得.
-    	final ListView lv = (ListView)parent;	// parentをListViewオブジェクトlvにキャスト.
-    	final HistoryItem item = (HistoryItem)lv.getItemAtPosition(position);	// lv.getItemAtPositionでitemを取得.
+    // 送り返すインテントにタイトルとURLをセット.
+    public void setReturnItem(String title, String url){
     	
     	// 送り返すインテントを準備し, finishすることで戻った先にデータが返る.
     	Intent data = new Intent();	// Intentオブジェクトdataの作成.
     	Bundle bundle = new Bundle();	// Bundleオブジェクトbundleの作成.
-    	bundle.putString("title", item.title);	// bundle.putStringでキー"title", 値item.titleを登録.
-    	bundle.putString("url", item.url);	// bundle.putStringでキー"url", 値item.urlを登録.
+    	bundle.putString("title", title);	// bundle.putStringでキー"title", 値titleを登録.
+    	bundle.putString("url", url);	// bundle.putStringでキー"url", 値urlを登録.
     	data.putExtras(bundle);	// data.putExtrasでbundleを登録.
     	setResult(RESULT_OK, data);	// setResultでRESULT_OKとdataをセット.
-    	finish();	// finishでこのアクティビティを閉じる.
     	
     }
     
