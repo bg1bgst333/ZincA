@@ -11,15 +11,11 @@
         android:orientation="horizontal" >"
         
 	    <EditText android:id="@+id/edittext_urlbar"
-	        android:layout_width="0dp"
+	        android:layout_width="match_parent"
 	        android:layout_height="36dp"
-	        android:layout_weight="1"
-	        android:inputType="textNoSuggestions" />
-	    
-	    <Button android:id="@+id/button_navigate"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="@string/button_navigate_text" />
+	        android:imeOptions="actionDone"
+	        android:inputType="textNoSuggestions"
+	        android:singleLine="true" />
     
     </LinearLayout>
     

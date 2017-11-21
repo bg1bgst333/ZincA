@@ -6,17 +6,22 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Browser;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 //メインアクティビティクラスMainActivity
-public class MainActivity extends Activity implements OnClickListener {	// View.OnClickListenerインターフェースの追加.
+public class MainActivity extends Activity implements OnClickListener, OnEditorActionListener{	// View.OnClickListener, TextView.OnEditorActionListenerインターフェースの追加.
 
 	// メンバフィールドの初期化.
 	public static final int REQUEST_CODE_BOOKMARK = 1001;	// REQUEST_CODE_BOOKMARKを1001とする.
@@ -29,7 +34,7 @@ public class MainActivity extends Activity implements OnClickListener {	// View.
     	// ビューのセット
         super.onCreate(savedInstanceState);	// 親クラスのonCreateを呼ぶ.
         setContentView(R.layout.activity_main);	// setContentViewでR.layout.activity_mainをセット.
-        initNavigateButton();	// initNavigateButtonでnavigateButtonを初期化.
+        initUrlBar();	// initUrlBarでetUrlを初期化.
         initCustomWebViewClient();	// initCustomWebViewClientでCustomWebViewClientを初期化.
         
     }
@@ -123,26 +128,12 @@ public class MainActivity extends Activity implements OnClickListener {	// View.
     	
     }
     
-    // navigateButton("送信")が押された時.
+    // ボタンが押された時.
     @Override
     public void onClick(View v){	// OnClickListener.onClickをオーバーライド.
     	
     	// ボタンごとに振り分ける.
     	switch (v.getId()){	// v.getId()でView(Button)のidを取得.
-    	
-	    	// R.id.button_navigate("送信")の時.
-			case R.id.button_navigate:
-				
-				// button_navigateブロック
-				{
-					
-					// ウェブビューで入力されたURLのWebページを表示.
-		    		loadUrl();	// loadUrlでURLバーのURLをロード.
-	
-				}
-				
-				// 抜ける.
-				break;	// breakで抜ける.
     			
     		// それ以外の時.
     		default:
@@ -154,13 +145,37 @@ public class MainActivity extends Activity implements OnClickListener {	// View.
     	
     }
     
-    // "送信"ボタンの初期化.
-    void initNavigateButton(){
+    // エディットテキストでEnterキーが押された時.
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event){
     	
-    	// navigateButtonを取得し, OnClickListenerとして自身(this)をセット.
-        Button navigateButton = (Button)findViewById(R.id.button_navigate);	// findViewByIdでR.id.button_navigateからButtonオブジェクトnavigateButtonを取得.
-        navigateButton.setOnClickListener(this);	// navigateButton.setOnClickListenerでthis(自身)をセット.
-        
+    	// Enterキーが押された時.
+    	if (actionId == EditorInfo.IME_ACTION_DONE){	// Enterキーが押された時.(IME_ACTION_DONE)
+    		
+    		// ソフトウェアキーボードの非表示.
+    		InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(getApplicationContext().INPUT_METHOD_SERVICE);	// getSystemServiceからinputMethodManagerを取得.
+    		inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);	// inputMethodManager.hideSoftInputFromWindowで非表示.
+    		
+    		// URLのロード.
+    		loadUrl();	// loadUrlでURLバーのURLをロード.
+    	
+    		// trueを返す.
+    		return true;	// returnでtrueを返す.
+    		
+    	}
+    	
+    	// falseを返す.
+    	return false;	// returnでfalseを返す.
+    	
+    }
+    
+    // URLバーの初期化.
+    void initUrlBar(){
+    	
+    	// etUrlを取得し, OnEditorActionListenerとして自身(this)をセット.
+    	EditText etUrl = (EditText)findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
+    	etUrl.setOnEditorActionListener(this);	// etUrl.setOnEditorActionListeneでthis(自身)をセット.
+    	
     }
     
     // カスタムウェブビュークライアントの初期化.

@@ -6,7 +6,6 @@
 	<string name="menu_item_bookmark_add_text">ブックマークの追加</string>
 	<string name="menu_item_bookmark_show_text">ブックマークの一覧</string>
 	<string name="menu_item_history_show_text">履歴の一覧</string>
-	<string name="button_navigate_text">送信</string>
 	<string name="toast_message_history_regist_error">履歴の登録に失敗しました.</string>
 	
 </resources>
