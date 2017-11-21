@@ -29,15 +29,8 @@ public class MainActivity extends Activity implements OnClickListener {	// View.
     	// ビューのセット
         super.onCreate(savedInstanceState);	// 親クラスのonCreateを呼ぶ.
         setContentView(R.layout.activity_main);	// setContentViewでR.layout.activity_mainをセット.
-        
-        // navigateButtonを取得し, OnClickListenerとして自身(this)をセット.
-        Button navigateButton = (Button)findViewById(R.id.button_navigate);	// findViewByIdでR.id.button_navigateからButtonオブジェクトnavigateButtonを取得.
-        navigateButton.setOnClickListener(this);	// navigateButton.setOnClickListenerでthis(自身)をセット.
-        
-        // CustomWebViewClientのセット.
-        WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
-        webView.getSettings().setJavaScriptEnabled(true);	// webView.getSettings().setJavaScriptEnabledでJavaScriptを有効にする.
-        webView.setWebViewClient(new CustomWebViewClient(this));	// newで生成したCustomWebViewClientオブジェクト(コンストラクタの引数にthisを渡す.)をwebView.setWebViewClientでセット.
+        initNavigateButton();	// initNavigateButtonでnavigateButtonを初期化.
+        initCustomWebViewClient();	// initCustomWebViewClientでCustomWebViewClientを初期化.
         
     }
     
@@ -45,14 +38,8 @@ public class MainActivity extends Activity implements OnClickListener {	// View.
     @Override
     public void onBackPressed(){
     	
-    	// 戻れる場合は, 1つ前のページに戻る.
-    	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
-    	if (webView.canGoBack()){	// バック可能な場合.
-    		webView.goBack();	// webView.goBackで戻る.
-    	}
-    	else{	// そうでない時.
-    		super.onBackPressed();	// 親クラスのonBackPressedを呼ぶ.
-    	}
+    	// バックキーにおけるウェブビューの動作.
+    	onBackPressedWebView();	// onBackPressedWebViewに任せる.
     	
     }
     
@@ -76,39 +63,12 @@ public class MainActivity extends Activity implements OnClickListener {	// View.
     	
     		// ブックマーク一覧.
     		case REQUEST_CODE_BOOKMARK:	// ブックマークの一覧から戻ってきた場合.
-    			
-    			// REQUEST_CODE_BOOKMARKブロック
-    			{
-    			
-    				if (resultCode == RESULT_OK){	// RESULT_OKの場合.
-    					String title = bundle.getString("title");	// bundle.getStringでtitleを取得.
-    					String url = bundle.getString("url");	// bundle.getStringでurlを取得.
-    					EditText etUrl = (EditText)findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
-    		    		WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
-    		    		etUrl.setText(url);	// etUrl.SetTextでURLバーのetUrlにurlをセット.
-    		    		webView.loadUrl(url);	// webView.loadUrlでurlの指すWebページをロード.
-    				}
-
-    			}
-    			
-    			// 抜ける.
-    			break;	// breakで抜ける.
-    			
     		// 履歴一覧.
     		case REQUEST_CODE_HISTORY:	// 履歴の一覧から戻ってきた場合.
     			
-    			// REQUEST_CODE_HISTORYブロック
-    			{
-    				
-    				if (resultCode == RESULT_OK){	// RESULT_OKの場合.
-    					String title = bundle.getString("title");	// bundle.getStringでtitleを取得.
-    					String url = bundle.getString("url");	// bundle.getStringでurlを取得.
-    					EditText etUrl = (EditText)findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
-    		    		WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
-    		    		etUrl.setText(url);	// etUrl.SetTextでURLバーのetUrlにurlをセット.
-    		    		webView.loadUrl(url);	// webView.loadUrlでurlの指すWebページをロード.
-    				}
-    				
+    			// ブックマークおよび履歴のアイテムが選択された時.
+    			if (resultCode == RESULT_OK){	// RESULT_OKの場合.
+    				loadSelectedUrl(bundle);	// loadSelectedUrlでbundleで渡したURLをロード.
     			}
     			
     			// 抜ける.
@@ -142,29 +102,19 @@ public class MainActivity extends Activity implements OnClickListener {	// View.
     	if (id == R.id.menu_item_bookmark_add){	// R.id.menu_item_bookmark_add("ブックマークの追加")の時.
 
     		// ブックマークの追加.
-    		WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
-    		String title = webView.getTitle();	// webView.getTitleでタイトルを取得.
-    		String url = webView.getUrl();	// webView.getUrlでURLを取得.
-    		Browser.saveBookmark(this, title, url);	// Browser.saveBookmarkでブックマークに追加.
-    		Toast.makeText(this, title + "(" + url + ")", Toast.LENGTH_LONG).show();	// 追加したブックマークのtitleとurlをToastで表示.
+    		addBookmark();	// addBookmarkで追加.
     		
     	}
     	else if (id == R.id.menu_item_bookmark_show){	// R.id.menu_item_bookmark_show("ブックマークの一覧")の時.
-    		
-    		// ブックマークアクティビティを起動する.
-    		String packageName = getPackageName();	// getPackageNameでpackageNameを取得.
-    		Intent intent = new Intent();	// Intentオブジェクトintentを作成.
-    		intent.setClassName(packageName, packageName + ".BookmarkActivity");	// intent.setClassNameで".BookmarkActivity"をセット.
-    		startActivityForResult(intent, REQUEST_CODE_BOOKMARK);	// startActivityForResultにintentとREQUEST_CODE_BOOKMARKを渡す.
+    	
+    		// ブックマークの表示.
+    		showBookmark();	// showBookmarkで表示.
     		
     	}
     	else if (id == R.id.menu_item_history_show){	// R.id.menu_item_history_show("履歴の一覧")の時.
     		
-    		// ヒストリーアクティビティを起動する.
-    		String packageName = getPackageName();	// getPackageNameでpackageNameを取得.
-    		Intent intent = new Intent();	// Intentオブジェクトintentを作成.
-    		intent.setClassName(packageName, packageName + ".HistoryActivity");	// intent.setClassNameで".HistoryActivity"をセット.
-    		startActivityForResult(intent, REQUEST_CODE_HISTORY);	// startActivityForResultにintentとREQUEST_CODE_HISTORYを渡す.
+    		// 履歴の表示.
+    		showHistory();	// showHistoryで表示.
     		
     	}
     	
@@ -174,6 +124,7 @@ public class MainActivity extends Activity implements OnClickListener {	// View.
     }
     
     // navigateButton("送信")が押された時.
+    @Override
     public void onClick(View v){	// OnClickListener.onClickをオーバーライド.
     	
     	// ボタンごとに振り分ける.
@@ -186,10 +137,7 @@ public class MainActivity extends Activity implements OnClickListener {	// View.
 				{
 					
 					// ウェブビューで入力されたURLのWebページを表示.
-		    		EditText etUrl = (EditText)findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
-		    		WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
-		    		String url = etUrl.getText().toString();	// etUrl.getText().toString()で入力されたURL文字列を取得し, urlに格納.
-		    		webView.loadUrl(url);	// webView.loadUrlでurlの指すWebページをロード.
+		    		loadUrl();	// loadUrlでURLバーのURLをロード.
 	
 				}
 				
@@ -204,6 +152,117 @@ public class MainActivity extends Activity implements OnClickListener {	// View.
     	
     	}
     	
+    }
+    
+    // "送信"ボタンの初期化.
+    void initNavigateButton(){
+    	
+    	// navigateButtonを取得し, OnClickListenerとして自身(this)をセット.
+        Button navigateButton = (Button)findViewById(R.id.button_navigate);	// findViewByIdでR.id.button_navigateからButtonオブジェクトnavigateButtonを取得.
+        navigateButton.setOnClickListener(this);	// navigateButton.setOnClickListenerでthis(自身)をセット.
+        
+    }
+    
+    // カスタムウェブビュークライアントの初期化.
+    void initCustomWebViewClient(){
+    	
+    	// CustomWebViewClientのセット.
+        WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
+        webView.getSettings().setJavaScriptEnabled(true);	// webView.getSettings().setJavaScriptEnabledでJavaScriptを有効にする.
+        webView.setWebViewClient(new CustomWebViewClient(this));	// newで生成したCustomWebViewClientオブジェクト(コンストラクタの引数にthisを渡す.)をwebView.setWebViewClientでセット.
+        
+    }
+    
+    // URLバーにURLをセット.
+    void setUrl(String url){
+    	
+    	// etUrlを取得し, urlをセット.
+    	EditText etUrl = (EditText)findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
+    	etUrl.setText(url);	// etUrl.SetTextでURLバーのetUrlにurlをセット.
+    	
+    }
+    
+    // URLバーからURLを取得.
+    String getUrl(){
+    	
+    	// etUrlのURLを取得.
+    	EditText etUrl = (EditText)findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
+    	return etUrl.getText().toString();	// etUrl.getText().toStringでURLを返す.
+    	
+    }
+    
+    //　URLバーのURLをロード.
+    void loadUrl(){
+    	
+    	// URLを取得し, ロード.
+    	loadUrl(getUrl());	// getUrlしたURLをloadUrlでロード.
+    	
+    }
+    
+    // 指定されたURLをロード.
+    void loadUrl(String url){
+    	
+    	// webViewを取得し, urlをロード.
+    	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
+		webView.loadUrl(url);	// webView.loadUrlでurlの指すWebページをロード.
+		
+    }
+    
+    // 選択されたURLをロード.
+    void loadSelectedUrl(Bundle bundle){
+    	
+    	// bundleからURLを取得しロード.
+    	String url = bundle.getString("url");	// bundle.getStringでurlを取得.
+		setUrl(url);	// setUrlでURLバーにURLをセット.
+		loadUrl();	// loadUrlでURLバーのURLをロード.
+		
+    }
+    
+    // バックキーが押された時のWebViewの動作.
+    public void onBackPressedWebView(){
+    	
+    	// 戻れる場合は, 1つ前のページに戻る.
+    	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
+    	if (webView.canGoBack()){	// バック可能な場合.
+    		webView.goBack();	// webView.goBackで戻る.
+    	}
+    	else{	// そうでない時.
+    		super.onBackPressed();	// 親クラスのonBackPressedを呼ぶ.
+    	}
+    	
+    }
+    
+    // ブックマークへの追加.
+    public void addBookmark(){
+    	
+    	// webViewを取得し, URLとタイトルをブックマークに登録.
+    	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
+		String title = webView.getTitle();	// webView.getTitleでタイトルを取得.
+		String url = webView.getUrl();	// webView.getUrlでURLを取得.
+		Browser.saveBookmark(this, title, url);	// Browser.saveBookmarkでブックマークに追加.
+		
+    }
+    
+    // ブックマークの表示.
+    public void showBookmark(){
+    	
+    	// ブックマークアクティビティを起動する.
+		String packageName = getPackageName();	// getPackageNameでpackageNameを取得.
+		Intent intent = new Intent();	// Intentオブジェクトintentを作成.
+		intent.setClassName(packageName, packageName + ".BookmarkActivity");	// intent.setClassNameで".BookmarkActivity"をセット.
+		startActivityForResult(intent, REQUEST_CODE_BOOKMARK);	// startActivityForResultにintentとREQUEST_CODE_BOOKMARKを渡す.
+		
+    }
+    
+    // 履歴の表示.
+    public void showHistory(){
+    	
+    	// ヒストリーアクティビティを起動する.
+		String packageName = getPackageName();	// getPackageNameでpackageNameを取得.
+		Intent intent = new Intent();	// Intentオブジェクトintentを作成.
+		intent.setClassName(packageName, packageName + ".HistoryActivity");	// intent.setClassNameで".HistoryActivity"をセット.
+		startActivityForResult(intent, REQUEST_CODE_HISTORY);	// startActivityForResultにintentとREQUEST_CODE_HISTORYを渡す.
+		
     }
     
 }
