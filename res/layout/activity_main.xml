@@ -11,10 +11,12 @@
         android:orientation="horizontal" >"
         
 	    <EditText android:id="@+id/edittext_urlbar"
+	        android:background="@drawable/shape_urlbar_frame"
 	        android:layout_width="match_parent"
 	        android:layout_height="36dp"
 	        android:imeOptions="actionDone"
 	        android:inputType="textNoSuggestions"
+	        android:padding="5dp"
 	        android:singleLine="true" />
     
     </LinearLayout>
