@@ -2,6 +2,7 @@
 package com.bgstation0.android.app.zinc;
 
 //パッケージのインポート
+import java.net.URLEncoder;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 	// メンバフィールドの初期化.
 	public static final int REQUEST_CODE_BOOKMARK = 1001;	// REQUEST_CODE_BOOKMARKを1001とする.
 	public static final int REQUEST_CODE_HISTORY = 1002;	// REQUEST_CODE_HISTORYを1002とする.
+	public static final String SEARCH_URL_GOOGLE = "https://www.google.co.jp/search?q=";	// SEARCH_URL_GOOGLEを"https://www.google.co.jp/search?q="とする.
 	
 	// アクティビティが作成された時.
     @Override
@@ -170,7 +172,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     }
     
     // URLバーの初期化.
-    void initUrlBar(){
+    public void initUrlBar(){
     	
     	// etUrlを取得し, OnEditorActionListenerとして自身(this)をセット.
     	EditText etUrl = (EditText)findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
@@ -179,7 +181,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     }
     
     // カスタムウェブビュークライアントの初期化.
-    void initCustomWebViewClient(){
+    public void initCustomWebViewClient(){
     	
     	// CustomWebViewClientのセット.
         WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
@@ -189,7 +191,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     }
     
     // URLバーにURLをセット.
-    void setUrl(String url){
+    public void setUrl(String url){
     	
     	// etUrlを取得し, urlをセット.
     	EditText etUrl = (EditText)findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
@@ -198,7 +200,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     }
     
     // URLバーにURLをセットする時に"http"の場合は省略する.
-    void setUrlOmit(String url){
+    public void setUrlOmit(String url){
     	
     	// 先頭文字列から省略するかを判定.
     	if (url.startsWith("http://")){	// "http"の時.
@@ -212,7 +214,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     }
     
     // URLバーからURLを取得.
-    String getUrl(){
+    public String getUrl(){
     	
     	// etUrlのURLを取得.
     	EditText etUrl = (EditText)findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
@@ -220,16 +222,56 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	
     }
     
-    //　URLバーのURLをロード.
-    void loadUrl(){
+    // URLか検索キーワードかを判定する.
+    public boolean isUrl(String url){
     	
-    	// URLを取得し, ロード.
-    	loadUrlComplement(getUrl());	// getUrl()で取得したURLをloadUrlComplement()でロード.
+    	// '.'があって, かつ, ' 'がない.
+    	if (url.contains(".") && !url.contains(" ")){	// url.contains(".")がtrue, かつ, url.contains(" ")がfalseの時.
+    		return true;	// URLの場合, trueを返す.
+    	}
+    	else{
+    		return false;	// 検索キーワードの場合, falseを返す.
+    	}
+    	
+    }
+    
+    // Google検索URLを生成する.
+    public String generateSearchUrlGoogle(String url){
+    
+    	// URLエンコード.
+    	String encoded = null;	// String型encodedをnullに初期化.
+    	try{	// tryで囲む.
+    		encoded = URLEncoder.encode(url, "utf-8");	// URLEncoder.encodeでurlをutf-8に変換し, encodedに格納.
+    	}
+    	catch (Exception ex){	// catchで例外のキャッチ.
+    		encoded = "";	// encodedに""をセット.
+    		return encoded;	// encodedを返す.
+    	}
+    	
+    	// 先頭にGoogle検索URLを付加.
+    	String searchUrl = SEARCH_URL_GOOGLE + encoded;	// searchUrlにSEARCH_URL_GOOGLEとencodedを連結したものをセット.
+    	return searchUrl;	// searchUrlを返す.
+    	
+    }
+    
+    //　URLバーのURLを検索キーワードかどうかを判定してから, 適切にロード.
+    public void loadUrl(){
+    	
+    	// URLか検索キーワードかを判定する.
+    	String url = getUrl();	// URLバーから, getUrlでurlを取得.
+    	if (isUrl(url)){	// isUrlでurlがURLの場合.
+    		// urlをロード.
+        	loadUrlComplement(url);	// urlをloadUrlComplement()でロード.
+    	}
+    	else{	// 検索キーワードの場合.
+    		String searchUrl = generateSearchUrlGoogle(url);	// searchUrlにgenerateSearchUrlGoogleで生成したURLをセット.
+    		loadUrlComplement(searchUrl);	// searchUrlをloadUrlComplement()でロード.
+    	}
     	
     }
     
     // 指定されたURLをロード.
-    void loadUrl(String url){
+    public void loadUrl(String url){
     	
     	// webViewを取得し, urlをロード.
     	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
@@ -238,7 +280,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     }
     
     // 指定されたURLを"http"を補完してロード.
-    void loadUrlComplement(String url){
+    public void loadUrlComplement(String url){
     	
     	// 先頭文字列から補完するかを判定.
     	if (url.startsWith("https://") || url.startsWith("http://")){	// "https"または"http"の時.
@@ -252,7 +294,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     }
     
     // 選択されたURLをロード.
-    void loadSelectedUrl(Bundle bundle){
+    public void loadSelectedUrl(Bundle bundle){
     	
     	// bundleからURLを取得しロード.
     	String url = bundle.getString("url");	// bundle.getStringでurlを取得.
