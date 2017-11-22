@@ -2,7 +2,6 @@
 package com.bgstation0.android.app.zinc;
 
 //パッケージのインポート
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -11,7 +10,6 @@ import android.provider.Browser;
 import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.EditText;
 import android.widget.Toast;
 
 // カスタムウェブビュークライアントクラスCustomWebViewClient
@@ -19,9 +17,9 @@ public class CustomWebViewClient extends WebViewClient {
 
 	// メンバフィールドの初期化
 	private static final String TAG = "CustomWebViewClient";	// TAGをCustomWebViewClientに初期化.
-	Context mContext = null;	// Context型mContextをnullに初期化.
+	private Context mContext = null;	// Context型mContextをnullに初期化.
 	private String mStartUrl = "";	// mStartUrlを""で初期化.
-	private String mFinishUrl = "";	// mFinishUrlを""で初期化.
+	//private String mFinishUrl = "";	// mFinishUrlを""で初期化.
 	private int mCount = 0;	// mCountを""で初期化.
 	
 	// 引数付きコンストラクタ
@@ -44,7 +42,10 @@ public class CustomWebViewClient extends WebViewClient {
 		
 		// URLバーにURLをセット.
 		setUrl(url);	// setUrlでurlをセット.
-			
+		
+		// プログレスバーを表示.
+		setProgressBarVisible(true);	// setProgressBarVisible(true)で表示.
+		
 		// ロードを開始したURLを保持しておく.
 		mStartUrl = url;	// mStartUrlにurlをセット.
 		mCount = 0;	// mCountも0にしておく.
@@ -60,7 +61,7 @@ public class CustomWebViewClient extends WebViewClient {
 				
 		// URLバーにURLをセット.
 		setUrl(url);	// setUrlでurlをセット.
-				
+		
 		// Chromeなど既定のブラウザで開かないようにするにはfalseを返す.
 		return false;	// falseを返す.
 		
@@ -81,7 +82,10 @@ public class CustomWebViewClient extends WebViewClient {
 			addHistory(view, url);	// addHistoryでurlを履歴に登録.
 		}
 		mCount++;	// mCountを1増やす.
-				
+		
+		// プログレスバーを非表示.
+		setProgressBarVisible(false);	// setProgressBarVisible(false)で非表示.
+					
 	}
 	
 	// URLバーにURLをセット.
@@ -94,6 +98,20 @@ public class CustomWebViewClient extends WebViewClient {
 			MainActivity mainActivity = (MainActivity)mContext;	// mContextをMainActivityにキャストし, mainActivityに格納.
 			mainActivity.setUrlOmit(url);	// mainActivity.setUrlOmitでURLバーにURLをセット.
 			
+		}
+				
+	}
+	
+	// プログレスバーの表示/非表示をセット.
+	public void setProgressBarVisible(boolean visible){
+		
+		// mContextからMainActivityを取得し, MainActivityのプログレスバーにセット.
+		if (mContext != null){	// mContextがnullでなければ.
+							
+			// プログレスバーに反映.
+			MainActivity mainActivity = (MainActivity)mContext;	// mContextをMainActivityにキャストし, mainActivityに格納.
+			mainActivity.setProgressBarVisible(visible);	// mainActivity.setProgressBarVisibleにvisibleをセット.
+							
 		}
 				
 	}

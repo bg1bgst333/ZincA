@@ -15,11 +15,10 @@ import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import android.widget.Toast;
 
 //メインアクティビティクラスMainActivity
 public class MainActivity extends Activity implements OnClickListener, OnEditorActionListener{	// View.OnClickListener, TextView.OnEditorActionListenerインターフェースの追加.
@@ -37,7 +36,8 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
         super.onCreate(savedInstanceState);	// 親クラスのonCreateを呼ぶ.
         setContentView(R.layout.activity_main);	// setContentViewでR.layout.activity_mainをセット.
         initUrlBar();	// initUrlBarでetUrlを初期化.
-        initCustomWebViewClient();	// initCustomWebViewClientでCustomWebViewClientを初期化.
+        initProgressBar();	// initProgressBarでprogressbarを初期化.
+        initWebView();	// initWebViewでwebViewを初期化.
         
     }
     
@@ -180,13 +180,26 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	
     }
     
-    // カスタムウェブビュークライアントの初期化.
-    public void initCustomWebViewClient(){
+    // プログレスバーの初期化.
+    public void initProgressBar(){
     	
-    	// CustomWebViewClientのセット.
+    	// progressBarを取得し, 最初は非表示にしておく.
+    	ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressbar);	// findViewByIdでR.id.progressbarからProgressBarオブジェクトprogressBarを取得.
+    	progressBar.setVisibility(View.INVISIBLE);	// progressBar.setVisibilityで非表示にする.
+    	
+    }
+    
+    // ウェブビューの初期化.
+    public void initWebView(){
+    	
+    	// webViewの取得.
         WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
+        // JavaScript有効化.
         webView.getSettings().setJavaScriptEnabled(true);	// webView.getSettings().setJavaScriptEnabledでJavaScriptを有効にする.
+        // CustomWebViewClientのセット.
         webView.setWebViewClient(new CustomWebViewClient(this));	// newで生成したCustomWebViewClientオブジェクト(コンストラクタの引数にthisを渡す.)をwebView.setWebViewClientでセット.
+        // CustomWebChromeClientのセット.
+        webView.setWebChromeClient(new CustomWebChromeClient(this));	// newで生成したCustomWebChromeClientオブジェクト(コンストラクタの引数にthisを渡す.)をwebView.setWebChromeClientでセット.
         
     }
     
@@ -301,6 +314,29 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 		setUrlOmit(url);	// setUrlOmitでURLバーにURLをセット.
 		loadUrl();	// loadUrlでURLバーのURLをロード.
 		
+    }
+    
+    // プログレスバーに進捗度をセット.
+    public void setProgressValue(int progress){
+    	
+    	// プログレスバーを取得し, 指定された進捗度をセット.
+    	ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressbar);	// findViewByIdでR.id.progressbarからProgressBarオブジェクトprogressBarを取得.
+    	progressBar.setProgress(progress);	// progressBar.setProgressでprogressをセット.
+    	
+    }
+    
+    // プログレスバーの表示/非表示をセット.
+    public void setProgressBarVisible(boolean visible){
+    	
+    	// プログレスバーを取得し, 表示/非表示をセット.
+    	ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressbar);	// findViewByIdでR.id.progressbarからProgressBarオブジェクトprogressBarを取得.
+    	if (visible){	// trueなら表示.
+    		progressBar.setVisibility(View.VISIBLE);	// progressBar.setVisibilityでVISIBLE.
+    	}
+    	else{	// falseなら非表示.
+    		progressBar.setVisibility(View.INVISIBLE);	// progressBar.setVisibilityでINVISIBLE.
+    	}
+    	
     }
     
     // バックキーが押された時のWebViewの動作.
