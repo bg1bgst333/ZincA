@@ -92,7 +92,7 @@ public class CustomWebViewClient extends WebViewClient {
 					
 			// URLバーに反映.
 			MainActivity mainActivity = (MainActivity)mContext;	// mContextをMainActivityにキャストし, mainActivityに格納.
-			mainActivity.setUrl(url);	// mainActivity.setUrlでURLバーにURLをセット.
+			mainActivity.setUrlOmit(url);	// mainActivity.setUrlOmitでURLバーにURLをセット.
 			
 		}
 				

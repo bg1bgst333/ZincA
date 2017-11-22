@@ -197,6 +197,20 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	
     }
     
+    // URLバーにURLをセットする時に"http"の場合は省略する.
+    void setUrlOmit(String url){
+    	
+    	// 先頭文字列から省略するかを判定.
+    	if (url.startsWith("http://")){	// "http"の時.
+    		String omitUrl = url.substring(7);	// url.substringで7文字目からの文字列をomitUrlに返す.
+    		setUrl(omitUrl);	// setUrlでomitUrlをセット.
+    	}
+    	else{
+    		setUrl(url);	// setUrlでそのままurlを渡す.
+    	}
+    	
+    }
+    
     // URLバーからURLを取得.
     String getUrl(){
     	
@@ -242,7 +256,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	
     	// bundleからURLを取得しロード.
     	String url = bundle.getString("url");	// bundle.getStringでurlを取得.
-		setUrl(url);	// setUrlでURLバーにURLをセット.
+		setUrlOmit(url);	// setUrlOmitでURLバーにURLをセット.
 		loadUrl();	// loadUrlでURLバーのURLをロード.
 		
     }
