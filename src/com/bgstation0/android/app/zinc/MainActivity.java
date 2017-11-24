@@ -127,6 +127,12 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     		showHistory();	// showHistoryで表示.
     		
     	}
+    	else if (id == R.id.menu_item_download){	// R.id.menu_item_download("ダウンロード")の時.
+    		
+    		// ダウンロード.
+    		download();	// downloadでダウンロード.
+    		
+    	}
     	
     	// あとは既定の処理に任せる.
     	return super.onOptionsItemSelected(item);	// 親クラスのonOptionsItemSelectedを呼ぶ.
@@ -237,6 +243,15 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	// etUrlのURLを取得.
     	EditText etUrl = (EditText)findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
     	return etUrl.getText().toString();	// etUrl.getText().toStringでURLを返す.
+    	
+    }
+    
+    // ウェブビューからURLを取得.
+    public String getWebUrl(){
+    	
+    	// webViewのURLを取得.
+    	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
+    	return webView.getUrl();	// returnでwebView.getUrlで取得したURLを返す.
     	
     }
     
@@ -425,6 +440,21 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 		intent.setClassName(packageName, packageName + ".HistoryActivity");	// intent.setClassNameで".HistoryActivity"をセット.
 		startActivityForResult(intent, REQUEST_CODE_HISTORY);	// startActivityForResultにintentとREQUEST_CODE_HISTORYを渡す.
 		
+    }
+    
+    // ダウンロード.
+    public void download(){
+    	
+    	// URLの取得.
+    	String url = getWebUrl();	// getWebUrlでurlを取得.
+    	
+    	// Uriの生成.
+    	Uri downloadUri = Uri.parse(url);	// Uri.parseでurlをパースしてdownloadUriに格納.
+    	String donwloadFileName = downloadUri.getLastPathSegment();	// downloadUri.getLastPathSegmentでファイル名部分だけを取得し, downloadFileNameに格納.
+    	
+    	// ファイル名の表示.
+    	Toast.makeText(this, donwloadFileName, Toast.LENGTH_LONG).show();	// downloadFileNameをToastでｄ表示.
+    	
     }
     
 }
