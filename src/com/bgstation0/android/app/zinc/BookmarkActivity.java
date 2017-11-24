@@ -57,7 +57,7 @@ public class BookmarkActivity extends Activity implements OnItemClickListener {	
         		Browser.BookmarkColumns.URL,	// URL.
         		Browser.BookmarkColumns.BOOKMARK	// ブックマークフラグ.
         };
-        Cursor c = getContentResolver().query(Browser.BOOKMARKS_URI, projection, Browser.BookmarkColumns.BOOKMARK + " = 1", null, Browser.BookmarkColumns._ID + " desc");	// getContentResolver().queryでブックマーク取得.(Browser.BookmarkColumns._ID + " desc"で降順ソート, 第3引数にBrowser.BookmarkColumns.BOOKMARK + " = 1"を指定するとブックマークとなる.)
+        Cursor c = getContentResolver().query(Browser.BOOKMARKS_URI, projection, Browser.BookmarkColumns.BOOKMARK + " = 1", null, Browser.BookmarkColumns.DATE + " desc");	// getContentResolver().queryでブックマーク取得.(Browser.BookmarkColumns.DATE + " desc"で降順ソート, 第3引数にBrowser.BookmarkColumns.BOOKMARK + " = 1"を指定するとブックマークとなる.)
         if (c.moveToFirst()){	// 最初の位置に移動.
         	do{
         		String title = c.getString(c.getColumnIndex(Browser.BookmarkColumns.TITLE));	// titleの取得.

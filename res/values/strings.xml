@@ -7,5 +7,8 @@
 	<string name="menu_item_bookmark_show_text">ブックマークの一覧</string>
 	<string name="menu_item_history_show_text">履歴の一覧</string>
 	<string name="toast_message_history_regist_error">履歴の登録に失敗しました.</string>
+	<string name="toast_message_bookmark_already_regist">既にブックマークに登録されています.</string>
+	<string name="toast_message_bookmark_regist_success">ブックマークに登録しました.</string>
+	<string name="toast_message_bookmark_regist_error">ブックマークの登録に失敗しました.</string>
 	
 </resources>

@@ -4,7 +4,9 @@ package com.bgstation0.android.app.zinc;
 //パッケージのインポート
 import java.net.URLEncoder;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Browser;
 import android.view.KeyEvent;
@@ -18,6 +20,7 @@ import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
 
 //メインアクティビティクラスMainActivity
@@ -364,11 +367,38 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     // ブックマークへの追加.
     public void addBookmark(){
     	
-    	// webViewを取得し, URLとタイトルをブックマークに登録.
+    	// webViewを取得し, URLとタイトルを取得.
     	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
 		String title = webView.getTitle();	// webView.getTitleでタイトルを取得.
 		String url = webView.getUrl();	// webView.getUrlでURLを取得.
-		Browser.saveBookmark(this, title, url);	// Browser.saveBookmarkでブックマークに追加.
+		
+		// このURLをブックマークに登録.
+		ContentValues values = new ContentValues();	// ContentValuesオブジェクトvaluesの生成.
+		values.put(Browser.BookmarkColumns.TITLE, title);	// values.putでtitleを登録.
+		values.put(Browser.BookmarkColumns.URL, url);	// values.putでurlを登録.
+		values.put(Browser.BookmarkColumns.DATE, System.currentTimeMillis());	// 現在時刻を登録.
+		values.put(Browser.BookmarkColumns.BOOKMARK, "1");	// values.putでBOOKMARKフラグは"1"として登録.
+		try{	// tryで囲む.
+			Uri uri = getContentResolver().insert(Browser.BOOKMARKS_URI, values);	// getContentResolver().insertでvaluesを挿入.(Uriオブジェクトuriに格納.)
+			if (uri == null){	// 既に挿入されている場合, nullが返る模様.
+				values = new ContentValues();	// ContentValuesオブジェクトvaluesの生成.
+				values.put(Browser.BookmarkColumns.DATE, System.currentTimeMillis());	// 現在時刻を登録.
+				values.put(Browser.BookmarkColumns.BOOKMARK, "1");	// values.putでBOOKMARKフラグは"1"として登録.
+				int row = getContentResolver().update(Browser.BOOKMARKS_URI, values, Browser.BookmarkColumns.URL + "=?", new String[]{url});	// getContentResolver().updateでURLが同じ行を更新.
+				if (row < 0){	// 更新失敗.
+					Toast.makeText(this, getString(R.string.toast_message_bookmark_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_bookmark_regist_errorに定義されたメッセージをToastで表示.
+				}
+				else{	// 更新成功.
+					Toast.makeText(this, getString(R.string.toast_message_bookmark_regist_success), Toast.LENGTH_LONG).show();	// R.string.toast_message_bookmark_regist_successに定義されたメッセージをToastで表示.
+				}
+			}
+			else{	// 挿入成功.
+				Toast.makeText(this, getString(R.string.toast_message_bookmark_regist_success), Toast.LENGTH_LONG).show();	// R.string.toast_message_bookmark_regist_successに定義されたメッセージをToastで表示.
+			}
+		}
+		catch (Exception ex){	// 例外のcatch.
+			Toast.makeText(this, getString(R.string.toast_message_bookmark_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_bookmark_regist_errorに定義されたメッセージをToastで表示.
+		}
 		
     }
     
