@@ -76,7 +76,10 @@ public class CustomWebViewClient extends WebViewClient {
 
 		// urlをログに出力.
 		Log.d(TAG, "onPageFinished: url = " + url);	// Log.dでurlを出力.
-			
+		
+		// タイトルの変更.
+		setActionBarTitle(view.getTitle());	// view.getTitleで取得したタイトルをsetActionBarTitleでセット.
+		
 		// 履歴登録条件を満たすかどうかを判定.
 		if (url.equals(mStartUrl) && mCount == 0){	// 直近の開始URLで一番最初の時.
 			addHistory(view, url);	// addHistoryでurlを履歴に登録.
@@ -116,6 +119,20 @@ public class CustomWebViewClient extends WebViewClient {
 				
 	}
 	
+	// アクションバーのタイトルをセット.
+    public void setActionBarTitle(String title){
+    	
+    	// mContextからMainActivityを取得し, MainActivityのアクションバーのタイトルにセット.
+    	if (mContext != null){	// mContextがnullでなければ.
+    	
+    		// アクションバーのタイトルに反映.
+    		MainActivity mainActivity = (MainActivity)mContext;	// mContextをMainActivityにキャストし, mainActivityに格納.
+    		mainActivity.setTitle(title);	// mainActivity.setTitleでtitleをセット.
+    		
+    	}
+    	
+    }
+    
 	// 履歴にURLを登録.
 	public void addHistory(WebView view, String url){
 		

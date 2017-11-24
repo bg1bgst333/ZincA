@@ -339,6 +339,14 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	
     }
     
+    // アクションバーのタイトルをセット.
+    public void setActionBarTitle(String title){
+    	
+    	// アクションバーを取得し, 指定されたタイトルをセット.
+    	getActionBar().setTitle(title);	// getActionBar().setTitleでtitleをセット.
+    	
+    }
+    
     // バックキーが押された時のWebViewの動作.
     public void onBackPressedWebView(){
     	
