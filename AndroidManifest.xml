@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bgstation0.android.app.zinc"
-    android:versionCode="41"
-    android:versionName="0.0.9(Komagawa #41)" >
+    android:versionCode="42"
+    android:versionName="0.0.9(Komagawa #42)" >
 
     <uses-sdk
         android:minSdkVersion="15"
         android:targetSdkVersion="15" />
     
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS" />
 	<uses-permission android:name="com.android.browser.permission.WRITE_HISTORY_BOOKMARKS" />
 	

@@ -11,5 +11,6 @@
 	<string name="toast_message_bookmark_already_regist">既にブックマークに登録されています.</string>
 	<string name="toast_message_bookmark_regist_success">ブックマークに登録しました.</string>
 	<string name="toast_message_bookmark_regist_error">ブックマークの登録に失敗しました.</string>
+	<string name="toast_message_download_success">ダウンロードが完了しました.</string>
 	
 </resources>

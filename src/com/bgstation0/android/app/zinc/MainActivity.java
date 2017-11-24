@@ -4,10 +4,14 @@ package com.bgstation0.android.app.zinc;
 //パッケージのインポート
 import java.net.URLEncoder;
 import android.app.Activity;
+import android.app.DownloadManager;
+import android.app.DownloadManager.Request;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.Browser;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -30,6 +34,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 	public static final int REQUEST_CODE_BOOKMARK = 1001;	// REQUEST_CODE_BOOKMARKを1001とする.
 	public static final int REQUEST_CODE_HISTORY = 1002;	// REQUEST_CODE_HISTORYを1002とする.
 	public static final String SEARCH_URL_GOOGLE = "https://www.google.co.jp/search?q=";	// SEARCH_URL_GOOGLEを"https://www.google.co.jp/search?q="とする.
+	public DownloadManager mDownloadManager = null;	// mDownloadManagerをnullで初期化.
 	
 	// アクティビティが作成された時.
     @Override
@@ -41,6 +46,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
         initUrlBar();	// initUrlBarでetUrlを初期化.
         initProgressBar();	// initProgressBarでprogressbarを初期化.
         initWebView();	// initWebViewでwebViewを初期化.
+        initDownloadManager();	// initDownloadManagerでmDownloadManagerを初期化.
         
     }
     
@@ -214,6 +220,16 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
         
     }
     
+    // ダウンロードマネージャーの初期化.
+    public void initDownloadManager(){
+    	
+    	// DownloadManagerの取得.
+    	if (mDownloadManager == null){	// mDownloadManagerがnullの時.
+    		mDownloadManager = (DownloadManager)getSystemService(DOWNLOAD_SERVICE);	// getSystemServiceでmDownloadManagerを取得.
+    	}
+    	
+    }
+    
     // URLバーにURLをセット.
     public void setUrl(String url){
     	
@@ -252,6 +268,32 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	// webViewのURLを取得.
     	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
     	return webView.getUrl();	// returnでwebView.getUrlで取得したURLを返す.
+    	
+    }
+    
+    // ダウンロード時に終端が'/'の場合, "index.html"を補完してURLを返す.
+    public String getDownloadUrl(){
+    	
+    	// URLの取得.
+    	String url = getWebUrl();	// getWebUrlでurlを取得.
+    	
+    	// '/'で終わっていたら, "index.html"を付加.
+    	if (url.charAt(url.length() - 1) == '/'){	// 最後が'/'の場合.
+    		url = url + "index.html";	// urlに"index.html"を付加する.
+    	}
+    	
+    	// urlを返す.
+    	return url;	// returnでurlを返す.
+    	
+    }
+    
+    // ダウンロードURLのファイル名の部分だけ取得.
+    public String getDownloadFileName(String url){
+    	
+    	// Uriの生成.
+    	Uri downloadUri = Uri.parse(url);	// Uri.parseでurlをパースしてdownloadUriに格納.
+    	String downloadFileName = downloadUri.getLastPathSegment();	// downloadUri.getLastPathSegmentでファイル名部分だけを取得し, downloadFileNameに格納.
+    	return downloadFileName;	// returnでdownloadFileNameを返す.
     	
     }
     
@@ -442,18 +484,39 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 		
     }
     
+    // ダウンロードリクエストの作成.
+    public Request createDownloadRequest(Uri downloadUri, String downloadFileName){
+    	
+    	// ダウンロードリクエストを作成する.
+    	Request request = new Request(downloadUri);	// downloadUriを指定して, requestを作成.
+    	request.setDestinationInExternalFilesDir(getApplicationContext(), Environment.DIRECTORY_DOWNLOADS, "/" + downloadFileName);	// request.setDestinationInExternalFilesDirでダウンロード先を指定.
+    	request.setTitle("Zinc - ダウンロード");		// "Zinc - ダウンロード"をセット.
+    	request.setAllowedNetworkTypes(Request.NETWORK_MOBILE | Request.NETWORK_WIFI);	// ネットワークタイプはモバイルとWiFi両方.
+    	request.setMimeType("application/octet-stream");	// MIMEタイプは"application/octet-stream".
+    	return request;	// requestを返す.
+    	
+    }
+    
     // ダウンロード.
     public void download(){
     	
-    	// URLの取得.
-    	String url = getWebUrl();	// getWebUrlでurlを取得.
+    	// ダウンロードURIの取得.
+    	Uri downloadUri = Uri.parse(getWebUrl());	// getWebUrlで取得した生URLをUri.parseでパースしてdownloadUriを取得.
     	
-    	// Uriの生成.
-    	Uri downloadUri = Uri.parse(url);	// Uri.parseでurlをパースしてdownloadUriに格納.
-    	String donwloadFileName = downloadUri.getLastPathSegment();	// downloadUri.getLastPathSegmentでファイル名部分だけを取得し, downloadFileNameに格納.
+    	// ダウンロードファイル名の取得.
+    	String downloadFileName = getDownloadFileName(getDownloadUrl());	// getDownloadUrlの補完済みURLからgetDownloadFileNameでファイル名部分だけ取り出す.
     	
-    	// ファイル名の表示.
-    	Toast.makeText(this, donwloadFileName, Toast.LENGTH_LONG).show();	// downloadFileNameをToastでｄ表示.
+    	// ダウンロードリクエストの作成.
+    	Request request = createDownloadRequest(downloadUri, downloadFileName);	// createDownloadRequestでrequestを作成.
+    	
+    	// ダウンロードレシーバーの作成.
+    	DownloadReceiver receiver = new DownloadReceiver(this);	// DownloadReceiverオブジェクトreceiverの作成.
+    	
+    	// レシーバーの登録.
+    	registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));	// registerReceiverでレシーバー登録.
+
+    	// ダウンロードタスクの追加.
+    	mDownloadManager.enqueue(request);	//  mDownloadManager.enqueueでrequestをタスクに追加.
     	
     }
     
