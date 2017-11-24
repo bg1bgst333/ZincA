@@ -44,7 +44,7 @@ public class CustomWebViewClient extends WebViewClient {
 		setUrl(url);	// setUrlでurlをセット.
 		
 		// プログレスバーを表示.
-		//setProgressBarVisible(true);	// setProgressBarVisible(true)で表示.
+		setProgressBarVisible(true);	// setProgressBarVisible(true)で表示.
 		
 		// ロードを開始したURLを保持しておく.
 		mStartUrl = url;	// mStartUrlにurlをセット.
@@ -87,8 +87,8 @@ public class CustomWebViewClient extends WebViewClient {
 		mCount++;	// mCountを1増やす.
 		
 		// プログレスバーを非表示.
-		//setProgressBarVisible(false);	// setProgressBarVisible(false)で非表示.
-		setProgress(0);	// setProgressで進捗度を0にセット.
+		setProgressBarVisible(false);	// setProgressBarVisible(false)で非表示.
+		//setProgress(0);	// setProgressで進捗度を0にセット.
 		
 	}
 	
