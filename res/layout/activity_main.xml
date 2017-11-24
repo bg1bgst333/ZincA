@@ -22,10 +22,12 @@
     </LinearLayout>
     "
     <ProgressBar android:id="@+id/progressbar"
+        android:background="#ffffff"
         android:layout_width="match_parent"
-        android:layout_height="5dp"
+        android:layout_height="3dp"
         android:indeterminate="false"
         android:max="100"
+        android:progressDrawable="@drawable/layer_list_progressbar_drawable"
         style="?android:attr/progressBarStyleHorizontal" />
     
     <WebView android:id="@+id/webview"

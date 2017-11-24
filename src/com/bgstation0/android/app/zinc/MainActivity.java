@@ -188,7 +188,8 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	
     	// progressBarを取得し, 最初は非表示にしておく.
     	ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressbar);	// findViewByIdでR.id.progressbarからProgressBarオブジェクトprogressBarを取得.
-    	progressBar.setVisibility(View.INVISIBLE);	// progressBar.setVisibilityで非表示にする.
+    	//progressBar.setVisibility(View.INVISIBLE);	// progressBar.setVisibilityで非表示にする.
+    	progressBar.setVisibility(View.VISIBLE);	// progressBar.setVisibilityで最初から表示にする.
     	
     }
     
