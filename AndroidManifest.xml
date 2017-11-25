@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bgstation0.android.app.zinc"
-    android:versionCode="42"
-    android:versionName="0.0.9(Komagawa #42)" >
+    android:versionCode="43"
+    android:versionName="0.0.10(Komagawa #43)" >
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -20,7 +20,8 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,12 +30,14 @@
         </activity>
         <activity
             android:name=".BookmarkActivity"
-            android:label="@string/menu_item_bookmark_show_text" >
+            android:label="@string/menu_item_bookmark_show_text"
+            android:screenOrientation="portrait">
             
         </activity>
         <activity
             android:name=".HistoryActivity"
-            android:label="@string/menu_item_history_show_text" >
+            android:label="@string/menu_item_history_show_text"
+            android:screenOrientation="portrait">
             
         </activity>
     </application>
