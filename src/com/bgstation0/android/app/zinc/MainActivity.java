@@ -48,6 +48,16 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
         initWebView();	// initWebViewでwebViewを初期化.
         initDownloadManager();	// initDownloadManagerでmDownloadManagerを初期化.
         
+        // 起動時のインテントからURLを取得し, それを使ってロード.
+        Intent intent = getIntent();	// getIntentでintentを取得.
+        String action = intent.getAction();	// intent.getActionでactionを取得.
+        String schema = intent.getScheme();	// intent.getSchemaでschemaを取得.
+        String url = intent.getDataString();	// intent.getDataStringでurlを取得.
+        if (action != null && action.equals(Intent.ACTION_VIEW) && (schema.equals("http") || schema.equals("https"))){	// ACTION_VIEWでhttpまたはhttpsの時.
+        	setUrlOmit(url);	// setUrlOmitでURLバーにURLをセット.
+    		loadUrl();	// loadUrlでURLバーのURLをロード.
+        }
+        
     }
     
     // バックキーが押された時.
