@@ -37,6 +37,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 	public DownloadManager mDownloadManager = null;	// mDownloadManagerをnullで初期化.
 	public String mPhoneUA = "";	// 電話用ユーザエージェントmPhoneUA.
 	public String mPCUA = "";	// PC用ユーザエージェントmPCUA.
+	public static final String PC_WIN_UA_SUBSTRING = "(Windows NT 10.0; Win64; x64)";	// WindowsPCのユーザエージェントであることを示す部分.
 	
 	// アクティビティが作成された時.
     @Override
@@ -220,6 +221,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
         mPhoneUA = webView.getSettings().getUserAgentString();	// webView.getSettings().getUserAgentStringで取得したUAをmPhoneUAに格納.(最初は電話用と思われるので, mPhoneUAに格納.)
         Toast.makeText(this, mPhoneUA, Toast.LENGTH_LONG).show();	// mPhoneUAをToastで表示.
         mPCUA = generatePCUserAgentString(mPhoneUA);	// mPhoneUAからPC用ユーザエージェント文字列を生成.
+        Toast.makeText(this, mPCUA, Toast.LENGTH_LONG).show();	// mPCUAをToastで表示.
         // CustomWebViewClientのセット.
         webView.setWebViewClient(new CustomWebViewClient(this));	// newで生成したCustomWebViewClientオブジェクト(コンストラクタの引数にthisを渡す.)をwebView.setWebViewClientでセット.
         // CustomWebChromeClientのセット.
@@ -550,7 +552,8 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	int e = phoneUserAgentString.indexOf(')');	// phoneUserAgentString.indexOfで最初の閉じ括弧の位置を取得.
     	if (s < e){	// sよりeのほうが後ろなので大きいはず.
     		String substring = phoneUserAgentString.substring(s, e + 1);	// sからeまでの文字列を取得.
-    		Toast.makeText(this, substring, Toast.LENGTH_LONG).show();	// substringをToastで表示.
+    		String pcUA = phoneUserAgentString.replace(substring, PC_WIN_UA_SUBSTRING);	// phoneUserAgentString.replaceでPC_WIN_UA_SUBSTRINGに置き換える.
+    		return pcUA;	// pcUAを返す.
     	}
     	return "";	// 条件外の場合は""を返す.
     	
