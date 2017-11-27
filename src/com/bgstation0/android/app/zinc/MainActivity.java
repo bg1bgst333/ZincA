@@ -37,6 +37,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 	public DownloadManager mDownloadManager = null;	// mDownloadManagerをnullで初期化.
 	public String mPhoneUA = "";	// 電話用ユーザエージェントmPhoneUA.
 	public String mPCUA = "";	// PC用ユーザエージェントmPCUA.
+	public String mCurrentUA = "";	// 現在のユーザエージェントmCurrentUA.
 	public static final String PC_WIN_UA_SUBSTRING = "(Windows NT 10.0; Win64; x64)";	// WindowsPCのユーザエージェントであることを示す部分.
 	
 	// アクティビティが作成された時.
@@ -143,6 +144,12 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     		download();	// downloadでダウンロード.
     		
     	}
+    	else if (id == R.id.menu_item_pc_site_browser){	// R.id.menu_item_pc_site_browser("PCサイトブラウザ")の時. 
+    		
+    		// PC用ユーザエージェントをセット.
+    		setUserAgent(mPCUA);	// setUserAgentでmPCUAをセット.
+    		
+    	}
     	
     	// あとは既定の処理に任せる.
     	return super.onOptionsItemSelected(item);	// 親クラスのonOptionsItemSelectedを呼ぶ.
@@ -219,9 +226,10 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
         webView.getSettings().setJavaScriptEnabled(true);	// webView.getSettings().setJavaScriptEnabledでJavaScriptを有効にする.
         // デフォルトのユーザエージェントを取得.
         mPhoneUA = webView.getSettings().getUserAgentString();	// webView.getSettings().getUserAgentStringで取得したUAをmPhoneUAに格納.(最初は電話用と思われるので, mPhoneUAに格納.)
-        Toast.makeText(this, mPhoneUA, Toast.LENGTH_LONG).show();	// mPhoneUAをToastで表示.
+        //Toast.makeText(this, mPhoneUA, Toast.LENGTH_LONG).show();	// mPhoneUAをToastで表示.
         mPCUA = generatePCUserAgentString(mPhoneUA);	// mPhoneUAからPC用ユーザエージェント文字列を生成.
-        Toast.makeText(this, mPCUA, Toast.LENGTH_LONG).show();	// mPCUAをToastで表示.
+        //Toast.makeText(this, mPCUA, Toast.LENGTH_LONG).show();	// mPCUAをToastで表示.
+        mCurrentUA = mPhoneUA;	// 現在のユーザエージェントをmPhoneUAとする.
         // CustomWebViewClientのセット.
         webView.setWebViewClient(new CustomWebViewClient(this));	// newで生成したCustomWebViewClientオブジェクト(コンストラクタの引数にthisを渡す.)をwebView.setWebViewClientでセット.
         // CustomWebChromeClientのセット.
@@ -557,6 +565,17 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	}
     	return "";	// 条件外の場合は""を返す.
     	
+    }
+    
+    // ユーザエージェントの変更.
+    public void setUserAgent(String strUA){
+    	
+    	// webViewの取得.
+    	mCurrentUA = strUA;	// mCurrentUAにstrUAをセット.
+        WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
+        webView.getSettings().setUserAgentString(mCurrentUA);	// webView.getSettings().setUserAgentStringでmCurrentUAをセット.
+        webView.reload();	// webView.reloadでリロード.
+        
     }
     
 }

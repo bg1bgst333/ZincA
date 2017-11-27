@@ -16,4 +16,8 @@
         android:title="@string/menu_item_download_text"
         android:orderInCategory="104"
         android:showAsAction="never" />
+    <item android:id="@+id/menu_item_pc_site_browser"
+        android:title="@string/menu_item_pc_site_browser_text"
+        android:orderInCategory="105"
+        android:showAsAction="never" />
 </menu>
