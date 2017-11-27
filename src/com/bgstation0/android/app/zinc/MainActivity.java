@@ -219,6 +219,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
         // デフォルトのユーザエージェントを取得.
         mPhoneUA = webView.getSettings().getUserAgentString();	// webView.getSettings().getUserAgentStringで取得したUAをmPhoneUAに格納.(最初は電話用と思われるので, mPhoneUAに格納.)
         Toast.makeText(this, mPhoneUA, Toast.LENGTH_LONG).show();	// mPhoneUAをToastで表示.
+        mPCUA = generatePCUserAgentString(mPhoneUA);	// mPhoneUAからPC用ユーザエージェント文字列を生成.
         // CustomWebViewClientのセット.
         webView.setWebViewClient(new CustomWebViewClient(this));	// newで生成したCustomWebViewClientオブジェクト(コンストラクタの引数にthisを渡す.)をwebView.setWebViewClientでセット.
         // CustomWebChromeClientのセット.
@@ -538,6 +539,20 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 
     	// ダウンロードタスクの追加.
     	mDownloadManager.enqueue(request);	//  mDownloadManager.enqueueでrequestをタスクに追加.
+    	
+    }
+    
+    // PC用ユーザエージェント文字列の作成.
+    public String generatePCUserAgentString(String phoneUserAgentString){
+    
+    	// 最初の括弧を探す.
+    	int s = phoneUserAgentString.indexOf('(');	// phoneUserAgentString.indexOfで最初の括弧の位置を取得.
+    	int e = phoneUserAgentString.indexOf(')');	// phoneUserAgentString.indexOfで最初の閉じ括弧の位置を取得.
+    	if (s < e){	// sよりeのほうが後ろなので大きいはず.
+    		String substring = phoneUserAgentString.substring(s, e + 1);	// sからeまでの文字列を取得.
+    		Toast.makeText(this, substring, Toast.LENGTH_LONG).show();	// substringをToastで表示.
+    	}
+    	return "";	// 条件外の場合は""を返す.
     	
     }
     
