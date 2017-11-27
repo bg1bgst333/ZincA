@@ -145,9 +145,9 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     		
     	}
     	else if (id == R.id.menu_item_pc_site_browser){	// R.id.menu_item_pc_site_browser("PCサイトブラウザ")の時. 
-    		
-    		// PC用ユーザエージェントをセット.
-    		setUserAgent(mPCUA);	// setUserAgentでmPCUAをセット.
+
+    		// 表示の切り替え.
+    		changePhonePCSite(item);	// changePhonePCSiteにitemを渡す.
     		
     	}
     	
@@ -576,6 +576,25 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
         webView.getSettings().setUserAgentString(mCurrentUA);	// webView.getSettings().setUserAgentStringでmCurrentUAをセット.
         webView.reload();	// webView.reloadでリロード.
         
+    }
+    
+    // 電話/PCサイトブラウザの表示切替.
+    public void changePhonePCSite(MenuItem item){
+    	
+    	// チェックがついていない場合.
+		if (!item.isChecked()){	// item.isCheckedがfalse.
+			// チェックを付ける.
+			item.setChecked(true);	//item.setCheckedにtrueをセットして, チェック済み.
+			// PC用ユーザエージェントをセット.
+			setUserAgent(mPCUA);	// setUserAgentでmPCUAをセット.
+		}
+		else{	// チェックがついている場合.
+			// チェックを外す.
+			item.setChecked(false);	// item.setCheckedにfalseをセットして, チェックを外す.
+			// 電話用ユーザエージェントをセット.
+			setUserAgent(mPhoneUA);	// setUserAgentでmPhoneUAをセット.
+		}
+		
     }
     
 }
