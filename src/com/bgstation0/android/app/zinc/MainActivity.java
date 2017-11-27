@@ -35,6 +35,8 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 	public static final int REQUEST_CODE_HISTORY = 1002;	// REQUEST_CODE_HISTORYを1002とする.
 	public static final String SEARCH_URL_GOOGLE = "https://www.google.co.jp/search?q=";	// SEARCH_URL_GOOGLEを"https://www.google.co.jp/search?q="とする.
 	public DownloadManager mDownloadManager = null;	// mDownloadManagerをnullで初期化.
+	public String mPhoneUA = "";	// 電話用ユーザエージェントmPhoneUA.
+	public String mPCUA = "";	// PC用ユーザエージェントmPCUA.
 	
 	// アクティビティが作成された時.
     @Override
@@ -47,16 +49,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
         initProgressBar();	// initProgressBarでprogressbarを初期化.
         initWebView();	// initWebViewでwebViewを初期化.
         initDownloadManager();	// initDownloadManagerでmDownloadManagerを初期化.
-        
-        // 起動時のインテントからURLを取得し, それを使ってロード.
-        Intent intent = getIntent();	// getIntentでintentを取得.
-        String action = intent.getAction();	// intent.getActionでactionを取得.
-        String schema = intent.getScheme();	// intent.getSchemaでschemaを取得.
-        String url = intent.getDataString();	// intent.getDataStringでurlを取得.
-        if (action != null && action.equals(Intent.ACTION_VIEW) && (schema.equals("http") || schema.equals("https"))){	// ACTION_VIEWでhttpまたはhttpsの時.
-        	setUrlOmit(url);	// setUrlOmitでURLバーにURLをセット.
-    		loadUrl();	// loadUrlでURLバーのURLをロード.
-        }
+        loadUrlFromIntent();	// loadUrlFromIntentでインテントで指定されたURLをロード.
         
     }
     
@@ -223,6 +216,9 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
         WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
         // JavaScript有効化.
         webView.getSettings().setJavaScriptEnabled(true);	// webView.getSettings().setJavaScriptEnabledでJavaScriptを有効にする.
+        // デフォルトのユーザエージェントを取得.
+        mPhoneUA = webView.getSettings().getUserAgentString();	// webView.getSettings().getUserAgentStringで取得したUAをmPhoneUAに格納.(最初は電話用と思われるので, mPhoneUAに格納.)
+        Toast.makeText(this, mPhoneUA, Toast.LENGTH_LONG).show();	// mPhoneUAをToastで表示.
         // CustomWebViewClientのセット.
         webView.setWebViewClient(new CustomWebViewClient(this));	// newで生成したCustomWebViewClientオブジェクト(コンストラクタの引数にthisを渡す.)をwebView.setWebViewClientでセット.
         // CustomWebChromeClientのセット.
@@ -386,6 +382,21 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 		setUrlOmit(url);	// setUrlOmitでURLバーにURLをセット.
 		loadUrl();	// loadUrlでURLバーのURLをロード.
 		
+    }
+    
+    // インテントで指定されたURLをロード.
+    public void loadUrlFromIntent(){
+    	
+    	// 起動時のインテントからURLを取得し, それを使ってロード.
+        Intent intent = getIntent();	// getIntentでintentを取得.
+        String action = intent.getAction();	// intent.getActionでactionを取得.
+        String schema = intent.getScheme();	// intent.getSchemaでschemaを取得.
+        String url = intent.getDataString();	// intent.getDataStringでurlを取得.
+        if (action != null && action.equals(Intent.ACTION_VIEW) && (schema.equals("http") || schema.equals("https"))){	// ACTION_VIEWでhttpまたはhttpsの時.
+        	setUrlOmit(url);	// setUrlOmitでURLバーにURLをセット.
+    		loadUrl();	// loadUrlでURLバーのURLをロード.
+        }
+        
     }
     
     // プログレスバーに進捗度をセット.
