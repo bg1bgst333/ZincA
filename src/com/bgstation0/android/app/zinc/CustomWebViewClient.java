@@ -16,7 +16,7 @@ import android.widget.Toast;
 public class CustomWebViewClient extends WebViewClient {
 
 	// メンバフィールドの初期化
-	private static final String TAG = "CustomWebViewClient";	// TAGをCustomWebViewClientに初期化.
+	private static final String TAG = "CustomWebViewClient";	// TAGを"CustomWebViewClient"に初期化.
 	private Context mContext = null;	// Context型mContextをnullに初期化.
 	private String mStartUrl = "";	// mStartUrlを""で初期化.
 	//private String mFinishUrl = "";	// mFinishUrlを""で初期化.
