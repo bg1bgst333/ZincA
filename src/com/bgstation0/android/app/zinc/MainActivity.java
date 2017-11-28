@@ -39,6 +39,8 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 	public String mPCUA = "";	// PC用ユーザエージェントmPCUA.
 	public String mCurrentUA = "";	// 現在のユーザエージェントmCurrentUA.
 	public static final String PC_WIN_UA_SUBSTRING = "(Windows NT 10.0; Win64; x64)";	// WindowsPCのユーザエージェントであることを示す部分.
+	public MainApplication mApp = null;	// MainApplicationオブジェクトmAppをnullで初期化.
+	public String mCurrentTabName = "";	// mCurrentTabNameを""で初期化.
 	
 	// アクティビティが作成された時.
     @Override
@@ -52,6 +54,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
         initWebView();	// initWebViewでwebViewを初期化.
         initDownloadManager();	// initDownloadManagerでmDownloadManagerを初期化.
         loadUrlFromIntent();	// loadUrlFromIntentでインテントで指定されたURLをロード.
+        initMainApplication();	// initMainApplicationでメインアプリケーションを初期化.
         
     }
     
@@ -138,7 +141,8 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	else if (id == R.id.menu_item_bookmark_add){	// R.id.menu_item_bookmark_add("ブックマークの追加")の時.
 
     		// ブックマークの追加.
-    		addBookmark();	// addBookmarkで追加.
+    		web0();	// web0を呼ぶ.
+    		//addBookmark();	// addBookmarkで追加.
     		
     	}
     	else if (id == R.id.menu_item_bookmark_show){	// R.id.menu_item_bookmark_show("ブックマークの一覧")の時.
@@ -168,6 +172,18 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	
     	// あとは既定の処理に任せる.
     	return super.onOptionsItemSelected(item);	// 親クラスのonOptionsItemSelectedを呼ぶ.
+    	
+    }
+    
+    public void web0(){
+    	
+    	// メインアクティビティを起動する.
+    	String packageName = getPackageName();	// getPackageNameでpackageNameを取得.
+    	Intent intent = new Intent();	// Intentオブジェクトintentを作成.
+    	intent.setClassName(packageName, packageName + ".MainActivity");	// intent.setClassNameで".MainActivity"をセット.
+    	intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);	// これだと起動するアクティビティ以外は破棄される.
+    	intent.putExtra("tabName", "web0");	// ("tabName", "web0")のペアを登録.
+    	startActivity(intent);	// startActivityにintentを渡す.
     	
     }
     
@@ -258,6 +274,31 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	// DownloadManagerの取得.
     	if (mDownloadManager == null){	// mDownloadManagerがnullの時.
     		mDownloadManager = (DownloadManager)getSystemService(DOWNLOAD_SERVICE);	// getSystemServiceでmDownloadManagerを取得.
+    	}
+    	
+    }
+    
+    // メインアプリケーションの初期化.
+    public void initMainApplication(){
+    
+    	// メインアプリケーションの取得.
+    	mApp = (MainApplication)getApplicationContext();	// getApplicationContextで取得したMainApplicationオブジェクトをmAppに格納.
+    	Intent intent = getIntent();
+    	String tabName = intent.getStringExtra("tabName");
+    	if (tabName != null && !tabName.equals("")){	// tabNameあり.
+    		View rootView = mApp.mViewMap.get(tabName);
+    		if (rootView != null){
+    			setContentView(rootView);
+    			mCurrentTabName = tabName;
+    		}
+    	}
+    	else{
+    		if (!mApp.mViewMap.containsKey(mCurrentTabName)){	// 存在しない場合.
+    			mCurrentTabName = "web" + String.valueOf(mApp.mNextViewNo);	// 現在のタブ名を新規作成.
+    			View rootView = getWindow().getDecorView();	// getWindow().getDecorViewでrootViewを取得.
+    			mApp.mViewMap.put(mCurrentTabName, rootView);	// rootViewを登録.
+    			mApp.mNextViewNo++;	// mApp.mNextViewNoを増やす.
+    		}
     	}
     	
     }
@@ -473,6 +514,10 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     
     // タブの追加.
     public void addTab(){
+    	
+    	// 現在のタブをマップに保存.
+    	View rootView = getWindow().getDecorView();	// getWindow().getDecorViewでrootViewを取得.
+    	mApp.mViewMap.put(mCurrentTabName, rootView);	// mCurrentTabNameとrootViewの組み合わせをput.
     	
     	// メインアクティビティを起動する.
     	String packageName = getPackageName();	// getPackageNameでpackageNameを取得.
