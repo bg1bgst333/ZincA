@@ -5,6 +5,7 @@ package com.bgstation0.android.app.zinc;
 import java.util.ArrayList;
 import java.util.List;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebView;
@@ -36,26 +37,43 @@ public class TabsActivity extends Activity implements OnItemClickListener {	// A
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id){  	
     	
+    	// 選択されたアイテムの取得.
+    	final ListView lv = (ListView)parent;	// parentをListViewオブジェクトlvにキャスト.
+    	final TabItem item = (TabItem)lv.getItemAtPosition(position);	// lv.getItemAtPositionでitemを取得.
+    	
+    	// タイトルとURLを送り返す.
+    	setReturnItem(item.tabName);	// setReturnItemでitem.tabNameを送り返すデータとしてセット.
+    	finish();	// finishでこのアクティビティを閉じる.
+    	
+    }
+    
+    // タブ一覧の取得.
+    public List<TabItem> getActiveTabs(){
+    	
+    	// tabsの作成
+        List<TabItem> tabs = new ArrayList<TabItem>();	// タブスtabsの生成.
+        
+        // ビューマップのキーを取り出し, そこから値も取り出し, 必要な情報を取り出す.
+    	for (String key : mApp.mViewMap.keySet()){	// キーの取り出しを繰り返す.
+    		View v = (View)mApp.mViewMap.get(key);	// 値を取り出す.
+    		WebView wv = (WebView)v.findViewById(R.id.webview);	// webviewを取り出す.
+    		TabItem item = new TabItem();	// TabItemを生成.
+    		item.title = wv.getTitle();		//　title取得.
+    		item.url = wv.getUrl();	// url取得.
+    		item.tabName = key;	// keyはタブ名.
+    		tabs.add(item);	// tabs.addでitem追加.
+    	}
+    	
+    	// tabsを返す.
+    	return tabs;	// returnでtabsを返す.
+    	
     }
     
     // タブのロード.
     public void loadTabs(){
 
-    	// tabsの作成
-        List<TabItem> tabs = new ArrayList<TabItem>();	// タブスtabsの生成.
-        
-    	for (String key : mApp.mViewMap.keySet()){
-    		View v = (View)mApp.mViewMap.get(key);
-    		WebView wv = (WebView)v.findViewById(R.id.webview);
-    		TabItem item = new TabItem();
-    		item.title = wv.getTitle();
-    		item.url = wv.getUrl();
-    		item.tabName = key;
-    		tabs.add(item);
-    	}
-    	
     	// adapterの生成
-        TabAdapter adapter = new TabAdapter(this, R.layout.adapter_tab_item, tabs);	// アダプタadapterの生成.(tabsを第3引数にセット.)
+        TabAdapter adapter = new TabAdapter(this, R.layout.adapter_tab_item, getActiveTabs());	// アダプタadapterの生成.(getActiveTabs()を第3引数にセット.)
         
         // ListViewの取得
         ListView lvTabs = (ListView)findViewById(R.id.listview_tabs);	// リストビューlvTabsの取得.
@@ -69,6 +87,18 @@ public class TabsActivity extends Activity implements OnItemClickListener {	// A
         // AdapterView.OnItemClickListenerのセット.
         lvTabs.setOnItemClickListener(this);	// this(自身)をセット.
             
+    }
+    
+    // 送り返すインテントにタブ名をセット.
+    public void setReturnItem(String tabName){
+    	
+    	// 送り返すインテントを準備し, finishすることで戻った先にデータが返る.
+       	Intent data = new Intent();	// Intentオブジェクトdataの作成.
+   	    Bundle bundle = new Bundle();	// Bundleオブジェクトbundleの作成.
+   	    bundle.putString("tabName", tabName);	// bundle.putStringキー"tabName", 値tabNameを登録.
+   	    data.putExtras(bundle);	// data.putExtrasでbundleを登録.
+   	    setResult(RESULT_OK, data);	// setResultでRESULT_OKとdataをセット.
+    	    	
     }
     
 }

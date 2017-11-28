@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
@@ -107,6 +108,18 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     			
     			// 抜ける.
     			break;	// breakで抜ける.
+    		
+    		// タブ一覧.
+    		case REQUEST_CODE_TAB:	// タブ一覧から戻ってきた場合.
+    			
+    			// タブのアイテムが選択されたとき.
+    			if (resultCode == RESULT_OK){	// RESULT_OKの場合.
+    				String tabName = bundle.getString("tabName");	// bundleからtabNameを取得.
+    				setContentViewByTabName(tabName);	// setContentViewByTabNameでtabNameからビューをセット.
+    			}
+    			
+    			// 抜ける.
+    			break;	// breakで抜ける.
     			
     		// それ以外の時.
     		default:
@@ -148,8 +161,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	else if (id == R.id.menu_item_bookmark_add){	// R.id.menu_item_bookmark_add("ブックマークの追加")の時.
 
     		// ブックマークの追加.
-    		web0();	// web0を呼ぶ.
-    		//addBookmark();	// addBookmarkで追加.
+    		addBookmark();	// addBookmarkで追加.
     		
     	}
     	else if (id == R.id.menu_item_bookmark_show){	// R.id.menu_item_bookmark_show("ブックマークの一覧")の時.
@@ -179,18 +191,6 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	
     	// あとは既定の処理に任せる.
     	return super.onOptionsItemSelected(item);	// 親クラスのonOptionsItemSelectedを呼ぶ.
-    	
-    }
-    
-    public void web0(){
-    	
-    	// メインアクティビティを起動する.
-    	String packageName = getPackageName();	// getPackageNameでpackageNameを取得.
-    	Intent intent = new Intent();	// Intentオブジェクトintentを作成.
-    	intent.setClassName(packageName, packageName + ".MainActivity");	// intent.setClassNameで".MainActivity"をセット.
-    	intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);	// これだと起動するアクティビティ以外は破棄される.
-    	intent.putExtra("tabName", "web0");	// ("tabName", "web0")のペアを登録.
-    	startActivity(intent);	// startActivityにintentを渡す.
     	
     }
     
@@ -290,24 +290,56 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     
     	// メインアプリケーションの取得.
     	mApp = (MainApplication)getApplicationContext();	// getApplicationContextで取得したMainApplicationオブジェクトをmAppに格納.
-    	Intent intent = getIntent();
-    	String tabName = intent.getStringExtra("tabName");
-    	if (tabName != null && !tabName.equals("")){	// tabNameあり.
-    		View rootView = mApp.mViewMap.get(tabName);
-    		if (rootView != null){
-    			setContentView(rootView);
-    			mCurrentTabName = tabName;
-    		}
+    	String tabName = getTabNameFromIntent();	// tabName取得.
+    	if (tabName == null){	// tabNameは指定されていない.
+    		registViewMap();	// registViewMapで追加.
     	}
-    	else{
-    		if (!mApp.mViewMap.containsKey(mCurrentTabName)){	// 存在しない場合.
-    			mCurrentTabName = "web" + String.valueOf(mApp.mNextViewNo);	// 現在のタブ名を新規作成.
-    			View rootView = getWindow().getDecorView();	// getWindow().getDecorViewでrootViewを取得.
-    			mApp.mViewMap.put(mCurrentTabName, rootView);	// rootViewを登録.
-    			mApp.mNextViewNo++;	// mApp.mNextViewNoを増やす.
-    		}
+    	else{	// tabNameがある場合.
+    		setContentViewByTabName(tabName);	// setContentViewByTabNameでビューをセット.
     	}
     	
+    }
+    
+    // タブ名を付けて起動された場合のタブ名を取得.
+    public String getTabNameFromIntent(){
+    	
+    	// インテントにセットされている起動タブ名を返す.
+    	Intent intent = getIntent();	// getIntentでintent取得.
+    	String tabName = intent.getStringExtra("tabName");	// intent.getStringExtraでtabName取得.
+    	return tabName;	// returnでtabNameを返す.
+    	
+    }
+    
+    // タブ名とビューのペアをビューマップに登録.
+    public void registViewMap(){
+    
+    	// 現在のタブを新規作成し, ビューマップに追加.
+    	mCurrentTabName = "web" + String.valueOf(mApp.mNextViewNo);	// 現在のタブ名を新規作成.
+		View rootView = getWindow().getDecorView();	// getWindow().getDecorViewでrootViewを取得.
+		View content = rootView.findViewById(R.id.layout_main);	// rootViewからlayout_mainを抜き出す.
+		mApp.mViewMap.put(mCurrentTabName, content);	// contentを登録.
+		mApp.mNextViewNo++;	// mApp.mNextViewNoを増やす.
+		
+    }
+    
+    // タブ名から取得したビューをセット.
+    public void setContentViewByTabName(String tabName){
+    
+    	// tabNameからcontentを取得し, セット.
+    	View content = mApp.mViewMap.get(tabName);
+		if (content != null){	// nullでなければ.
+			ViewGroup vg = (ViewGroup)content.getParent();
+			vg.removeView(content);
+			setContentView(content);	// setContentViewでcontentをセット.
+			initUrlBar();	// initUrlBarでetUrlを初期化.
+	        initProgressBar();	// initProgressBarでprogressbarを初期化.
+	        initWebView();	// initWebViewでwebViewを初期化.
+			mCurrentTabName = tabName;	// 現在のタブ名とする.
+		}
+		else{
+			registViewMap();	// 無い時は生成.
+		}
+		
     }
     
     // URLバーにURLをセット.
@@ -315,8 +347,12 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	
     	// etUrlを取得し, urlをセット.
     	EditText etUrl = (EditText)findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
-    	etUrl.setText(url);	// etUrl.SetTextでURLバーのetUrlにurlをセット.
-    	
+    	if (etUrl == null){
+    		Toast.makeText(this, "null", Toast.LENGTH_LONG).show();
+    	}
+    	else{
+    		etUrl.setText(url);	// etUrl.SetTextでURLバーのetUrlにurlをセット.
+    	}
     }
     
     // URLバーにURLをセットする時に"http"の場合は省略する.
@@ -523,8 +559,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     public void addTab(){
     	
     	// 現在のタブをマップに保存.
-    	View rootView = getWindow().getDecorView();	// getWindow().getDecorViewでrootViewを取得.
-    	mApp.mViewMap.put(mCurrentTabName, rootView);	// mCurrentTabNameとrootViewの組み合わせをput.
+    	saveTabState();	// saveTabStateで保存.
     	
     	// メインアクティビティを起動する.
     	String packageName = getPackageName();	// getPackageNameでpackageNameを取得.
@@ -533,6 +568,16 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);	// これだと起動するアクティビティ以外は破棄される.
     	startActivity(intent);	// startActivityにintentを渡す.
     	
+    }
+    
+    // タブ状態の保存.
+    public void saveTabState(){
+    	
+    	// 現在のタブをマップに保存.
+    	View rootView = getWindow().getDecorView();	// getWindow().getDecorViewでrootViewを取得.
+		View content = rootView.findViewById(R.id.layout_main);	// rootViewからlayout_mainを抜き出す.
+		mApp.mViewMap.put(mCurrentTabName, content);	// contentを登録.
+		
     }
     
     // タブ一覧の表示.
