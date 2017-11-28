@@ -33,6 +33,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 	// メンバフィールドの初期化.
 	public static final int REQUEST_CODE_BOOKMARK = 1001;	// REQUEST_CODE_BOOKMARKを1001とする.
 	public static final int REQUEST_CODE_HISTORY = 1002;	// REQUEST_CODE_HISTORYを1002とする.
+	public static final int REQUEST_CODE_TAB = 1003;	// REQUEST_CODE_TABを1003とする.
 	public static final String SEARCH_URL_GOOGLE = "https://www.google.co.jp/search?q=";	// SEARCH_URL_GOOGLEを"https://www.google.co.jp/search?q="とする.
 	public DownloadManager mDownloadManager = null;	// mDownloadManagerをnullで初期化.
 	public String mPhoneUA = "";	// 電話用ユーザエージェントmPhoneUA.
@@ -136,6 +137,12 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     		
     		//　新しいタブの追加.
     		addTab();	// addTabで追加.
+    		
+    	}
+    	else if (id == R.id.menu_item_tabs_show){	// R.id.menu_item_tabs_show("タブ一覧の表示")の時.
+
+    		// タブ一覧の表示.
+    		showTabs();	// showTabsで追加.
     		
     	}
     	else if (id == R.id.menu_item_bookmark_add){	// R.id.menu_item_bookmark_add("ブックマークの追加")の時.
@@ -526,6 +533,17 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);	// これだと起動するアクティビティ以外は破棄される.
     	startActivity(intent);	// startActivityにintentを渡す.
     	
+    }
+    
+    // タブ一覧の表示.
+    public void showTabs(){
+    	
+    	// タブスアクティビティを起動する.
+    	String packageName = getPackageName();	// getPackageNameでpackageNameを取得.
+    	Intent intent = new Intent();	// Intentオブジェクトintentを作成.
+    	intent.setClassName(packageName, packageName + ".TabsActivity");	// intent.setClassNameで".TabsActivity"をセット.
+    	startActivityForResult(intent, REQUEST_CODE_TAB);	// startActivityForResultにintentとREQUEST_CODE_TABを渡す. 			
+    			
     }
     
     // ブックマークへの追加.

@@ -4,6 +4,7 @@
     <string name="app_name">Zinc</string>
     <string name="hello_world">Hello Zinc!</string>
     <string name="menu_item_new_tab_text">新しいタブ</string>
+    <string name="menu_item_tabs_show_text">タブ一覧の表示</string>
 	<string name="menu_item_bookmark_add_text">ブックマークの追加</string>
 	<string name="menu_item_bookmark_show_text">ブックマークの一覧</string>
 	<string name="menu_item_history_show_text">履歴の一覧</string>
