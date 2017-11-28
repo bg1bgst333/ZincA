@@ -478,8 +478,9 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	String packageName = getPackageName();	// getPackageNameでpackageNameを取得.
     	Intent intent = new Intent();	// Intentオブジェクトintentを作成.
     	intent.setClassName(packageName, packageName + ".MainActivity");	// intent.setClassNameで".MainActivity"をセット.
+    	intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);	// これだと起動するアクティビティ以外は破棄される.
     	startActivity(intent);	// startActivityにintentを渡す.
-    			
+    	
     }
     
     // ブックマークへの追加.
