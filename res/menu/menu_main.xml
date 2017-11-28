@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/menu_item_new_tab"
+        android:title="@string/menu_item_new_tab_text"
+        android:orderInCategory="101"
+        android:showAsAction="never" />
     <item android:id="@+id/menu_item_bookmark_add"
         android:title="@string/menu_item_bookmark_add_text"
-        android:orderInCategory="101"
+        android:orderInCategory="102"
         android:showAsAction="never" />
     <item android:id="@+id/menu_item_bookmark_show"
         android:title="@string/menu_item_bookmark_show_text"
-        android:orderInCategory="102"
+        android:orderInCategory="103"
         android:showAsAction="never" />
     <item android:id="@+id/menu_item_history_show"
         android:title="@string/menu_item_history_show_text"
-        android:orderInCategory="103"
+        android:orderInCategory="104"
         android:showAsAction="never" />
     <item android:id="@+id/menu_item_download"
         android:title="@string/menu_item_download_text"
-        android:orderInCategory="104"
+        android:orderInCategory="105"
         android:showAsAction="never" />
     <item android:id="@+id/menu_item_pc_site_browser"
         android:title="@string/menu_item_pc_site_browser_text"
-        android:orderInCategory="105"
+        android:orderInCategory="106"
         android:checkable="true"
         android:showAsAction="never" />
 </menu>

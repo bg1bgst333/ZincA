@@ -120,7 +120,13 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	
     	// 選択されたメニューアイテムごとに振り分ける.
     	int id = item.getItemId();	// item.getItemIdで選択されたメニューアイテムのidを取得.
-    	if (id == R.id.menu_item_bookmark_add){	// R.id.menu_item_bookmark_add("ブックマークの追加")の時.
+    	if (id == R.id.menu_item_new_tab){	// R.id.menu_item_new_tab("新しいタブ")の時.
+    		
+    		//　新しいタブの追加.
+    		addTab();	// addTabで追加.
+    		
+    	}
+    	else if (id == R.id.menu_item_bookmark_add){	// R.id.menu_item_bookmark_add("ブックマークの追加")の時.
 
     		// ブックマークの追加.
     		addBookmark();	// addBookmarkで追加.
@@ -454,6 +460,17 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     		super.onBackPressed();	// 親クラスのonBackPressedを呼ぶ.
     	}
     	
+    }
+    
+    // タブの追加.
+    public void addTab(){
+    	
+    	// メインアクティビティを起動する.
+    	String packageName = getPackageName();	// getPackageNameでpackageNameを取得.
+    	Intent intent = new Intent();	// Intentオブジェクトintentを作成.
+    	intent.setClassName(packageName, packageName + ".MainActivity");	// intent.setClassNameで".MainActivity"をセット.
+    	startActivity(intent);	// startActivityにintentを渡す.
+    			
     }
     
     // ブックマークへの追加.
