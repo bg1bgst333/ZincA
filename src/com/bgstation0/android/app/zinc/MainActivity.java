@@ -55,6 +55,15 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
         
     }
     
+    // 既存のインスタンスが再利用され, インテントが飛んで来た時.
+    @Override
+    protected void onNewIntent(Intent intent){
+    	
+    	// OnNewIntentに来た事をトーストで表示.
+    	Toast.makeText(this, "OnNewIntent", Toast.LENGTH_LONG).show();	// "OnNewIntent"とToastで表示.
+    	
+    }
+    
     // バックキーが押された時.
     @Override
     public void onBackPressed(){
