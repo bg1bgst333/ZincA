@@ -2,6 +2,7 @@
 package com.bgstation0.android.app.zinc;
 
 //パッケージのインポート
+import android.app.ActionBar;
 import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -143,6 +144,12 @@ public class CustomWebViewClient extends WebViewClient {
     		// アクションバーのタイトルに反映.
     		MainActivity mainActivity = (MainActivity)mContext;	// mContextをMainActivityにキャストし, mainActivityに格納.
     		mainActivity.setTitle(title);	// mainActivity.setTitleでtitleをセット.
+    		
+    		// 上記のsetTitleだけだと反映されない時があるので, アクションバーからもセットする.
+    		ActionBar act = mainActivity.getActionBar();	// mainActivity.getActionBarでactを取得.
+    		if (act != null){	// actがnullでなければ.
+    			act.setTitle(title);	// act.setTitleでタイトルをセット.
+    		}
     		
     	}
     	

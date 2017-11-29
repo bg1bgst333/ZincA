@@ -41,8 +41,8 @@ public class TabsActivity extends Activity implements OnItemClickListener {	// A
     	final ListView lv = (ListView)parent;	// parentをListViewオブジェクトlvにキャスト.
     	final TabItem item = (TabItem)lv.getItemAtPosition(position);	// lv.getItemAtPositionでitemを取得.
     	
-    	// タイトルとURLを送り返す.
-    	setReturnItem(item.tabName);	// setReturnItemでitem.tabNameを送り返すデータとしてセット.
+    	// タブ名とタイトルを送り返す.
+    	setReturnItem(item.tabName, item.title);	// setReturnItemでitem.tabName, item.titleを送り返すデータとしてセット.
     	finish();	// finishでこのアクティビティを閉じる.
     	
     }
@@ -90,12 +90,13 @@ public class TabsActivity extends Activity implements OnItemClickListener {	// A
     }
     
     // 送り返すインテントにタブ名をセット.
-    public void setReturnItem(String tabName){
+    public void setReturnItem(String tabName, String title){
     	
     	// 送り返すインテントを準備し, finishすることで戻った先にデータが返る.
        	Intent data = new Intent();	// Intentオブジェクトdataの作成.
    	    Bundle bundle = new Bundle();	// Bundleオブジェクトbundleの作成.
    	    bundle.putString("tabName", tabName);	// bundle.putStringキー"tabName", 値tabNameを登録.
+   	    bundle.putString("title", title);	// bundle.putStringキー"title", 値titleを登録.
    	    data.putExtras(bundle);	// data.putExtrasでbundleを登録.
    	    setResult(RESULT_OK, data);	// setResultでRESULT_OKとdataをセット.
     	    	

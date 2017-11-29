@@ -115,7 +115,9 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     			// タブのアイテムが選択されたとき.
     			if (resultCode == RESULT_OK){	// RESULT_OKの場合.
     				String tabName = bundle.getString("tabName");	// bundleからtabNameを取得.
-    				setContentViewByTabName(tabName);	// setContentViewByTabNameでtabNameからビューをセット.
+    				String title = bundle.getString("title");	// bundleからtitleを取得.
+    				setContentViewByTabName(tabName, title);	// setContentViewByTabNameでtabNameからビューをセット.(タイトルもセットしておく.)
+    				
     			}
     			
     			// 抜ける.
@@ -295,7 +297,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     		registViewMap();	// registViewMapで追加.
     	}
     	else{	// tabNameがある場合.
-    		setContentViewByTabName(tabName);	// setContentViewByTabNameでビューをセット.
+    		setContentViewByTabName(tabName, "Zinc");	// setContentViewByTabNameでビューをセット.(タイトルは"Zinc"にしておく.)
     	}
     	
     }
@@ -323,17 +325,20 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     }
     
     // タブ名から取得したビューをセット.
-    public void setContentViewByTabName(String tabName){
+    public void setContentViewByTabName(String tabName, String title){
     
     	// tabNameからcontentを取得し, セット.
     	View content = mApp.mViewMap.get(tabName);
 		if (content != null){	// nullでなければ.
-			ViewGroup vg = (ViewGroup)content.getParent();
-			vg.removeView(content);
+			ViewGroup vg = (ViewGroup)content.getParent();	// content.getParentでいったん親のViewGroup取得.
+			if (vg != null){	// nullでなければ.(nullの場合で落ちてたので, nullの場合は削除しない.)
+				vg.removeView(content);	// removeViewしろとエラーが出たので, vg.removeViewで削除.
+			}
 			setContentView(content);	// setContentViewでcontentをセット.
 			initUrlBar();	// initUrlBarでetUrlを初期化.
 	        initProgressBar();	// initProgressBarでprogressbarを初期化.
 	        initWebView();	// initWebViewでwebViewを初期化.
+	        setActionBarTitle(title);	// setActionBarTitleでtitleをセット.
 			mCurrentTabName = tabName;	// 現在のタブ名とする.
 		}
 		else{
