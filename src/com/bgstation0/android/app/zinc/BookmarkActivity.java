@@ -131,11 +131,14 @@ public class BookmarkActivity extends Activity implements OnItemClickListener, O
     // ブックマークの削除.
     public void removeBookmark(BookmarkItem item){
     	
+    	// ContentResolverからの削除.
+    	int row = getContentResolver().delete(Browser.BOOKMARKS_URI, Browser.BookmarkColumns.URL + "=?", new String[]{item.url});
+
     	// ListViewの取得
         ListView lvBookmark = (ListView)findViewById(R.id.listview_bookmark);	// リストビューlvBookmarkの取得.
         
         // adapterの取得.
-        BookmarkAdapter adapter = (BookmarkAdapter)lvBookmark.getAdapter();	// lvBookmark.getAdapterでadapterを取得.
+        BookmarkAdapter adapter = (BookmarkAdapter)lvBookmark.getAdapter();	// lvBookmark.getAdapterでadapterを取得.        
         
         // 削除.
         adapter.remove(item);	// adapter.removeでitemを削除.
