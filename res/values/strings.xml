@@ -15,5 +15,8 @@
 	<string name="toast_message_bookmark_regist_success">ブックマークに登録しました.</string>
 	<string name="toast_message_bookmark_regist_error">ブックマークの登録に失敗しました.</string>
 	<string name="toast_message_download_success">ダウンロードが完了しました.</string>
+	<string name="dialog_title_confirm_bookmark_remove">ブックマークの削除</string>
+	<string name="dialog_message_confirm_bookmark_remove">このアイテムを削除しますか?</string>
+	<string name="dialog_button_positive_yes">はい</string>
 	
 </resources>
