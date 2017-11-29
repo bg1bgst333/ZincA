@@ -12,10 +12,11 @@ import android.provider.Browser;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 // ブックマークアクティビティクラスBookmarkActivity
-public class BookmarkActivity extends Activity implements OnItemClickListener {	// AdapterView.OnItemClickListenerインターフェースの追加.
+public class BookmarkActivity extends Activity implements OnItemClickListener, OnItemLongClickListener{	// AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListenerインターフェースの追加.
 
 	// アクティビティが作成された時.
     @Override
@@ -41,6 +42,22 @@ public class BookmarkActivity extends Activity implements OnItemClickListener {	
     	// タイトルとURLを送り返す.
     	setReturnItem(item.title, item.url);	// setReturnItemでitem.titleとitem.urlを送り返すデータとしてセット.
     	finish();	// finishでこのアクティビティを閉じる.
+    	
+    }
+    
+    // リストビューのアイテムが長押しされた時.
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id){
+    	
+    	// 選択されたアイテムの取得.
+    	final ListView lv = (ListView)parent;	// parentをListViewオブジェクトlvにキャスト.
+    	BookmarkItem item = (BookmarkItem)lv.getItemAtPosition(position);	// lv.getItemAtPositionでitemを取得.
+    	
+    	// 長押しされたアイテムをブックマークから削除.
+    	removeBookmark(item);	// removeBookmarkでitemを削除.
+    	
+    	// 通常の選択を有効にさせないためにはtrueを返す.
+    	return true;	// returnでtrueを返す.
     	
     }
     
@@ -93,6 +110,9 @@ public class BookmarkActivity extends Activity implements OnItemClickListener {	
         // AdapterView.OnItemClickListenerのセット.
         lvBookmark.setOnItemClickListener(this);	// this(自身)をセット.
         
+        // AdapterView.OnItemLongClickListenerのセット.
+        lvBookmark.setOnItemLongClickListener(this);	// this(自身)をセット.
+        
     }
     
     // 送り返すインテントにタイトルとURLをセット.
@@ -106,6 +126,23 @@ public class BookmarkActivity extends Activity implements OnItemClickListener {	
    	    data.putExtras(bundle);	// data.putExtrasでbundleを登録.
    	    setResult(RESULT_OK, data);	// setResultでRESULT_OKとdataをセット.
     	    	
+    }
+    
+    // ブックマークの削除.
+    public void removeBookmark(BookmarkItem item){
+    	
+    	// ListViewの取得
+        ListView lvBookmark = (ListView)findViewById(R.id.listview_bookmark);	// リストビューlvBookmarkの取得.
+        
+        // adapterの取得.
+        BookmarkAdapter adapter = (BookmarkAdapter)lvBookmark.getAdapter();	// lvBookmark.getAdapterでadapterを取得.
+        
+        // 削除.
+        adapter.remove(item);	// adapter.removeでitemを削除.
+        
+        // 更新.
+        adapter.notifyDataSetChanged();	// adapter.notifyDataSetChangedで更新.
+        
     }
     
 }
