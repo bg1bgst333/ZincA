@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -19,6 +23,9 @@ import android.widget.AdapterView.OnItemClickListener;
 // ヒストリーアクティビティクラスHistoryActivity
 public class HistoryActivity extends Activity implements OnItemClickListener, OnItemLongClickListener {	// AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListenerインターフェースの追加.
 
+	// メンバフィールドの初期化.
+	public static final int DIALOG_ID_CONFIRM_HISTORY_REMOVE = 0;	// 履歴確認のダイアログID.
+	
 	// アクティビティが作成された時.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +60,44 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
     	final ListView lv = (ListView)parent;	// parentをListViewオブジェクトlvにキャスト.
     	HistoryItem item = (HistoryItem)lv.getItemAtPosition(position);	// lv.getItemAtPositionでitemを取得.
     	
-    	// 長押しされたアイテムを履歴から削除.
-    	removeHistory(item);	// removeHistoryでitemを削除.
+    	// 削除確認ダイアログ
+    	showConfirmHistoryRemove(position);	// showConfirmHistoryRemoveで削除確認ダイアログの表示.(positionを渡す.)
     	
     	// 通常の選択を有効にさせないためにはtrueを返す.
     	return true;	// returnでtrueを返す.
+    	
+    }
+    
+    // ダイアログの作成時.
+    @Override
+    protected Dialog onCreateDialog(int id, final Bundle args){
+    	
+    	// idごとに振り分け.
+    	if (id == DIALOG_ID_CONFIRM_HISTORY_REMOVE){	// 履歴削除確認.
+    		
+    		// アラートダイアログの作成.
+    		AlertDialog.Builder builder = new AlertDialog.Builder(this);	// builderの作成.
+    		builder.setTitle(getString(R.string.dialog_title_confirm_history_remove));	// タイトルのセット.
+    		builder.setMessage(getString(R.string.dialog_message_confirm_history_remove));	// メッセージのセット.
+    		builder.setPositiveButton(getString(R.string.dialog_button_positive_yes), new DialogInterface.OnClickListener() {
+				
+    			// "はい"ボタンが選択された時.
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					int position = args.getInt("position");	// positionを取得.
+					final ListView lv = (ListView)findViewById(R.id.listview_history);	// リストビューlvの取得.
+					final HistoryItem item = (HistoryItem)lv.getItemAtPosition(position);	// lv.getItemAtPositionでitemを取得.
+					removeHistory(item);	// removeHistoryで削除.
+				}
+				
+			});
+    		
+    		return builder.create();	// builder.createで作成してそのまま返す.
+    		
+    	}
+    	
+    	// nullを返す.
+    	return null;	// returnでnullを返す.
     	
     }
     
@@ -150,6 +190,16 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
     	
     	// 更新.
     	adapter.notifyDataSetChanged();	// adapter.notifyDataSetChangedで更新.
+    	
+    }
+    
+    // 履歴の削除確認ダイアログ.
+    private void showConfirmHistoryRemove(int position){
+    	
+    	// ダイアログの表示.
+    	Bundle bundle = new Bundle();	// bundle作成.
+    	bundle.putInt("position", position);	// positionを登録.
+    	showDialog(DIALOG_ID_CONFIRM_HISTORY_REMOVE, bundle);	// showDialogにDIALOG_ID_CONFIRM_HISTORY_REMOVEとbundleを渡す.
     	
     }
     
