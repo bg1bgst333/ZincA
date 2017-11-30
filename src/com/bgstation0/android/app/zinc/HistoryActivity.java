@@ -12,11 +12,12 @@ import android.os.Bundle;
 import android.provider.Browser;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
 // ヒストリーアクティビティクラスHistoryActivity
-public class HistoryActivity extends Activity implements OnItemClickListener {	// AdapterView.OnItemClickListenerインターフェースの追加.
+public class HistoryActivity extends Activity implements OnItemClickListener, OnItemLongClickListener {	// AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListenerインターフェースの追加.
 
 	// アクティビティが作成された時.
     @Override
@@ -41,6 +42,22 @@ public class HistoryActivity extends Activity implements OnItemClickListener {	/
     	// タイトルとURLを送り返す.
     	setReturnItem(item.title, item.url);	// setReturnItemでitem.titleとitem.urlを送り返すデータとしてセット.
     	finish();	// finishでこのアクティビティを閉じる.
+    	
+    }
+    
+    // リストビューのアイテムが長押しされた時.
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id){
+    	
+    	// 選択されたアイテムの取得.
+    	final ListView lv = (ListView)parent;	// parentをListViewオブジェクトlvにキャスト.
+    	HistoryItem item = (HistoryItem)lv.getItemAtPosition(position);	// lv.getItemAtPositionでitemを取得.
+    	
+    	// 長押しされたアイテムを履歴から削除.
+    	removeHistory(item);	// removeHistoryでitemを削除.
+    	
+    	// 通常の選択を有効にさせないためにはtrueを返す.
+    	return true;	// returnでtrueを返す.
     	
     }
     
@@ -98,6 +115,9 @@ public class HistoryActivity extends Activity implements OnItemClickListener {	/
         // AdapterView.OnItemClickListenerのセット.
         lvHistory.setOnItemClickListener(this);	// this(自身)をセット.
         
+        // AdapterView.OnItemLongClickListenerのセット.
+        lvHistory.setOnItemLongClickListener(this);	// this(自身)をセット.
+        
     }
     
     // 送り返すインテントにタイトルとURLをセット.
@@ -110,6 +130,23 @@ public class HistoryActivity extends Activity implements OnItemClickListener {	/
     	bundle.putString("url", url);	// bundle.putStringでキー"url", 値urlを登録.
     	data.putExtras(bundle);	// data.putExtrasでbundleを登録.
     	setResult(RESULT_OK, data);	// setResultでRESULT_OKとdataをセット.
+    	
+    }
+    
+    // 履歴の削除.
+    public void removeHistory(HistoryItem item){
+    	
+    	// ListViewの取得
+    	ListView lvHistory = (ListView)findViewById(R.id.listview_history);	// リストビューlvHistoryの取得.
+    	
+    	// adapterの取得.
+    	HistoryAdapter adapter = (HistoryAdapter)lvHistory.getAdapter();	// lvHistory.getAdapterでadapterを取得.
+    	
+    	// 削除.
+    	adapter.remove(item);	// adapter.removeでitemを削除.
+    	
+    	// 更新.
+    	adapter.notifyDataSetChanged();	// adapter.notifyDataSetChangedで更新.
     	
     }
     
