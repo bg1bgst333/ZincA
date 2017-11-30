@@ -136,6 +136,9 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
     // 履歴の削除.
     public void removeHistory(HistoryItem item){
     	
+    	// ContentResolverからの削除.
+    	int row = getContentResolver().delete(Browser.BOOKMARKS_URI, Browser.BookmarkColumns.URL + "=?", new String[]{item.url});
+    	
     	// ListViewの取得
     	ListView lvHistory = (ListView)findViewById(R.id.listview_history);	// リストビューlvHistoryの取得.
     	

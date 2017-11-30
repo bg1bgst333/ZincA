@@ -178,7 +178,7 @@ public class BookmarkActivity extends Activity implements OnItemClickListener, O
         ListView lvBookmark = (ListView)findViewById(R.id.listview_bookmark);	// リストビューlvBookmarkの取得.
         
         // adapterの取得.
-        BookmarkAdapter adapter = (BookmarkAdapter)lvBookmark.getAdapter();	// lvBookmark.getAdapterでadapterを取得.        
+        BookmarkAdapter adapter = (BookmarkAdapter)lvBookmark.getAdapter();	// lvBookmark.getAdapterでadapterを取得.
         
         // 削除.
         adapter.remove(item);	// adapter.removeでitemを削除.
