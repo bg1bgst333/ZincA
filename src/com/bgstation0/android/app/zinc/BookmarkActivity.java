@@ -7,6 +7,7 @@ import java.util.List;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.os.Bundle;
 import android.provider.Browser;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
@@ -181,9 +183,11 @@ public class BookmarkActivity extends Activity implements OnItemClickListener, O
     // ブックマークの削除.
     public void removeBookmark(BookmarkItem item){
     	
-    	// ContentResolverからの削除.
-    	int row = getContentResolver().delete(Browser.BOOKMARKS_URI, Browser.BookmarkColumns.URL + "=?", new String[]{item.url});
-
+    	// BOOKMARKフラグを降ろす.
+    	ContentValues values = new ContentValues();	// ContentValuesオブジェクトvaluesの生成.
+    	values.put(Browser.BookmarkColumns.BOOKMARK, "0");	// values.putでBOOKMARKフラグは"0"として登録.
+    	int row = getContentResolver().update(Browser.BOOKMARKS_URI, values, Browser.BookmarkColumns.URL + "=?", new String[]{item.url});	// getContentResolver().updateでURLが同じ行を更新.
+    	
     	// ListViewの取得
         ListView lvBookmark = (ListView)findViewById(R.id.listview_bookmark);	// リストビューlvBookmarkの取得.
         

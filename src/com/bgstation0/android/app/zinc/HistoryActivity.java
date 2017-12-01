@@ -124,8 +124,9 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
         		Browser.BookmarkColumns.URL,	// URL.
         		Browser.BookmarkColumns.DATE,	// 日時.
         		Browser.BookmarkColumns.BOOKMARK,	// ブックマークフラグ.
+        		Browser.BookmarkColumns.VISITS	// 訪問回数?
         };
-        Cursor c = getContentResolver().query(Browser.BOOKMARKS_URI, projection, Browser.BookmarkColumns.BOOKMARK + " = 0", null, Browser.BookmarkColumns.DATE + " desc");	// getContentResolver().queryで履歴取得.(Browser.BookmarkColumns.DATE + " desc"で降順ソート, 第3引数にBrowser.BookmarkColumns.BOOKMARK + " = 0"を指定すると履歴となる.)
+        Cursor c = getContentResolver().query(Browser.BOOKMARKS_URI, projection, null, null, Browser.BookmarkColumns.DATE + " desc");	// getContentResolver().queryで履歴取得.(Browser.BookmarkColumns.DATE + " desc"で降順ソート. 全てがアクセスしたURLなので第3引数は指定しない.)
         if (c.moveToFirst()){	// 最初の位置に移動.
         	do{
         		String title = c.getString(c.getColumnIndex(Browser.BookmarkColumns.TITLE));	// titleの取得.
@@ -187,7 +188,7 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
     public void removeHistory(HistoryItem item){
     	
     	// ContentResolverからの削除.
-    	int row = getContentResolver().delete(Browser.BOOKMARKS_URI, Browser.BookmarkColumns.URL + "=?", new String[]{item.url});
+    	int row = getContentResolver().delete(Browser.BOOKMARKS_URI, Browser.BookmarkColumns.URL + "=?", new String[]{item.url});	// 同じURLの行を削除.
     	
     	// ListViewの取得
     	ListView lvHistory = (ListView)findViewById(R.id.listview_history);	// リストビューlvHistoryの取得.

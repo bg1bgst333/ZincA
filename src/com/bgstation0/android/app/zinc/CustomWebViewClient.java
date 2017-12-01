@@ -5,6 +5,7 @@ package com.bgstation0.android.app.zinc;
 import android.app.ActionBar;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.Browser;
@@ -170,25 +171,41 @@ public class CustomWebViewClient extends WebViewClient {
 			values.put(Browser.BookmarkColumns.URL, url);	// values.putでurlを登録.
 			values.put(Browser.BookmarkColumns.DATE, System.currentTimeMillis());	// 現在時刻を登録.
 			values.put(Browser.BookmarkColumns.BOOKMARK, "0");	// values.putでBOOKMARKフラグは"0"として登録.
+			values.put(Browser.BookmarkColumns.VISITS, "1");	// values.putでVISITSは"1"として登録.
 			try{	// tryで囲む.
 				Uri uri = mainActivity.getContentResolver().insert(Browser.BOOKMARKS_URI, values);	// mainActivity.getContentResolver().insertでvaluesを挿入.(Uriオブジェクトuriに格納.)
 				if (uri == null){	// 既に挿入されている場合, nullが返る模様.
-					values = new ContentValues();	// ContentValuesオブジェクトvaluesの生成.
-					values.put(Browser.BookmarkColumns.DATE, System.currentTimeMillis());	// 現在時刻を登録.
-					values.put(Browser.BookmarkColumns.BOOKMARK, "0");	// values.putでBOOKMARKフラグは"0"として登録.
-					int row = mainActivity.getContentResolver().update(Browser.BOOKMARKS_URI, values, Browser.BookmarkColumns.URL + "=?", new String[]{url});	// mainActivity.getContentResolver().updateでURLが同じ行を更新.
-					String sr = String.valueOf(row);
-					if (row <= 0){
-						Toast.makeText(mainActivity, mainActivity.getString(R.string.toast_message_history_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_history_regist_errorに定義されたメッセージをToastで表示.
+					// VISITSを取りたい.
+					String[] projection = new String[]{
+							Browser.BookmarkColumns.URL,	// URL.
+							Browser.BookmarkColumns.DATE,	// 日時.
+							Browser.BookmarkColumns.VISITS	// 訪問回数?
+					};
+					int visits;	// 訪問回数.
+					Cursor c = mainActivity.getContentResolver().query(Browser.BOOKMARKS_URI, projection, Browser.BookmarkColumns.URL + "=?", new String[]{url}, Browser.BookmarkColumns.DATE + " desc");	// 合致する行を取得.
+					if (c.getCount() == 1){
+						if (c.moveToFirst()){
+							visits = c.getInt(c.getColumnIndex(Browser.BookmarkColumns.VISITS));	// visitsの取得.
+							visits++;	// visitsを1増やす.
+							values = new ContentValues();	// ContentValuesオブジェクトvaluesの生成.
+							values.put(Browser.BookmarkColumns.DATE, System.currentTimeMillis());	// 現在時刻を登録.
+							String strVisits = String.valueOf(visits);	// visitsを文字列に変換.
+							values.put(Browser.BookmarkColumns.VISITS, strVisits);	// 訪問回数を登録.
+							int row = mainActivity.getContentResolver().update(Browser.BOOKMARKS_URI, values, Browser.BookmarkColumns.URL + "=?", new String[]{url});	// mainActivity.getContentResolver().updateでURLが同じ行を更新.
+							if (row <= 0){
+								Toast.makeText(mainActivity, mainActivity.getString(R.string.toast_message_history_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_history_regist_errorに定義されたメッセージをToastで表示.
+							}
+							else{
+								//Toast.makeText(mainActivity, "visits = " + strVisits, Toast.LENGTH_LONG).show();	// とりあえずvisitsを出力.
+							}
+						}
 					}
 					else{
-						String s = "更新成功"+sr;
-						Toast.makeText(mainActivity, s, Toast.LENGTH_LONG).show();	// R.string.toast_message_bookmark_regist_successに定義されたメッセージをToastで表示.
+						Toast.makeText(mainActivity, mainActivity.getString(R.string.toast_message_history_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_history_regist_errorに定義されたメッセージをToastで表示.
 					}
 				}
 				else{
-					String s = "挿入成功";
-					Toast.makeText(mainActivity, s, Toast.LENGTH_LONG).show();	// R.string.toast_message_bookmark_regist_successに定義されたメッセージをToastで表示.
+					//Toast.makeText(mainActivity, "visits = 1", Toast.LENGTH_LONG).show();	// とりあえずvisitsを1として出力.
 				}
 			}
 			catch (Exception ex){	// 例外のcatch.
