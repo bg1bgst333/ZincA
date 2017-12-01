@@ -70,7 +70,7 @@ public class BookmarkActivity extends Activity implements OnItemClickListener, O
     
     // ダイアログの作成時.
     @Override
-    protected Dialog onCreateDialog(int id, final Bundle args){
+    protected Dialog onCreateDialog(final int id, final Bundle args){
     
     	// idごとに振り分け.
     	if (id == DIALOG_ID_CONFIRM_BOOKMARK_REMOVE){	// ブックマーク削除確認.
@@ -88,11 +88,21 @@ public class BookmarkActivity extends Activity implements OnItemClickListener, O
 			    	final ListView lv = (ListView)findViewById(R.id.listview_bookmark);	// リストビューlvの取得.
 			    	final BookmarkItem item = (BookmarkItem)lv.getItemAtPosition(position);	// lv.getItemAtPositionでitemを取得.
 			    	removeBookmark(item);	// removeBookmarkで削除.
+			    	removeDialog(id);	// removeDialogでダイアログを削除.
 				}				
 				
 			});
-			
-    		return builder.create();	// builder.createで作成してそのまま返す.
+    		Dialog dialog = builder.create();	// builder.createでdialogを作成.(ただし, まだ返さない.)
+    		dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {	// キャンセル時の動作を追加.
+
+    			// ダイアログのキャンセル時.
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					removeDialog(id);	// removeDialogでダイアログを削除.
+				}
+				
+			});
+    		return dialog;	// dialogを返す.
     		
     	}
     	

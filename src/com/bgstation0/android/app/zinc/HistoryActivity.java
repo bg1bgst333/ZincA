@@ -70,7 +70,7 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
     
     // ダイアログの作成時.
     @Override
-    protected Dialog onCreateDialog(int id, final Bundle args){
+    protected Dialog onCreateDialog(final int id, final Bundle args){
     	
     	// idごとに振り分け.
     	if (id == DIALOG_ID_CONFIRM_HISTORY_REMOVE){	// 履歴削除確認.
@@ -88,11 +88,21 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
 					final ListView lv = (ListView)findViewById(R.id.listview_history);	// リストビューlvの取得.
 					final HistoryItem item = (HistoryItem)lv.getItemAtPosition(position);	// lv.getItemAtPositionでitemを取得.
 					removeHistory(item);	// removeHistoryで削除.
+					removeDialog(id);	// removeDialogでダイアログを削除.
 				}
 				
 			});
-    		
-    		return builder.create();	// builder.createで作成してそのまま返す.
+    		Dialog dialog = builder.create();	// builder.createでdialogを作成.(ただし, まだ返さない.)
+    		dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {	// キャンセル時の動作を追加.
+
+    			// ダイアログのキャンセル時.
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					removeDialog(id);	// removeDialogでダイアログを削除.
+				}
+				
+			});
+    		return dialog;	// dialogを返す.
     		
     	}
     	
