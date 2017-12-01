@@ -177,9 +177,18 @@ public class CustomWebViewClient extends WebViewClient {
 					values.put(Browser.BookmarkColumns.DATE, System.currentTimeMillis());	// 現在時刻を登録.
 					values.put(Browser.BookmarkColumns.BOOKMARK, "0");	// values.putでBOOKMARKフラグは"0"として登録.
 					int row = mainActivity.getContentResolver().update(Browser.BOOKMARKS_URI, values, Browser.BookmarkColumns.URL + "=?", new String[]{url});	// mainActivity.getContentResolver().updateでURLが同じ行を更新.
-					if (row < 0){
+					String sr = String.valueOf(row);
+					if (row <= 0){
 						Toast.makeText(mainActivity, mainActivity.getString(R.string.toast_message_history_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_history_regist_errorに定義されたメッセージをToastで表示.
 					}
+					else{
+						String s = "更新成功"+sr;
+						Toast.makeText(mainActivity, s, Toast.LENGTH_LONG).show();	// R.string.toast_message_bookmark_regist_successに定義されたメッセージをToastで表示.
+					}
+				}
+				else{
+					String s = "挿入成功";
+					Toast.makeText(mainActivity, s, Toast.LENGTH_LONG).show();	// R.string.toast_message_bookmark_regist_successに定義されたメッセージをToastで表示.
 				}
 			}
 			catch (Exception ex){	// 例外のcatch.

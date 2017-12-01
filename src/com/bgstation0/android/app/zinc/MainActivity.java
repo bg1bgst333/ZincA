@@ -617,15 +617,16 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 				values.put(Browser.BookmarkColumns.DATE, System.currentTimeMillis());	// 現在時刻を登録.
 				values.put(Browser.BookmarkColumns.BOOKMARK, "1");	// values.putでBOOKMARKフラグは"1"として登録.
 				int row = getContentResolver().update(Browser.BOOKMARKS_URI, values, Browser.BookmarkColumns.URL + "=?", new String[]{url});	// getContentResolver().updateでURLが同じ行を更新.
-				if (row < 0){	// 更新失敗.
+				String sr = String.valueOf(row);
+				if (row <= 0){	// 更新失敗.
 					Toast.makeText(this, getString(R.string.toast_message_bookmark_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_bookmark_regist_errorに定義されたメッセージをToastで表示.
 				}
 				else{	// 更新成功.
-					Toast.makeText(this, getString(R.string.toast_message_bookmark_regist_success), Toast.LENGTH_LONG).show();	// R.string.toast_message_bookmark_regist_successに定義されたメッセージをToastで表示.
+					Toast.makeText(this, "更新成功"+sr+":"+getString(R.string.toast_message_bookmark_regist_success), Toast.LENGTH_LONG).show();	// R.string.toast_message_bookmark_regist_successに定義されたメッセージをToastで表示.
 				}
 			}
 			else{	// 挿入成功.
-				Toast.makeText(this, getString(R.string.toast_message_bookmark_regist_success), Toast.LENGTH_LONG).show();	// R.string.toast_message_bookmark_regist_successに定義されたメッセージをToastで表示.
+				Toast.makeText(this, "挿入成功"+getString(R.string.toast_message_bookmark_regist_success), Toast.LENGTH_LONG).show();	// R.string.toast_message_bookmark_regist_successに定義されたメッセージをToastで表示.
 			}
 		}
 		catch (Exception ex){	// 例外のcatch.
