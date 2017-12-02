@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -19,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Toast;
 
 // ヒストリーアクティビティクラスHistoryActivity
 public class HistoryActivity extends Activity implements OnItemClickListener, OnItemLongClickListener {	// AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListenerインターフェースの追加.
@@ -33,6 +35,9 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
     	// ビューのセット
         super.onCreate(savedInstanceState);	// 親クラスのonCreateを呼ぶ.
         setContentView(R.layout.activity_history);	// setContentViewでR.layout.activity_historyをセット.
+        
+        // 履歴のクリーンナップ.
+        cleanUpHistories();	// cleanUpHistoriesで履歴をクリーンナップ.
         
         // 履歴のロード.
         loadHistories();	// loadHistoriesで履歴をロード.
@@ -126,7 +131,7 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
         		Browser.BookmarkColumns.BOOKMARK,	// ブックマークフラグ.
         		Browser.BookmarkColumns.VISITS	// 訪問回数?
         };
-        Cursor c = getContentResolver().query(Browser.BOOKMARKS_URI, projection, null, null, Browser.BookmarkColumns.DATE + " desc");	// getContentResolver().queryで履歴取得.(Browser.BookmarkColumns.DATE + " desc"で降順ソート. 全てがアクセスしたURLなので第3引数は指定しない.)
+        Cursor c = getContentResolver().query(Browser.BOOKMARKS_URI, projection, Browser.BookmarkColumns.VISITS + " > 0", null, Browser.BookmarkColumns.DATE + " desc");	// getContentResolver().queryで履歴取得.(Browser.BookmarkColumns.DATE + " desc"で降順ソート. 第3引数はBrowser.BookmarkColumns.VISITS + " > 0"とする.)
         if (c.moveToFirst()){	// 最初の位置に移動.
         	do{
         		String title = c.getString(c.getColumnIndex(Browser.BookmarkColumns.TITLE));	// titleの取得.
@@ -171,6 +176,17 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
         
     }
     
+    // 履歴のクリーンナップ.
+    public void cleanUpHistories(){
+    	
+    	// BOOKMARKフラグが立っていない, VISITSが0の行を削除.
+    	Cursor c = this.getContentResolver().query(Browser.BOOKMARKS_URI, new String[]{Browser.BookmarkColumns.URL}, null, null, null);
+    	Toast.makeText(this, "all = "+String.valueOf(c.getCount()), Toast.LENGTH_LONG).show();
+		int row = getContentResolver().delete(Browser.BOOKMARKS_URI, "("+Browser.BookmarkColumns.BOOKMARK + "=0) AND (" + Browser.BookmarkColumns.VISITS + "=0)", null);	// BOOKMARKが0, かつ, VISITSが0の行をdelete.
+		Toast.makeText(this, "cleanUp row = " + String.valueOf(row), Toast.LENGTH_LONG).show();	// クリーンナップ行数を表示.
+		
+    }
+    
     // 送り返すインテントにタイトルとURLをセット.
     public void setReturnItem(String title, String url){
     	
@@ -187,8 +203,27 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
     // 履歴の削除.
     public void removeHistory(HistoryItem item){
     	
-    	// ContentResolverからの削除.
-    	int row = getContentResolver().delete(Browser.BOOKMARKS_URI, Browser.BookmarkColumns.URL + "=?", new String[]{item.url});	// 同じURLの行を削除.
+    	// まずBOOKMARKフラグが立っているかを確認.
+    	String[] projection = new String[]{
+    			Browser.BookmarkColumns.BOOKMARK,	// ブックマークフラグ.
+		};
+    	Cursor c = getContentResolver().query(Browser.BOOKMARKS_URI, projection, Browser.BookmarkColumns.URL + "=?", new String[]{item.url}, Browser.BookmarkColumns.DATE + " desc");	// 合致する行を取得.
+    	if (c.getCount() == 1){	// 1個
+			if (c.moveToFirst()){	// 最初に移動.
+				int bookmark = c.getInt(c.getColumnIndex(Browser.BookmarkColumns.BOOKMARK));	// bookmarkの取得.
+				if (bookmark == 1){	// bookmarkが1の場合.
+					// VISITSを0に更新.
+					ContentValues values = new ContentValues();	// ContentValuesオブジェクトvaluesの生成.
+					values.put(Browser.BookmarkColumns.VISITS, "0");	// 訪問回数を0とする.
+					int row = getContentResolver().update(Browser.BOOKMARKS_URI, values, Browser.BookmarkColumns.URL + "=?", new String[]{item.url});	// getContentResolver().updateでURLが同じ行を更新.
+					Toast.makeText(this, "visitsupdate row = " + String.valueOf(row), Toast.LENGTH_LONG).show();	// VISITSのupdate行数を表示.
+				}
+				else{	// bookmarkが0の場合.
+					// ContentResolverからの削除.
+					int row = getContentResolver().delete(Browser.BOOKMARKS_URI, Browser.BookmarkColumns.URL + "=?", new String[]{item.url});	// 同じURLの行を削除.
+				}
+			}
+    	}
     	
     	// ListViewの取得
     	ListView lvHistory = (ListView)findViewById(R.id.listview_history);	// リストビューlvHistoryの取得.
