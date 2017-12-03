@@ -15,6 +15,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.Browser;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -26,7 +28,8 @@ import android.widget.Toast;
 public class HistoryActivity extends Activity implements OnItemClickListener, OnItemLongClickListener {	// AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListenerインターフェースの追加.
 
 	// メンバフィールドの初期化.
-	public static final int DIALOG_ID_CONFIRM_HISTORY_REMOVE = 0;	// 履歴確認のダイアログID.
+	public static final int DIALOG_ID_CONFIRM_HISTORY_REMOVE = 0;	// 履歴削除確認のダイアログID.
+	public static final int DIALOG_ID_CONFIRM_ALL_HISTORIES_REMOVE = 1;	// 履歴全削除確認のダイアログID.
 	
 	// アクティビティが作成された時.
     @Override
@@ -42,6 +45,34 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
         // 履歴のロード.
         loadHistories();	// loadHistoriesで履歴をロード.
         
+    }
+    
+    // メニューが作成された時.
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+    	
+    	// リソースからメニューを作成.
+    	getMenuInflater().inflate(R.menu.menu_history, menu);	// getMenuInflater().inflateでR.menu.menu_historyからメニューを作成.
+    	return true;	// trueを返す.
+    	
+    }
+    
+    // メニューが選択されたとき.
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+    	
+    	// 選択されたメニューアイテムごとに振り分ける.
+    	int id = item.getItemId();	// item.getItemIdで選択されたメニューアイテムのidを取得.
+    	if (id == R.id.menu_item_remove_all_histories){	// R.id.menu_item_remove_all_histories("全ての履歴を削除")の時.
+    		
+    		// 履歴の全削除.
+    		showConfirmAllHistoriesRemove();	// showConfirmAllHistoriesRemoveで全削除をするか確認する.
+    		
+    	}
+    	
+    	// あとは既定の処理に任せる.
+    	return super.onOptionsItemSelected(item);	// 親クラスのonOptionsItemSelectedを呼ぶ.
+    	
     }
     
     // リストビューのアイテムが選択された時.
@@ -95,6 +126,36 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
 					removeHistory(item);	// removeHistoryで削除.
 					removeDialog(id);	// removeDialogでダイアログを削除.
 				}
+				
+			});
+    		Dialog dialog = builder.create();	// builder.createでdialogを作成.(ただし, まだ返さない.)
+    		dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {	// キャンセル時の動作を追加.
+
+    			// ダイアログのキャンセル時.
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					removeDialog(id);	// removeDialogでダイアログを削除.
+				}
+				
+			});
+    		return dialog;	// dialogを返す.
+    		
+    	}
+    	else if (id == DIALOG_ID_CONFIRM_ALL_HISTORIES_REMOVE){	// 履歴全削除確認.
+    		
+    		// アラートダイアログの作成.
+    		AlertDialog.Builder builder = new AlertDialog.Builder(this);	// builderの作成.
+    		builder.setTitle(getString(R.string.dialog_title_confirm_all_histories_remove));	// タイトルのセット.
+    		builder.setMessage(getString(R.string.dialog_message_confirm_all_histories_remove));	// メッセージのセット.
+    		builder.setPositiveButton(getString(R.string.dialog_button_positive_yes), new DialogInterface.OnClickListener() {
+    			
+    			// "はい"ボタンが選択された時.
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// 全ての履歴を削除.
+			    	removeAllHistories();	// removeAllHistoriesで全削除.
+			    	removeDialog(id);	// removeDialogでダイアログを削除.
+				}				
 				
 			});
     		Dialog dialog = builder.create();	// builder.createでdialogを作成.(ただし, まだ返さない.)
@@ -239,6 +300,32 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
     	
     }
     
+    // 履歴の全削除.
+    public void removeAllHistories(){
+    	
+    	// BOOKMARKが1の行全てのVISITSを0にする.
+		ContentValues values = new ContentValues();	// ContentValuesオブジェクトvaluesの生成.
+		values.put(Browser.BookmarkColumns.VISITS, "0");	// 訪問回数を0とする.
+		int row = getContentResolver().update(Browser.BOOKMARKS_URI, values, Browser.BookmarkColumns.BOOKMARK + "=1", null);	// getContentResolver().updateでBOOKMARKが1の行を更新.
+		//Toast.makeText(this, "row = "+String.valueOf(row), Toast.LENGTH_LONG).show();	// rowをToastで表示.
+		// BOOKMARKが0の行全てを削除.
+		int row2 = getContentResolver().delete(Browser.BOOKMARKS_URI, Browser.BookmarkColumns.BOOKMARK + "=0", null);	// getContentResolver().deleteでBOOKMARKが0の行を削除.
+		//Toast.makeText(this, "row2 = "+String.valueOf(row2), Toast.LENGTH_LONG).show();	// row2をToastで表示.
+		
+		// ListViewの取得
+    	ListView lvHistory = (ListView)findViewById(R.id.listview_history);	// リストビューlvHistoryの取得.
+    	
+    	// adapterの取得.
+    	HistoryAdapter adapter = (HistoryAdapter)lvHistory.getAdapter();	// lvHistory.getAdapterでadapterを取得.
+    	
+    	// 全削除.
+        adapter.clear();	// adapter.clearで全削除.
+    	
+    	// 更新.
+    	adapter.notifyDataSetChanged();	// adapter.notifyDataSetChangedで更新.
+    	
+    }
+    
     // 履歴の削除確認ダイアログ.
     private void showConfirmHistoryRemove(int position){
     	
@@ -246,6 +333,14 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
     	Bundle bundle = new Bundle();	// bundle作成.
     	bundle.putInt("position", position);	// positionを登録.
     	showDialog(DIALOG_ID_CONFIRM_HISTORY_REMOVE, bundle);	// showDialogにDIALOG_ID_CONFIRM_HISTORY_REMOVEとbundleを渡す.
+    	
+    }
+    
+    // ブックマークの全削除確認ダイアログ.
+    private void showConfirmAllHistoriesRemove(){
+    	
+    	// ダイアログの表示.
+    	showDialog(DIALOG_ID_CONFIRM_ALL_HISTORIES_REMOVE);	// showDialogにDIALOG_ID_CONFIRM_ALL_HISTORIES_REMOVEを渡す.
     	
     }
     
