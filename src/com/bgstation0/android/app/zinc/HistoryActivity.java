@@ -37,7 +37,7 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
         setContentView(R.layout.activity_history);	// setContentViewでR.layout.activity_historyをセット.
         
         // 履歴のクリーンナップ.
-        cleanUpHistories();	// cleanUpHistoriesで履歴をクリーンナップ.
+        //cleanUpHistories();	// cleanUpHistoriesで履歴をクリーンナップ.
         
         // 履歴のロード.
         loadHistories();	// loadHistoriesで履歴をロード.
@@ -181,9 +181,9 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
     	
     	// BOOKMARKフラグが立っていない, VISITSが0の行を削除.
     	Cursor c = this.getContentResolver().query(Browser.BOOKMARKS_URI, new String[]{Browser.BookmarkColumns.URL}, null, null, null);
-    	Toast.makeText(this, "all = "+String.valueOf(c.getCount()), Toast.LENGTH_LONG).show();
+    	//Toast.makeText(this, "all = "+String.valueOf(c.getCount()), Toast.LENGTH_LONG).show();
 		int row = getContentResolver().delete(Browser.BOOKMARKS_URI, "("+Browser.BookmarkColumns.BOOKMARK + "=0) AND (" + Browser.BookmarkColumns.VISITS + "=0)", null);	// BOOKMARKが0, かつ, VISITSが0の行をdelete.
-		Toast.makeText(this, "cleanUp row = " + String.valueOf(row), Toast.LENGTH_LONG).show();	// クリーンナップ行数を表示.
+		//Toast.makeText(this, "cleanUp row = " + String.valueOf(row), Toast.LENGTH_LONG).show();	// クリーンナップ行数を表示.
 		
     }
     
@@ -216,7 +216,7 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
 					ContentValues values = new ContentValues();	// ContentValuesオブジェクトvaluesの生成.
 					values.put(Browser.BookmarkColumns.VISITS, "0");	// 訪問回数を0とする.
 					int row = getContentResolver().update(Browser.BOOKMARKS_URI, values, Browser.BookmarkColumns.URL + "=?", new String[]{item.url});	// getContentResolver().updateでURLが同じ行を更新.
-					Toast.makeText(this, "visitsupdate row = " + String.valueOf(row), Toast.LENGTH_LONG).show();	// VISITSのupdate行数を表示.
+					//Toast.makeText(this, "visitsupdate row = " + String.valueOf(row), Toast.LENGTH_LONG).show();	// VISITSのupdate行数を表示.
 				}
 				else{	// bookmarkが0の場合.
 					// ContentResolverからの削除.

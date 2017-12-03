@@ -193,7 +193,7 @@ public class CustomWebViewClient extends WebViewClient {
 							values.put(Browser.BookmarkColumns.VISITS, strVisits);	// 訪問回数を登録.
 							int row = mainActivity.getContentResolver().update(Browser.BOOKMARKS_URI, values, Browser.BookmarkColumns.URL + "=?", new String[]{url});	// mainActivity.getContentResolver().updateでURLが同じ行を更新.
 							if (row <= 0){
-								Toast.makeText(mainActivity, "1"+mainActivity.getString(R.string.toast_message_history_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_history_regist_errorに定義されたメッセージをToastで表示.
+								Toast.makeText(mainActivity, mainActivity.getString(R.string.toast_message_history_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_history_regist_errorに定義されたメッセージをToastで表示.
 							}
 							else{
 								//Toast.makeText(mainActivity, "visits = " + strVisits, Toast.LENGTH_LONG).show();	// とりあえずvisitsを出力.
@@ -201,7 +201,7 @@ public class CustomWebViewClient extends WebViewClient {
 						}
 					}
 					else{
-						Toast.makeText(mainActivity, c.getCount()+":2"+mainActivity.getString(R.string.toast_message_history_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_history_regist_errorに定義されたメッセージをToastで表示.
+						Toast.makeText(mainActivity, mainActivity.getString(R.string.toast_message_history_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_history_regist_errorに定義されたメッセージをToastで表示.
 					}
 				}
 				else{
@@ -209,7 +209,7 @@ public class CustomWebViewClient extends WebViewClient {
 				}
 			}
 			catch (Exception ex){	// 例外のcatch.
-				Toast.makeText(mainActivity, "3"+mainActivity.getString(R.string.toast_message_history_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_history_regist_errorに定義されたメッセージをToastで表示.
+				Toast.makeText(mainActivity, mainActivity.getString(R.string.toast_message_history_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_history_regist_errorに定義されたメッセージをToastで表示.
 			}
 			
 		}

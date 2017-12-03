@@ -184,16 +184,13 @@ public class BookmarkActivity extends Activity implements OnItemClickListener, O
     public void removeBookmark(BookmarkItem item){
     	
     	// BOOKMARKフラグを降ろす.
-    	
-    	Cursor c1 = this.getContentResolver().query(Browser.BOOKMARKS_URI, new String[]{Browser.BookmarkColumns.URL}, null, null, null);
-    	Toast.makeText(this, "all1 = "+String.valueOf(c1.getCount()), Toast.LENGTH_LONG).show();
-    	
+    	//Cursor c1 = this.getContentResolver().query(Browser.BOOKMARKS_URI, new String[]{Browser.BookmarkColumns.URL}, null, null, null);
+    	//Toast.makeText(this, "all1 = "+String.valueOf(c1.getCount()), Toast.LENGTH_LONG).show();
     	ContentValues values = new ContentValues();	// ContentValuesオブジェクトvaluesの生成.
     	values.put(Browser.BookmarkColumns.BOOKMARK, "0");	// values.putでBOOKMARKフラグは"0"として登録.
     	int row = getContentResolver().update(Browser.BOOKMARKS_URI, values, Browser.BookmarkColumns.URL + "=?", new String[]{item.url});	// getContentResolver().updateでURLが同じ行を更新.
-    	
-    	Cursor c2 = this.getContentResolver().query(Browser.BOOKMARKS_URI, new String[]{Browser.BookmarkColumns.URL}, null, null, null);
-    	Toast.makeText(this, "all2 = "+String.valueOf(c2.getCount()), Toast.LENGTH_LONG).show();
+    	//Cursor c2 = this.getContentResolver().query(Browser.BOOKMARKS_URI, new String[]{Browser.BookmarkColumns.URL}, null, null, null);
+    	//Toast.makeText(this, "all2 = "+String.valueOf(c2.getCount()), Toast.LENGTH_LONG).show();
     	
     	// ListViewの取得
         ListView lvBookmark = (ListView)findViewById(R.id.listview_bookmark);	// リストビューlvBookmarkの取得.
