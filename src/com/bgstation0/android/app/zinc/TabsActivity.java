@@ -12,9 +12,10 @@ import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 
 // タブスアクティビティクラスTabsActivity
-public class TabsActivity extends Activity implements OnItemClickListener {	// AdapterView.OnItemClickListenerインターフェースの追加.
+public class TabsActivity extends Activity implements OnItemClickListener, OnItemLongClickListener {	// AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListenerインターフェースの追加.
 
 	// メンバフィールドの初期化.
 	public MainApplication mApp = null;	// MainApplicationオブジェクトmAppをnullで初期化.
@@ -44,6 +45,22 @@ public class TabsActivity extends Activity implements OnItemClickListener {	// A
     	// タブ名とタイトルを送り返す.
     	setReturnItem(item.tabName, item.title);	// setReturnItemでitem.tabName, item.titleを送り返すデータとしてセット.
     	finish();	// finishでこのアクティビティを閉じる.
+    	
+    }
+    
+    // リストビューのアイテムが長押しされた時.
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id){
+    	
+    	// 選択されたアイテムの取得.
+    	final ListView lv = (ListView)parent;	// parentをListViewオブジェクトlvにキャスト.
+    	TabItem item = (TabItem)lv.getItemAtPosition(position);	// lv.getItemAtPositionでitemを取得.
+    	
+    	// 長押しされたアイテムをタブから削除.
+    	removeTab(item);	// removeTabでitemを削除.
+    	
+    	// 通常の選択を有効にさせないためにはtrueを返す.
+    	return true;	// returnでtrueを返す.
     	
     }
     
@@ -86,7 +103,10 @@ public class TabsActivity extends Activity implements OnItemClickListener {	// A
         
         // AdapterView.OnItemClickListenerのセット.
         lvTabs.setOnItemClickListener(this);	// this(自身)をセット.
-            
+
+        // AdapterView.OnItemLongClickListenerのセット.
+        lvTabs.setOnItemLongClickListener(this);	// this(自身)をセット.
+        
     }
     
     // 送り返すインテントにタブ名をセット.
@@ -100,6 +120,29 @@ public class TabsActivity extends Activity implements OnItemClickListener {	// A
    	    data.putExtras(bundle);	// data.putExtrasでbundleを登録.
    	    setResult(RESULT_OK, data);	// setResultでRESULT_OKとdataをセット.
     	    	
+    }
+    
+    // タブの削除.
+    public void removeTab(TabItem item){
+    	
+    	// itemのタブ名を取得.
+    	String tabName = item.tabName;	// item.tabNameでtabNameを取得.
+    	
+    	// タブの削除.
+    	mApp.mViewMap.remove(tabName);	// tabNameで登録されたviewをmViewMapから削除.
+    	
+    	// ListViewの取得
+    	ListView lvTabs = (ListView)findViewById(R.id.listview_tabs);	// リストビューlvTabsの取得.
+    	
+    	// adapterの取得.
+    	TabAdapter adapter = (TabAdapter)lvTabs.getAdapter();	// lvTabs.getAdapterでadapterを取得.
+    	
+    	// 削除.
+    	adapter.remove(item);	// adapter.removeでitemを削除.
+    	
+    	// 更新.
+    	adapter.notifyDataSetChanged();	// adapter.notifyDataSetChangedで更新.
+    	
     }
     
 }
