@@ -11,9 +11,13 @@ import java.util.Map.Entry;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Browser;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.AdapterView;
@@ -27,6 +31,7 @@ public class TabsActivity extends Activity implements OnItemClickListener, OnIte
 	// メンバフィールドの初期化.
 	public MainApplication mApp = null;	// MainApplicationオブジェクトmAppをnullで初期化.
 	public static final int DIALOG_ID_CONFIRM_TAB_REMOVE = 0;	// タブ削除確認のダイアログID.
+	public static final int DIALOG_ID_CONFIRM_ALL_TABS_REMOVE = 1;	// タブ全削除確認のダイアログID.
 	
 	// アクティビティが作成された時.
     @Override
@@ -40,6 +45,34 @@ public class TabsActivity extends Activity implements OnItemClickListener, OnIte
         // タブのロード.
         loadTabs();	// loadTabsでタブをロードして表示.
         
+    }
+    
+    // メニューが作成された時.
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+    	
+    	// リソースからメニューを作成.
+    	getMenuInflater().inflate(R.menu.menu_tabs, menu);	// getMenuInflater().inflateでR.menu.menu_tabsからメニューを作成.
+    	return true;	// trueを返す.
+    	
+    }
+    
+    // メニューが選択された時.
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+    	
+    	// 選択されたメニューアイテムごとに振り分ける.
+    	int id = item.getItemId();	// item.getItemIdで選択されたメニューアイテムのidを取得.
+    	if (id == R.id.menu_item_remove_all_tabs){	// R.id.menu_item_remove_all_tabs("全てのタブを削除")の時.
+    		
+    		// タブの全削除.
+    		showConfirmAllTabsRemove();	// showConfirmAllTabsRemoveで全削除をするか確認する.
+    		
+    	}
+    	
+    	// あとは既定の処理に任せる.
+    	return super.onOptionsItemSelected(item);	// 親クラスのonOptionsItemSelectedを呼ぶ.
+    	
     }
     
     // リストビューのアイテムが選択された時.
@@ -92,6 +125,36 @@ public class TabsActivity extends Activity implements OnItemClickListener, OnIte
 			    	final ListView lv = (ListView)findViewById(R.id.listview_tabs);	// リストビューlvの取得.
 			    	final TabItem item = (TabItem)lv.getItemAtPosition(position);	// lv.getItemAtPositionでitemを取得.
 			    	removeTab(item);	// removeTabで削除.
+			    	removeDialog(id);	// removeDialogでダイアログを削除.
+				}				
+				
+			});
+    		Dialog dialog = builder.create();	// builder.createでdialogを作成.(ただし, まだ返さない.)
+    		dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {	// キャンセル時の動作を追加.
+
+    			// ダイアログのキャンセル時.
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					removeDialog(id);	// removeDialogでダイアログを削除.
+				}
+				
+			});
+    		return dialog;	// dialogを返す.
+    		
+    	}
+    	else if (id == DIALOG_ID_CONFIRM_ALL_TABS_REMOVE){	// タブ全削除確認.
+    		
+    		// アラートダイアログの作成.
+    		AlertDialog.Builder builder = new AlertDialog.Builder(this);	// builderの作成.
+    		builder.setTitle(getString(R.string.dialog_title_confirm_all_tabs_remove));	// タイトルのセット.
+    		builder.setMessage(getString(R.string.dialog_message_confirm_all_tabs_remove));	// メッセージのセット.
+    		builder.setPositiveButton(getString(R.string.dialog_button_positive_yes), new DialogInterface.OnClickListener() {
+    			
+    			// "はい"ボタンが選択された時.
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// 全てのタブを削除.
+					removeAllTabs();	// removeAllTabsで全削除.
 			    	removeDialog(id);	// removeDialogでダイアログを削除.
 				}				
 				
@@ -195,6 +258,26 @@ public class TabsActivity extends Activity implements OnItemClickListener, OnIte
     	
     }
     
+    // タブの全削除.
+    public void removeAllTabs(){
+    	
+    	// タブマップをクリア.
+    	mApp.mTabMap.clear();	// mApp.mTabMap.clearでクリア.
+    	
+		// ListViewの取得
+    	ListView lvTabs = (ListView)findViewById(R.id.listview_tabs);	// リストビューlvTabsの取得.
+    	
+    	// adapterの取得.
+    	TabAdapter adapter = (TabAdapter)lvTabs.getAdapter();	// lvTabs.getAdapterでadapterを取得.
+    	
+    	// 全削除.
+        adapter.clear();	// adapter.clearで全削除.
+    	
+    	// 更新.
+    	adapter.notifyDataSetChanged();	// adapter.notifyDataSetChangedで更新.
+    	
+    }
+    
     // タブの削除確認ダイアログ.
     private void showConfirmTabRemove(int position){
     	
@@ -202,6 +285,14 @@ public class TabsActivity extends Activity implements OnItemClickListener, OnIte
     	Bundle bundle = new Bundle();	// bundle作成.
     	bundle.putInt("position", position);	// positionを登録.
     	showDialog(DIALOG_ID_CONFIRM_TAB_REMOVE, bundle);	// showDialogにDIALOG_ID_CONFIRM_TAB_REMOVEとbundleを渡す.
+    	
+    }
+    
+    // タブの全削除確認ダイアログ.
+    private void showConfirmAllTabsRemove(){
+    	
+    	// ダイアログの表示.
+    	showDialog(DIALOG_ID_CONFIRM_ALL_TABS_REMOVE);	// showDialogにDIALOG_ID_CONFIRM_ALL_TABS_REMOVEを渡す.
     	
     }
     

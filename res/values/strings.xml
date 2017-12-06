@@ -12,6 +12,7 @@
 	<string name="menu_item_pc_site_browser_text">PCサイトブラウザ</string>
 	<string name="menu_item_remove_all_bookmarks_text">全てのブックマークを削除</string>
 	<string name="menu_item_remove_all_histories_text">全ての履歴を削除</string>
+	<string name="menu_item_remove_all_tabs_text">全てのタブを削除</string>
 	<string name="toast_message_history_regist_error">履歴の登録に失敗しました.</string>
 	<string name="toast_message_bookmark_already_regist">既にブックマークに登録されています.</string>
 	<string name="toast_message_bookmark_regist_success">ブックマークに登録しました.</string>
@@ -28,5 +29,7 @@
 	<string name="dialog_message_confirm_all_histories_remove">全てのアイテムを削除しますか?</string>
 	<string name="dialog_title_confirm_tab_remove">タブの削除</string>
 	<string name="dialog_message_confirm_tab_remove">このアイテムを削除しますか?</string>
+	<string name="dialog_title_confirm_all_tabs_remove">タブの全削除</string>
+	<string name="dialog_message_confirm_all_tabs_remove">全てのアイテムを削除しますか?</string>
 	
 </resources>
