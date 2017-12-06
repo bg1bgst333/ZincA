@@ -74,21 +74,8 @@ public class TabsActivity extends Activity implements OnItemClickListener, OnIte
     	// tabsの作成
         List<TabItem> tabs = new ArrayList<TabItem>();	// タブスtabsの生成.
         
-        // 日時でソート.
-        List<Entry<String, TabInfo>> list_entries = new ArrayList<Entry<String, TabInfo>>(mApp.mTabMap.entrySet());	// エントリーリストの生成.
-        Collections.sort(list_entries, new Comparator<Entry<String, TabInfo>>(){	// Collections.sortでソート.
-        	public int compare(Entry<String, TabInfo> obj1, Entry<String, TabInfo> obj2){	// 比較関数compare.
-        		TabInfo tabInfo1 = obj1.getValue();
-        		TabInfo tabInfo2 = obj2.getValue();
-        		if (tabInfo1.date < tabInfo2.date){
-        			return 1;	// 1を返す.
-        		}
-        		else{
-        			return -1;	// -1を返す.
-        		}
-        	}
-        });
-        for (Entry<String, TabInfo> entry : list_entries){
+        // ソート済みエントリーリストからTabInfoを取り出して, TabItemにセット.
+        for (Entry<String, TabInfo> entry : mApp.getTabMapEntryList()){
         	TabItem item = new TabItem();	// TabItemオブジェクトitemを生成.
         	TabInfo tabInfo = entry.getValue();	// tabInfo取得.
     		item.title = tabInfo.title;	// title

@@ -2,8 +2,14 @@
 package com.bgstation0.android.app.zinc;
 
 //パッケージのインポート
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
 import android.app.Application;
 import android.util.Log;
 import android.view.View;
@@ -49,6 +55,27 @@ public class MainApplication extends Application {
 		//Toast.makeText(this, "onLowMemory", Toast.LENGTH_LONG).show();	// "onLowMemory"をToastで表示.
 		Log.d(TAG, "onLowMemory");	// Log.dで"onLowMemory"を記録.
 		
+	}
+	
+	// エントリーリストの取得.
+	public List<Entry<String, TabInfo>> getTabMapEntryList(){
+		
+		// 日時でソート.
+        List<Entry<String, TabInfo>> list_entries = new ArrayList<Entry<String, TabInfo>>(mTabMap.entrySet());	// エントリーリストの生成.
+        Collections.sort(list_entries, new Comparator<Entry<String, TabInfo>>(){	// Collections.sortでソート.
+        	public int compare(Entry<String, TabInfo> obj1, Entry<String, TabInfo> obj2){	// 比較関数compare.
+        		TabInfo tabInfo1 = obj1.getValue();
+        		TabInfo tabInfo2 = obj2.getValue();
+        		if (tabInfo1.date < tabInfo2.date){
+        			return 1;	// 1を返す.
+        		}
+        		else{
+        			return -1;	// -1を返す.
+        		}
+        	}
+        });
+        return list_entries;	// list_entriesを返す.
+        
 	}
 	
 }

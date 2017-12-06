@@ -3,6 +3,12 @@ package com.bgstation0.android.app.zinc;
 
 //パッケージのインポート
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map.Entry;
+
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
@@ -86,12 +92,15 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	super.onActivityResult(requestCode, resultCode, data);	// 親クラスのonActivityResultを呼ぶ.
     	
     	// キャンセルの場合.
-    	if (resultCode == RESULT_CANCELED){	// resultCodeがRESULT_CANCELEDの場合.
+    	if (requestCode != REQUEST_CODE_TAB && resultCode == RESULT_CANCELED){	// requestCodeがREQUEST_CODE_TABではなく, resultCodeがRESULT_CANCELEDの場合.
     		return;	// 何もせず終了.
     	}
     	
     	// 起動したアクティビティが閉じた時の結果に対する処理.
-    	Bundle bundle = data.getExtras();	// data.getExtrasでbundleを取得.
+    	Bundle bundle = null;	// Bundle型bundleをnullで初期化.
+    	if (data != null){	// dataがnullでなければ.
+    		bundle = data.getExtras();	// data.getExtrasでbundleを取得.
+    	}
     	
     	// 処理の振り分け.
     	switch (requestCode){	// requestCodeごとに振り分け.
@@ -103,7 +112,9 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     			
     			// ブックマークおよび履歴のアイテムが選択された時.
     			if (resultCode == RESULT_OK){	// RESULT_OKの場合.
-    				loadSelectedUrl(bundle);	// loadSelectedUrlでbundleで渡したURLをロード.
+    				if (bundle != null){	// bundleがnullでなければ.
+    					loadSelectedUrl(bundle);	// loadSelectedUrlでbundleで渡したURLをロード.
+    				}
     			}
     			
     			// 抜ける.
@@ -114,9 +125,28 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     			
     			// タブのアイテムが選択されたとき.
     			if (resultCode == RESULT_OK){	// RESULT_OKの場合.
-    				String tabName = bundle.getString("tabName");	// bundleからtabNameを取得.
-    				String title = bundle.getString("title");	// bundleからtitleを取得.
-    				setContentViewByTabName(tabName, title);	// setContentViewByTabNameでtabNameからビューをセット.(タイトルもセットしておく.)
+    				if (bundle != null){	// bundleがnullでなければ.
+    					String tabName = bundle.getString("tabName");	// bundleからtabNameを取得.
+    					String title = bundle.getString("title");	// bundleからtitleを取得.
+    					setContentViewByTabName(tabName, title);	// setContentViewByTabNameでtabNameからビューをセット.(タイトルもセットしておく.)
+    				}
+    			}
+    			else if (resultCode == RESULT_CANCELED){	// RESULT_CANCELEDの場合.
+    				if (!mApp.mTabMap.containsKey(mCurrentTabName)){	// 表示していたタブが消えた時.
+    					if (mApp.mTabMap.size() > 0){	// 他にタブがある場合.
+    				        Entry<String, TabInfo> firstEndtry = mApp.getTabMapEntryList().get(0);	// 最初の要素.
+    				        TabInfo first = firstEndtry.getValue();	// TabInfoオブジェクトfirstを取得.
+    				        setContentViewByTabName(first.tabName, first.title);	// first.tabNameをセット.
+    					}
+    					else{	// タブが無い場合.
+    						// メインアクティビティを起動する.(新規にタブを追加する.)
+    				    	String packageName = getPackageName();	// getPackageNameでpackageNameを取得.
+    				    	Intent intent = new Intent();	// Intentオブジェクトintentを作成.
+    				    	intent.setClassName(packageName, packageName + ".MainActivity");	// intent.setClassNameで".MainActivity"をセット.
+    				    	intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);	// これだと起動するアクティビティ以外は破棄される.
+    				    	startActivity(intent);	// startActivityにintentを渡す.
+    					}
+    				}
     			}
     			
     			// 抜ける.
