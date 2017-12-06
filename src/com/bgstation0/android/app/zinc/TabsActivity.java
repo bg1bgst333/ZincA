@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -23,6 +26,7 @@ public class TabsActivity extends Activity implements OnItemClickListener, OnIte
 
 	// メンバフィールドの初期化.
 	public MainApplication mApp = null;	// MainApplicationオブジェクトmAppをnullで初期化.
+	public static final int DIALOG_ID_CONFIRM_TAB_REMOVE = 0;	// タブ削除確認のダイアログID.
 	
 	// アクティビティが作成された時.
     @Override
@@ -60,11 +64,54 @@ public class TabsActivity extends Activity implements OnItemClickListener, OnIte
     	final ListView lv = (ListView)parent;	// parentをListViewオブジェクトlvにキャスト.
     	TabItem item = (TabItem)lv.getItemAtPosition(position);	// lv.getItemAtPositionでitemを取得.
     	
-    	// 長押しされたアイテムをタブから削除.
-    	removeTab(item);	// removeTabでitemを削除.
+    	// 削除確認ダイアログ
+    	showConfirmTabRemove(position);	// showConfirmTabRemoveで削除確認ダイアログの表示.(positionを渡す.)
     	
     	// 通常の選択を有効にさせないためにはtrueを返す.
     	return true;	// returnでtrueを返す.
+    	
+    }
+    
+    // ダイアログの作成時.
+    @Override
+    protected Dialog onCreateDialog(final int id, final Bundle args){
+    	
+    	// idごとに振り分け.
+    	if (id == DIALOG_ID_CONFIRM_TAB_REMOVE){	// タブ削除確認.
+
+    		// アラートダイアログの作成.
+    		AlertDialog.Builder builder = new AlertDialog.Builder(this);	// builderの作成.
+    		builder.setTitle(getString(R.string.dialog_title_confirm_tab_remove));	// タイトルのセット.
+    		builder.setMessage(getString(R.string.dialog_message_confirm_tab_remove));	// メッセージのセット.
+    		builder.setPositiveButton(getString(R.string.dialog_button_positive_yes), new DialogInterface.OnClickListener() {
+    			
+    			// "はい"ボタンが選択された時.
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					int position = args.getInt("position");	// positionを取得.
+			    	final ListView lv = (ListView)findViewById(R.id.listview_tabs);	// リストビューlvの取得.
+			    	final TabItem item = (TabItem)lv.getItemAtPosition(position);	// lv.getItemAtPositionでitemを取得.
+			    	removeTab(item);	// removeTabで削除.
+			    	removeDialog(id);	// removeDialogでダイアログを削除.
+				}				
+				
+			});
+    		Dialog dialog = builder.create();	// builder.createでdialogを作成.(ただし, まだ返さない.)
+    		dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {	// キャンセル時の動作を追加.
+
+    			// ダイアログのキャンセル時.
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					removeDialog(id);	// removeDialogでダイアログを削除.
+				}
+				
+			});
+    		return dialog;	// dialogを返す.
+    		
+    	}
+    	
+    	// nullを返す.
+    	return null;	// returnでnullを返す.
     	
     }
     
@@ -145,6 +192,16 @@ public class TabsActivity extends Activity implements OnItemClickListener, OnIte
     	
     	// 更新.
     	adapter.notifyDataSetChanged();	// adapter.notifyDataSetChangedで更新.
+    	
+    }
+    
+    // タブの削除確認ダイアログ.
+    private void showConfirmTabRemove(int position){
+    	
+    	// ダイアログの表示.
+    	Bundle bundle = new Bundle();	// bundle作成.
+    	bundle.putInt("position", position);	// positionを登録.
+    	showDialog(DIALOG_ID_CONFIRM_TAB_REMOVE, bundle);	// showDialogにDIALOG_ID_CONFIRM_TAB_REMOVEとbundleを渡す.
     	
     }
     

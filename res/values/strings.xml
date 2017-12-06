@@ -26,5 +26,7 @@
 	<string name="dialog_message_confirm_history_remove">このアイテムを削除しますか?</string>
 	<string name="dialog_title_confirm_all_histories_remove">履歴の全削除</string>
 	<string name="dialog_message_confirm_all_histories_remove">全てのアイテムを削除しますか?</string>
+	<string name="dialog_title_confirm_tab_remove">タブの削除</string>
+	<string name="dialog_message_confirm_tab_remove">このアイテムを削除しますか?</string>
 	
 </resources>
