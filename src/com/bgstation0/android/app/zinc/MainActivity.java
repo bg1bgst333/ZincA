@@ -117,7 +117,6 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     				String tabName = bundle.getString("tabName");	// bundleからtabNameを取得.
     				String title = bundle.getString("title");	// bundleからtitleを取得.
     				setContentViewByTabName(tabName, title);	// setContentViewByTabNameでtabNameからビューをセット.(タイトルもセットしておく.)
-    				
     			}
     			
     			// 抜ける.
@@ -294,7 +293,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	mApp = (MainApplication)getApplicationContext();	// getApplicationContextで取得したMainApplicationオブジェクトをmAppに格納.
     	String tabName = getTabNameFromIntent();	// tabName取得.
     	if (tabName == null){	// tabNameは指定されていない.
-    		registViewMap();	// registViewMapで追加.
+    		registTabMap();	// registTabMapで追加.
     	}
     	else{	// tabNameがある場合.
     		setContentViewByTabName(tabName, "Zinc");	// setContentViewByTabNameでビューをセット.(タイトルは"Zinc"にしておく.)
@@ -312,14 +311,20 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	
     }
     
-    // タブ名とビューのペアをビューマップに登録.
-    public void registViewMap(){
+    // タブ名とビューのペアをタブマップに登録.
+    public void registTabMap(){
     
     	// 現在のタブを新規作成し, ビューマップに追加.
     	mCurrentTabName = "web" + String.valueOf(mApp.mNextViewNo);	// 現在のタブ名を新規作成.
 		View rootView = getWindow().getDecorView();	// getWindow().getDecorViewでrootViewを取得.
 		View content = rootView.findViewById(R.id.layout_main);	// rootViewからlayout_mainを抜き出す.
-		mApp.mViewMap.put(mCurrentTabName, content);	// contentを登録.
+		TabInfo tabInfo = new TabInfo();	// tabInfoを作成.
+		tabInfo.tabName = mCurrentTabName;	// tabNameをセット.
+		tabInfo.title = "";	// とりあえず空.
+		tabInfo.url = "";	// とりあえず空.
+		tabInfo.date = System.currentTimeMillis();	// 現在時刻をセット.
+		tabInfo.view = content;	//contentをセット.
+		mApp.mTabMap.put(mCurrentTabName, tabInfo);	// tabInfoを登録.
 		mApp.mNextViewNo++;	// mApp.mNextViewNoを増やす.
 		
     }
@@ -328,9 +333,10 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     public void setContentViewByTabName(String tabName, String title){
     
     	// tabNameからcontentを取得し, セット.
-    	View content = mApp.mViewMap.get(tabName);
-		if (content != null){	// nullでなければ.
-			ViewGroup vg = (ViewGroup)content.getParent();	// content.getParentでいったん親のViewGroup取得.
+    	TabInfo tabInfo = mApp.mTabMap.get(tabName);	// mApp.mTabMap.getでtabInfoを取得.
+    	if (tabInfo != null){	// tabInfoがnullでなければ.
+    		View content = tabInfo.view;	// tabInfo.viewをcontentにセット.
+    		ViewGroup vg = (ViewGroup)content.getParent();	// content.getParentでいったん親のViewGroup取得.
 			if (vg != null){	// nullでなければ.(nullの場合で落ちてたので, nullの場合は削除しない.)
 				vg.removeView(content);	// removeViewしろとエラーが出たので, vg.removeViewで削除.
 			}
@@ -338,11 +344,16 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 			initUrlBar();	// initUrlBarでetUrlを初期化.
 	        initProgressBar();	// initProgressBarでprogressbarを初期化.
 	        initWebView();	// initWebViewでwebViewを初期化.
-	        setActionBarTitle(title);	// setActionBarTitleでtitleをセット.
+	        if (title.equals("")){	// titleが空.
+	        	setActionBarTitle(tabInfo.title);	// setActionBarTitleでtabInfo.titleをセット.
+	        }
+	        else{
+	        	setActionBarTitle(title);	// setActionBarにtitleをセット.
+	        }
 			mCurrentTabName = tabName;	// 現在のタブ名とする.
-		}
+    	}
 		else{
-			registViewMap();	// 無い時は生成.
+			registTabMap();	// 無い時は生成.
 		}
 		
     }
@@ -581,12 +592,32 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	// 現在のタブをマップに保存.
     	View rootView = getWindow().getDecorView();	// getWindow().getDecorViewでrootViewを取得.
 		View content = rootView.findViewById(R.id.layout_main);	// rootViewからlayout_mainを抜き出す.
-		mApp.mViewMap.put(mCurrentTabName, content);	// contentを登録.
+		TabInfo tabInfo = mApp.mTabMap.get(mCurrentTabName);	// tabInfo取得.
+		if (tabInfo == null){	// タブが無い.
+			tabInfo = new TabInfo();	// 生成.
+			tabInfo.view = content;	// contentを保存.
+			tabInfo.tabName = mCurrentTabName;	// 現在のタブ名をセット.
+			tabInfo.title = getActionBar().getTitle().toString();	// タイトルを取得.(アクションバーから取得が確実かも.)
+			tabInfo.url = getUrl();
+			tabInfo.date = System.currentTimeMillis();	// 現在日時をセット.
+			mApp.mTabMap.put(mCurrentTabName, tabInfo);	// mCurrentTabNameをキーにtabInfoを登録.
+		}
+		else{
+			tabInfo.view = content;	// contentを保存.
+			tabInfo.tabName = mCurrentTabName;	// 現在のタブ名をセット.
+			tabInfo.title = getActionBar().getTitle().toString();	// タイトルを取得.(アクションバーから取得が確実かも.)
+			tabInfo.url = getUrl();
+			tabInfo.date = System.currentTimeMillis();	// 現在日時をセット.
+			mApp.mTabMap.put(mCurrentTabName, tabInfo);	// mCurrentTabNameをキーにtabInfoを登録.
+		}
 		
     }
     
     // タブ一覧の表示.
     public void showTabs(){
+    	
+    	// 現在のタブをマップに保存.
+    	saveTabState();	// saveTabStateで保存.
     	
     	// タブスアクティビティを起動する.
     	String packageName = getPackageName();	// getPackageNameでpackageNameを取得.

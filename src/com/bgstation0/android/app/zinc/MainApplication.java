@@ -14,7 +14,7 @@ public class MainApplication extends Application {
 
 	// メンバフィールドの初期化
 	private static final String TAG = "MainApplication";	// TAGを"MainApplication"に初期化.
-	public Map<String, View> mViewMap = null;	// ビューマップmViewMapをnullで初期化.
+	public Map<String, TabInfo> mTabMap = null;	// タブmTabMapをnullで初期化.
 	public int mNextViewNo = 0;	// mNextViewNoを0に初期化.
 	
 	// アプリケーションが生成された時.
@@ -25,8 +25,8 @@ public class MainApplication extends Application {
 		//Toast.makeText(this, "onCreate", Toast.LENGTH_LONG).show();	// "onCreate"をToastで表示.
 		Log.d(TAG, "onCreate");	// Log.dで"onCreate"を記録.
 		
-		// ビューマップの生成.
-		mViewMap = new HashMap<String, View>();	// mViewMapをHashMapで作成.
+		// タブマップの生成.
+		mTabMap = new HashMap<String, TabInfo>();	// mTabMapをHashMapで作成.
 		mNextViewNo = 0;	// mNextViewNoを0としておく.
 		
 	}

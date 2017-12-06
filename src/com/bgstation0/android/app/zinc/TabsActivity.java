@@ -3,7 +3,11 @@ package com.bgstation0.android.app.zinc;
 
 //パッケージのインポート
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map.Entry;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -70,16 +74,28 @@ public class TabsActivity extends Activity implements OnItemClickListener, OnIte
     	// tabsの作成
         List<TabItem> tabs = new ArrayList<TabItem>();	// タブスtabsの生成.
         
-        // ビューマップのキーを取り出し, そこから値も取り出し, 必要な情報を取り出す.
-    	for (String key : mApp.mViewMap.keySet()){	// キーの取り出しを繰り返す.
-    		View v = (View)mApp.mViewMap.get(key);	// 値を取り出す.
-    		WebView wv = (WebView)v.findViewById(R.id.webview);	// webviewを取り出す.
-    		TabItem item = new TabItem();	// TabItemを生成.
-    		item.title = wv.getTitle();		//　title取得.
-    		item.url = wv.getUrl();	// url取得.
-    		item.tabName = key;	// keyはタブ名.
+        // 日時でソート.
+        List<Entry<String, TabInfo>> list_entries = new ArrayList<Entry<String, TabInfo>>(mApp.mTabMap.entrySet());	// エントリーリストの生成.
+        Collections.sort(list_entries, new Comparator<Entry<String, TabInfo>>(){	// Collections.sortでソート.
+        	public int compare(Entry<String, TabInfo> obj1, Entry<String, TabInfo> obj2){	// 比較関数compare.
+        		TabInfo tabInfo1 = obj1.getValue();
+        		TabInfo tabInfo2 = obj2.getValue();
+        		if (tabInfo1.date < tabInfo2.date){
+        			return 1;	// 1を返す.
+        		}
+        		else{
+        			return -1;	// -1を返す.
+        		}
+        	}
+        });
+        for (Entry<String, TabInfo> entry : list_entries){
+        	TabItem item = new TabItem();	// TabItemオブジェクトitemを生成.
+        	TabInfo tabInfo = entry.getValue();	// tabInfo取得.
+    		item.title = tabInfo.title;	// title
+    		item.url = tabInfo.url;	// url
+    		item.tabName = tabInfo.tabName;	// タブ名.
     		tabs.add(item);	// tabs.addでitem追加.
-    	}
+        }
     	
     	// tabsを返す.
     	return tabs;	// returnでtabsを返す.
@@ -129,7 +145,7 @@ public class TabsActivity extends Activity implements OnItemClickListener, OnIte
     	String tabName = item.tabName;	// item.tabNameでtabNameを取得.
     	
     	// タブの削除.
-    	mApp.mViewMap.remove(tabName);	// tabNameで登録されたviewをmViewMapから削除.
+    	mApp.mTabMap.remove(tabName);	// tabNameで登録されたtabInfoをmTabMapから削除.
     	
     	// ListViewの取得
     	ListView lvTabs = (ListView)findViewById(R.id.listview_tabs);	// リストビューlvTabsの取得.
