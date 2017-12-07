@@ -178,7 +178,7 @@ public class TabsActivity extends Activity implements OnItemClickListener, OnIte
     	
     }
     
-    // タブ一覧の取得.
+    // タブ一覧の取得.(アクティブなタブのみ.)
     public List<TabItem> getActiveTabs(){
     	
     	// tabsの作成
@@ -199,11 +199,32 @@ public class TabsActivity extends Activity implements OnItemClickListener, OnIte
     	
     }
     
+    // タブ一覧の取得.(非アクティブも含めて.)
+    public List<TabItem> getAllTabs(){
+    	
+    	// tabsの作成
+    	List <TabItem> tabs = new ArrayList<TabItem>();	// タブスtabsの生成.
+    	
+    	// ソート済みDBからTabInfoを取り出して, TabItemにセット.
+    	for (TabInfo tabInfo: mApp.mHlpr.getTabInfoList()){
+    		TabItem item = new TabItem();	// TabItemオブジェクトitemを生成.
+    		item.tabName = tabInfo.tabName;	// tabName.
+    		item.title = tabInfo.title;	// titile.
+    		item.url = tabInfo.url;	// url.
+    		tabs.add(item);	// tabs.addでitemを追加.
+    	}
+    	
+    	// tabsを返す.
+    	return tabs;	// returnでtabsを返す.
+    	
+    }
+    
     // タブのロード.
     public void loadTabs(){
 
     	// adapterの生成
-        TabAdapter adapter = new TabAdapter(this, R.layout.adapter_tab_item, getActiveTabs());	// アダプタadapterの生成.(getActiveTabs()を第3引数にセット.)
+        //TabAdapter adapter = new TabAdapter(this, R.layout.adapter_tab_item, getActiveTabs());	// アダプタadapterの生成.(getActiveTabs()を第3引数にセット.)
+        TabAdapter adapter = new TabAdapter(this, R.layout.adapter_tab_item, getAllTabs());	// アダプタadapterの生成.(getAllTabs()を第3引数にセット.)
         
         // ListViewの取得
         ListView lvTabs = (ListView)findViewById(R.id.listview_tabs);	// リストビューlvTabsの取得.
