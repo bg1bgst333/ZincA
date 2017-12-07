@@ -128,4 +128,38 @@ public class UrlListDatabaseHelper extends SQLiteOpenHelper {
 		
 	}
 	
+	// タブ情報の更新.
+	public boolean updateTabInfo(String tabName, TabInfo tabInfo){
+		
+		// 変数の初期化.
+		SQLiteDatabase sqlite = null;	// SQLiteDatabaseオブジェクトsqliteをnullで初期化.
+		
+		// 更新.
+		try{	// tryで囲む.
+			sqlite = getWritableDatabase();	// getWritableDatabaseでsqliteを取得.
+			ContentValues values = new ContentValues();	// ContentValuesオブジェクトvaluesを生成.
+			values.put("title", tabInfo.title);	// title
+			values.put("url", tabInfo.url);	// url
+			values.put("datemillisec", tabInfo.date);	// datemillisec
+			int row = sqlite.update(TABLE_TABS, values, "tabname = ?", new String[]{tabName});	// updateでtitle, url, datemillisecを更新.
+			if (row == 1){	// 1つだけ変更された.
+				return true;
+			}
+			else{	// それ以外.
+				throw new Exception("not row == 1!");
+			}
+		}
+		catch (Exception ex){	// 例外をcatch.
+			Log.d(TAG, ex.toString());	// ex.toStringをログに出力.
+			return false;
+		}
+		finally{	// 必ず行う処理.
+			if (sqlite != null){	// sqliteがnullでなければ.
+				sqlite.close();	// sqlite.closeで閉じる.
+				sqlite = null;	// sqliteにnullを格納.
+			}
+		}
+		
+	}
+	
 }
