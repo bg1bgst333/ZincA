@@ -22,6 +22,7 @@ public class MainApplication extends Application {
 	private static final String TAG = "MainApplication";	// TAGを"MainApplication"に初期化.
 	public Map<String, TabInfo> mTabMap = null;	// タブmTabMapをnullで初期化.
 	public int mNextViewNo = 0;	// mNextViewNoを0に初期化.
+	public UrlListDatabaseHelper mHlpr = null;	// UrlListDatabaseHelperオブジェクトmHlprをnullに初期化.
 	
 	// アプリケーションが生成された時.
 	@Override
@@ -30,6 +31,9 @@ public class MainApplication extends Application {
 		// Toastで"OnCreate"を表示.
 		//Toast.makeText(this, "onCreate", Toast.LENGTH_LONG).show();	// "onCreate"をToastで表示.
 		Log.d(TAG, "onCreate");	// Log.dで"onCreate"を記録.
+		
+		// タブDBヘルパーの生成.
+		mHlpr = new UrlListDatabaseHelper(this);	// UrlListDatabaseHelperにthisを渡して生成.
 		
 		// タブマップの生成.
 		mTabMap = new HashMap<String, TabInfo>();	// mTabMapをHashMapで作成.

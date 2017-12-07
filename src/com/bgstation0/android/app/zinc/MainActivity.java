@@ -323,7 +323,8 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	mApp = (MainApplication)getApplicationContext();	// getApplicationContextで取得したMainApplicationオブジェクトをmAppに格納.
     	String tabName = getTabNameFromIntent();	// tabName取得.
     	if (tabName == null){	// tabNameは指定されていない.
-    		registTabMap();	// registTabMapで追加.
+    		//registTabMap();	// registTabMapで追加.
+    		registTab();	// registTabで新規タブを登録.
     	}
     	else{	// tabNameがある場合.
     		setContentViewByTabName(tabName, "Zinc");	// setContentViewByTabNameでビューをセット.(タイトルは"Zinc"にしておく.)
@@ -359,6 +360,31 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 		
     }
     
+    // タブの登録.
+    public void registTab(){
+    	
+    	// DB側の更新.
+    	long datemillisec = System.currentTimeMillis();	// datemillisecを取得.
+    	long id = mApp.mHlpr.insertRowTab("", "", "", datemillisec);	// mApp.mHlpr.insertRowTabでまずは空のタブ名で登録し, idを取得.
+    	String currentTabName = "web" + String.valueOf(id);	// 現在のタブ名を作成.
+    	boolean b = mApp.mHlpr.updateTabName(id, currentTabName);	// タブ名の更新.
+    	//boolean c;
+    	//c = b;
+    	
+    	// マップ側の更新.
+    	View rootView = getWindow().getDecorView();	// getWindow().getDecorViewでrootViewを取得.
+		View content = rootView.findViewById(R.id.layout_main);	// rootViewからlayout_mainを抜き出す.
+		TabInfo tabInfo = new TabInfo();	// tabInfoを作成.
+		tabInfo.tabName = currentTabName;	// tabNameをセット.
+		tabInfo.title = "";	// とりあえず空.
+		tabInfo.url = "";	// とりあえず空.
+		tabInfo.date = datemillisec;	// 現在時刻をセット.
+		tabInfo.view = content;	//contentをセット.
+		mApp.mTabMap.put(currentTabName, tabInfo);	// tabInfoを登録.
+		mCurrentTabName = currentTabName;	// mCurrentTabNameにセット.
+		
+    }
+    
     // タブ名から取得したビューをセット.
     public void setContentViewByTabName(String tabName, String title){
     
@@ -383,7 +409,8 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 			mCurrentTabName = tabName;	// 現在のタブ名とする.
     	}
 		else{
-			registTabMap();	// 無い時は生成.
+			//registTabMap();	// 無い時は生成.
+			registTab();	// registTabで新規タブを登録.
 		}
 		
     }
