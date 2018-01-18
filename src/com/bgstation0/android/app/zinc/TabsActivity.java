@@ -262,6 +262,9 @@ public class TabsActivity extends Activity implements OnItemClickListener, OnIte
     	// itemのタブ名を取得.
     	String tabName = item.tabName;	// item.tabNameでtabNameを取得.
     	
+    	// DBから削除.
+    	mApp.mHlpr.removeRowTab(tabName);	// mApp.mHlpr.removeRowTabでtabNameのタブを削除.
+    	
     	// タブの削除.
     	mApp.mTabMap.remove(tabName);	// tabNameで登録されたtabInfoをmTabMapから削除.
     	
