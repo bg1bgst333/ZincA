@@ -61,7 +61,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
         initProgressBar();	// initProgressBarでprogressbarを初期化.
         initWebView();	// initWebViewでwebViewを初期化.
         initDownloadManager();	// initDownloadManagerでmDownloadManagerを初期化.
-        loadUrlFromIntent();	// loadUrlFromIntentでインテントで指定されたURLをロード.
+        //loadUrlFromIntent();	// loadUrlFromIntentでインテントで指定されたURLをロード.
         initMainApplication();	// initMainApplicationでメインアプリケーションを初期化.
         
     }
@@ -324,13 +324,20 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	//String tabName = getTabNameFromIntent();	// tabName取得.
     	//if (tabName == null){	// tabNameは指定されていない.
     	//registTabMap();	// registTabMapで追加.
-    	TabInfo lastTabInfo = mApp.mHlpr.getLastTabInfo();	// 直近のタブを取得.
-    	if (lastTabInfo == null){	// lastTabInfoがnullの時.
+    	String launchMode = getTabLaunchModeFromIntent();	// getTabLaunchModeFromIntentで起動モード取得.
+    	if (launchMode != null && launchMode.equals("NewTab")){
     		registTab();	// registTabで新規タブを登録.
     	}
     	else{
-    		loadTab(lastTabInfo);	// loadTabでDB上のタブを復元.
+    		TabInfo lastTabInfo = mApp.mHlpr.getLastTabInfo();	// 直近のタブを取得.
+    		if (lastTabInfo == null){	// lastTabInfoがnullの時.
+    			registTab();	// registTabで新規タブを登録.
+    		}	
+    		else{
+    			loadTab(lastTabInfo);	// loadTabでDB上のタブを復元.
+    		}
     	}
+    	
     	//}
     	//else{	// tabNameがある場合.
     	//	setContentViewByTabName(tabName, "Zinc");	// setContentViewByTabNameでビューをセット.(タイトルは"Zinc"にしておく.)
@@ -345,6 +352,16 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	Intent intent = getIntent();	// getIntentでintent取得.
     	String tabName = intent.getStringExtra("tabName");	// intent.getStringExtraでtabName取得.
     	return tabName;	// returnでtabNameを返す.
+    	
+    }
+    
+    // タブの起動モードを取得.
+    public String getTabLaunchModeFromIntent(){
+    	
+    	// インテントにセットされた起動モードを返す.
+    	Intent intent = getIntent();
+    	String launchMode = intent.getStringExtra("LaunchMode");	// intent.getStringExtraで"LaunchMode"を取得.
+    	return launchMode;	// returnでlaunchModeを返す.
     	
     }
     
@@ -662,6 +679,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	Intent intent = new Intent();	// Intentオブジェクトintentを作成.
     	intent.setClassName(packageName, packageName + ".MainActivity");	// intent.setClassNameで".MainActivity"をセット.
     	intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);	// これだと起動するアクティビティ以外は破棄される.
+    	intent.putExtra("LaunchMode", "NewTab");	// "LaunchMode"をキー, "NewTab"を値として登録.
     	startActivity(intent);	// startActivityにintentを渡す.
     	
     }
