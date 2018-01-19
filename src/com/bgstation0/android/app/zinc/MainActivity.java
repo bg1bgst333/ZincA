@@ -324,7 +324,13 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	//String tabName = getTabNameFromIntent();	// tabName取得.
     	//if (tabName == null){	// tabNameは指定されていない.
     	//registTabMap();	// registTabMapで追加.
-    	registTab();	// registTabで新規タブを登録.
+    	TabInfo lastTabInfo = mApp.mHlpr.getLastTabInfo();	// 直近のタブを取得.
+    	if (lastTabInfo == null){	// lastTabInfoがnullの時.
+    		registTab();	// registTabで新規タブを登録.
+    	}
+    	else{
+    		loadTab(lastTabInfo);	// loadTabでDB上のタブを復元.
+    	}
     	//}
     	//else{	// tabNameがある場合.
     	//	setContentViewByTabName(tabName, "Zinc");	// setContentViewByTabNameでビューをセット.(タイトルは"Zinc"にしておく.)
@@ -343,10 +349,10 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     }
     
     // タブ名とビューのペアをタブマップに登録.
-    public void registTabMap(){
+    public void registTabMapx(){
     
     	// 現在のタブを新規作成し, ビューマップに追加.
-    	mCurrentTabName = "web" + String.valueOf(mApp.mNextViewNo);	// 現在のタブ名を新規作成.
+    	//mCurrentTabName = "web" + String.valueOf(mApp.mNextViewNo);	// 現在のタブ名を新規作成.
 		View rootView = getWindow().getDecorView();	// getWindow().getDecorViewでrootViewを取得.
 		View content = rootView.findViewById(R.id.layout_main);	// rootViewからlayout_mainを抜き出す.
 		TabInfo tabInfo = new TabInfo();	// tabInfoを作成.
@@ -356,7 +362,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 		tabInfo.date = System.currentTimeMillis();	// 現在時刻をセット.
 		tabInfo.view = content;	//contentをセット.
 		mApp.mTabMap.put(mCurrentTabName, tabInfo);	// tabInfoを登録.
-		mApp.mNextViewNo++;	// mApp.mNextViewNoを増やす.
+		//mApp.mNextViewNo++;	// mApp.mNextViewNoを増やす.
 		
     }
     
@@ -382,6 +388,21 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 		tabInfo.view = content;	//contentをセット.
 		mApp.mTabMap.put(currentTabName, tabInfo);	// tabInfoを登録.
 		mCurrentTabName = currentTabName;	// mCurrentTabNameにセット.
+		
+    }
+    
+    // タブ情報からタブを生成.
+    public void loadTab(TabInfo tabInfo){
+    	
+    	// マップ側の更新.
+    	View rootView = getWindow().getDecorView();	// getWindow().getDecorViewでrootViewを取得.
+		View content = rootView.findViewById(R.id.layout_main);	// rootViewからlayout_mainを抜き出す.
+		tabInfo.date = System.currentTimeMillis();	// 現在時刻をセット.
+		tabInfo.view = content;	//contentをセット.
+		setUrlOmit(tabInfo.url);	// tabInfo.urlをsetUrlOmitでセット.
+		loadUrl();	// loadUrlでロード.
+		mCurrentTabName = tabInfo.tabName;	// tabInfo.tabNameをセット.
+		mApp.mTabMap.put(mCurrentTabName, tabInfo);	// tabInfoを登録.
 		
     }
     

@@ -261,4 +261,47 @@ public class UrlListDatabaseHelper extends SQLiteOpenHelper {
 		}
 	}
 	
+	// 最後に更新したタブ情報を取得.
+	public TabInfo getLastTabInfo(){
+		
+		// 変数の初期化.
+		SQLiteDatabase sqlite = null;	// SQLiteDatabaseオブジェクトsqliteをnullで初期化.
+        String[] projection = new String[]{	// 取得したいカラム名の配列projection.
+        		"_id",	// ID.
+        		"tabname",	// タブ名.
+        		"title",	// タイトル.
+        		"url",	// URL.
+        		"datemillisec"	// 日時.
+        };
+        Cursor c = null;	// cをnullに初期化.
+
+        // DBからタブ情報を得る.
+		try{	// tryで囲む.
+			sqlite = getReadableDatabase();	// getReadableDatabaseでsqliteを取得.
+			c = sqlite.query(TABLE_TABS, projection, null, null, null, null, "datemillisec desc");	// sqlite.queryで一覧取得.("datemillisec desc"で日時降順.)
+			c.moveToFirst();	// 先頭にセット.
+			TabInfo tabInfo = new TabInfo();	// tabInfoの生成.
+			tabInfo.tabName = c.getString(c.getColumnIndex("tabname"));	// tabname.
+			tabInfo.title = c.getString(c.getColumnIndex("title"));	// title.
+			tabInfo.url = c.getString(c.getColumnIndex("url"));	// url.
+			tabInfo.date = c.getLong(c.getColumnIndex("datemillisec"));	// datemillisec.
+			return tabInfo;	// tabInfoを返す.
+		}
+		catch (Exception ex){	// 例外をcatch.
+			Log.d(TAG, ex.toString());	// ex.toStringをログに出力.
+			return null;	// nullを返す.
+		}
+		finally{	// 必ず行う処理.
+			if (c != null){	// cがnullでなければ.
+				c.close();	// c.closeで閉じる.
+				c = null;	// cにnullを格納.
+			}
+			if (sqlite != null){	// sqliteがnullでなければ.
+				sqlite.close();	// sqlite.closeで閉じる.
+				sqlite = null;	// sqliteにnullを格納.
+			}
+		}
+	
+	}
+	
 }

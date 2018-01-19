@@ -21,7 +21,7 @@ public class MainApplication extends Application {
 	// メンバフィールドの初期化
 	private static final String TAG = "MainApplication";	// TAGを"MainApplication"に初期化.
 	public Map<String, TabInfo> mTabMap = null;	// タブmTabMapをnullで初期化.
-	public int mNextViewNo = 0;	// mNextViewNoを0に初期化.
+	//public int mNextViewNo = 0;	// mNextViewNoを0に初期化.
 	public UrlListDatabaseHelper mHlpr = null;	// UrlListDatabaseHelperオブジェクトmHlprをnullに初期化.
 	
 	// アプリケーションが生成された時.
@@ -37,7 +37,7 @@ public class MainApplication extends Application {
 		
 		// タブマップの生成.
 		mTabMap = new HashMap<String, TabInfo>();	// mTabMapをHashMapで作成.
-		mNextViewNo = 0;	// mNextViewNoを0としておく.
+		//mNextViewNo = 0;	// mNextViewNoを0としておく.
 		
 	}
 	
