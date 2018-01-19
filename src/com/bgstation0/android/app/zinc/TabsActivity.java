@@ -285,6 +285,9 @@ public class TabsActivity extends Activity implements OnItemClickListener, OnIte
     // タブの全削除.
     public void removeAllTabs(){
     	
+    	// DBから全削除.
+    	mApp.mHlpr.removeAllTabs();	// mApp.mHlpr.removeAllTabsですべてのタブを削除.
+    	
     	// タブマップをクリア.
     	mApp.mTabMap.clear();	// mApp.mTabMap.clearでクリア.
     	
