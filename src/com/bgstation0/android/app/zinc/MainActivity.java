@@ -128,22 +128,62 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     				if (bundle != null){	// bundleがnullでなければ.
     					String tabName = bundle.getString("tabName");	// bundleからtabNameを取得.
     					String title = bundle.getString("title");	// bundleからtitleを取得.
-    					setContentViewByTabName(tabName, title);	// setContentViewByTabNameでtabNameからビューをセット.(タイトルもセットしておく.)
+    					if (mApp.mTabMap.containsKey(tabName)){	// タブマップにある場合.
+    						setContentViewByTabName(tabName, title);	// setContentViewByTabNameでtabNameからビューをセット.(タイトルもセットしておく.)
+    					}
+    					else{	// マップには無い場合.
+    						// タブDBからの取得.
+    						TabInfo tabInfo = mApp.mHlpr.getTabInfo(tabName);	// tabNameからtabInfo取得
+    						if (tabInfo != null){	// DBにはある場合.
+    							// メインアクティビティを起動する.(タブを復元する.)
+	    				    	String packageName = getPackageName();	// getPackageNameでpackageNameを取得.
+	    				    	Intent intent = new Intent();	// Intentオブジェクトintentを作成.
+	    				    	intent.setClassName(packageName, packageName + ".MainActivity");	// intent.setClassNameで".MainActivity"をセット.
+	    				    	intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);	// これだと起動するアクティビティ以外は破棄される.
+	    				    	intent.putExtra("LaunchMode", "RestoreTab");	// "LaunchMode"をキー, "RestoreTab"を値として登録.
+	    				    	intent.putExtra("TabName", tabInfo.tabName);	// "TabName"でtabinfo.tabNameを登録.
+	    				    	intent.putExtra("Url", tabInfo.url);	// "Url"をキーにして, tabInfo.urlを送る.
+	    				    	startActivity(intent);	// startActivityにintentを渡す.
+    						}
+    						else{	// DBにもない場合.(ここにくることはない.)
+	    						// メインアクティビティを起動する.(タブの新規作成する.)
+	    				    	String packageName = getPackageName();	// getPackageNameでpackageNameを取得.
+	    				    	Intent intent = new Intent();	// Intentオブジェクトintentを作成.
+	    				    	intent.setClassName(packageName, packageName + ".MainActivity");	// intent.setClassNameで".MainActivity"をセット.
+	    				    	intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);	// これだと起動するアクティビティ以外は破棄される.
+	    				    	intent.putExtra("LaunchMode", "NewTab");	// "LaunchMode"をキー, "NewTab"を値として登録.
+	    				    	startActivity(intent);	// startActivityにintentを渡す.
+    						}
+    					}
     				}
     			}
     			else if (resultCode == RESULT_CANCELED){	// RESULT_CANCELEDの場合.
     				if (!mApp.mTabMap.containsKey(mCurrentTabName)){	// 表示していたタブが消えた時.
-    					if (mApp.mTabMap.size() > 0){	// 他にタブがある場合.
-    				        Entry<String, TabInfo> firstEndtry = mApp.getTabMapEntryList().get(0);	// 最初の要素.
-    				        TabInfo first = firstEndtry.getValue();	// TabInfoオブジェクトfirstを取得.
-    				        setContentViewByTabName(first.tabName, first.title);	// first.tabNameをセット.
+    					// 直近タブかどうか.
+    					TabInfo tabInfo = mApp.mHlpr.getLastTabInfo();	// 直近のタブを取得.
+    					if (tabInfo != null){	// 1つはみつかった.
+	    					if (mApp.mTabMap.containsKey(tabInfo.tabName)){	// マップにある場合.
+	     				        setContentViewByTabName(tabInfo.tabName, tabInfo.title);	// tabInfoのビューをセット.
+	    					}
+	    					else{	// マップに無い.
+	    						// メインアクティビティを起動する.(タブを復元する.)
+	    				    	String packageName = getPackageName();	// getPackageNameでpackageNameを取得.
+	    				    	Intent intent = new Intent();	// Intentオブジェクトintentを作成.
+	    				    	intent.setClassName(packageName, packageName + ".MainActivity");	// intent.setClassNameで".MainActivity"をセット.
+	    				    	intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);	// これだと起動するアクティビティ以外は破棄される.
+	    				    	intent.putExtra("LaunchMode", "RestoreTab");	// "LaunchMode"をキー, "RestoreTab"を値として登録.
+	    				    	intent.putExtra("TabName", tabInfo.tabName);	// "TabName"でtabinfo.tabNameを登録.
+	    				    	intent.putExtra("Url", tabInfo.url);	// "Url"をキーにして, tabInfo.urlを送る.
+	    				    	startActivity(intent);	// startActivityにintentを渡す.
+	    					}
     					}
-    					else{	// タブが無い場合.
-    						// メインアクティビティを起動する.(新規にタブを追加する.)
+    					else{	// 1つもない.
+    						// メインアクティビティを起動する.(タブの新規作成する.)
     				    	String packageName = getPackageName();	// getPackageNameでpackageNameを取得.
     				    	Intent intent = new Intent();	// Intentオブジェクトintentを作成.
     				    	intent.setClassName(packageName, packageName + ".MainActivity");	// intent.setClassNameで".MainActivity"をセット.
     				    	intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);	// これだと起動するアクティビティ以外は破棄される.
+    				    	intent.putExtra("LaunchMode", "NewTab");	// "LaunchMode"をキー, "NewTab"を値として登録.
     				    	startActivity(intent);	// startActivityにintentを渡す.
     					}
     				}
@@ -327,6 +367,11 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	String launchMode = getTabLaunchModeFromIntent();	// getTabLaunchModeFromIntentで起動モード取得.
     	if (launchMode != null && launchMode.equals("NewTab")){
     		registTab();	// registTabで新規タブを登録.
+    	}
+    	else if (launchMode != null && launchMode.equals("RestoreTab")){
+    		String tabName = getIntent().getExtras().getString("TabName");	// tabName取得.
+    		TabInfo tabInfo = mApp.mHlpr.getTabInfo(tabName);	// tabNameからtabInfo取得.
+    		loadTab(tabInfo);	// loadTabでDB上のタブを復元.
     	}
     	else{
     		TabInfo lastTabInfo = mApp.mHlpr.getLastTabInfo();	// 直近のタブを取得.
