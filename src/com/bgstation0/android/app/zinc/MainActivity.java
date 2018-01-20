@@ -417,7 +417,9 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 		tabInfo.date = System.currentTimeMillis();	// 現在時刻をセット.
 		tabInfo.view = content;	//contentをセット.
 		setUrlOmit(tabInfo.url);	// tabInfo.urlをsetUrlOmitでセット.
-		loadUrl();	// loadUrlでロード.
+		if (!tabInfo.url.equals("")){	// ""でなければ.
+			loadUrl();	// loadUrlでロード.
+		}
 		mCurrentTabName = tabInfo.tabName;	// tabInfo.tabNameをセット.
 		mApp.mTabMap.put(mCurrentTabName, tabInfo);	// tabInfoを登録.
 		
