@@ -27,6 +27,7 @@ import android.widget.ListView;
 public class BookmarkActivity extends Activity implements OnItemClickListener, OnItemLongClickListener{	// AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListenerインターフェースの追加.
 
 	// メンバフィールドの初期化.
+	public MainApplication mApp = null;	// MainApplicationオブジェクトmAppをnullで初期化.
 	public static final int DIALOG_ID_CONFIRM_BOOKMARK_REMOVE = 0;	// ブックマーク削除確認のダイアログID.
 	public static final int DIALOG_ID_CONFIRM_ALL_BOOKMARKS_REMOVE = 1;	// ブックマーク全削除確認のダイアログID.
 	
@@ -37,6 +38,7 @@ public class BookmarkActivity extends Activity implements OnItemClickListener, O
     	// ビューのセット
         super.onCreate(savedInstanceState);	// 親クラスのonCreateを呼ぶ.
         setContentView(R.layout.activity_bookmark);	// setContentViewでR.layout.activity_bookmarkをセット.
+        mApp = (MainApplication)getApplicationContext();	// getApplicationContextでmAppを取得.
         
         // ブックマークのロード.
         loadBookmarks();	// loadBookmarksでブックマークをロードして表示.
@@ -174,8 +176,8 @@ public class BookmarkActivity extends Activity implements OnItemClickListener, O
     	
     }
     
-    // ブックマーク一覧の取得.
-    public List<BookmarkItem> getAllBookmarks(){
+    // ブックマーク一覧の取得.(Browserクラス版.)
+    public List<BookmarkItem> getAllBookmarksFromBrowser(){
     	
     	// bookmarksの作成
         List<BookmarkItem> bookmarks = new ArrayList<BookmarkItem>();	// ブックマークbookmarksの生成.
@@ -205,11 +207,31 @@ public class BookmarkActivity extends Activity implements OnItemClickListener, O
         
     }
     
+    // ブックマーク一覧の取得.(独自DB版.)
+    public List<BookmarkItem> getAllBookmarksFromDB(){
+    
+    	// bookmarksの作成.
+    	List<BookmarkItem> bookmarks = new ArrayList<BookmarkItem>();	// ブックマークスbookmarksの生成.
+    	
+    	// ソート済みDBからBookmarkInfoを取り出して, BookmarkItemにセット.
+    	for (BookmarkInfo bookmarkInfo: mApp.mHlpr.getBookmarkList()){
+    		BookmarkItem item = new BookmarkItem();	// BookmarkItemオブジェクトitemを生成.
+    		item.title = bookmarkInfo.title;	// title.
+    		item.url = bookmarkInfo.url;	// url.
+    		bookmarks.add(item);	// bookmarks.addでitemを追加.
+    	}
+    	
+    	// bookmarksを返す.
+    	return bookmarks;	// returnでbookmarksを返す.
+    	
+    }
+    
+    
     // ブックマークのロード.
     public void loadBookmarks(){
     	
     	// adapterの生成
-        BookmarkAdapter adapter = new BookmarkAdapter(this, R.layout.adapter_bookmark_item, getAllBookmarks());	// アダプタadapterの生成.(getAllBookmarks()でブックマークリストを取得し, 第3引数にセット.)
+        BookmarkAdapter adapter = new BookmarkAdapter(this, R.layout.adapter_bookmark_item, getAllBookmarksFromDB());	// アダプタadapterの生成.(getAllBookmarksFromDBでブックマークリストを取得し, 第3引数にセット.)
         
         // ListViewの取得
         ListView lvBookmark = (ListView)findViewById(R.id.listview_bookmark);	// リストビューlvBookmarkの取得.

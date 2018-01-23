@@ -232,7 +232,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	else if (id == R.id.menu_item_bookmark_add){	// R.id.menu_item_bookmark_add("ブックマークの追加")の時.
 
     		// ブックマークの追加.
-    		addBookmark();	// addBookmarkで追加.
+    		addBookmarkToDB();	// addBookmarkToDBで追加.
     		
     	}
     	else if (id == R.id.menu_item_bookmark_show){	// R.id.menu_item_bookmark_show("ブックマークの一覧")の時.
@@ -777,8 +777,8 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     			
     }
     
-    // ブックマークへの追加.
-    public void addBookmark(){
+    // ブックマークへの追加.(Browserクラス版.)
+    public void addBookmarkToBrowser(){
     	
     	// webViewを取得し, URLとタイトルを取得.
     	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
@@ -800,6 +800,20 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 		catch (Exception ex){	// 例外のcatch.
 			Toast.makeText(this, getString(R.string.toast_message_bookmark_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_bookmark_regist_errorに定義されたメッセージをToastで表示.
 		}
+		
+    }
+    
+    // ブックマークへの追加.(独自DB版.)
+    public void addBookmarkToDB(){
+    	
+    	// webViewを取得し, URLとタイトルを取得.
+    	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
+		String title = webView.getTitle();	// webView.getTitleでタイトルを取得.
+		String url = webView.getUrl();	// webView.getUrlでURLを取得.
+		long datemillisec = System.currentTimeMillis();	// System.currentTimeMillisで現在時刻を取得し, datemillisecに格納.
+		
+		// このURLをブックマークへ追加.
+		mApp.mHlpr.insertRowBookmark(title, url, datemillisec);	// mApp.mHlpr.insertRowBookmarkでtitle, url, datemillisecを追加.
 		
     }
     

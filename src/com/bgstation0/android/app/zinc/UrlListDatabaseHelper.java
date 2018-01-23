@@ -20,10 +20,13 @@ public class UrlListDatabaseHelper extends SQLiteOpenHelper {
 	// メンバフィールドの定義.
 	private static final String TAG = "UrlListDatabaseHelper";	// TAGを"UrlListDatabaseHelper"に初期化.
 	private static final String DB = "urllist.db";	// DB名は"urllist.db".
-	private static final int DB_VERSION = 1;	// DBバージョンは1.
+	private static final int DB_VERSION = 2;	// DBバージョンは2.(TABLE_BOOKMARKSを追加したため.)
 	private static final String TABLE_TABS = "tabs";	// tabsテーブル.
+	private static final String TABLE_BOOKMARKS = "bookmarks";	// bookmarksテーブル.
 	private static final String CREATE_TABLE_TABS = "create table " + TABLE_TABS + " ( _id integer primary key, tabname string, title string, url string, datemillisec long);";	// TABLE_TABSのCREATE_TABLE文.(sqliteシステムが使っている_idはintegerなのでlongにすると別のカラムとして扱われるのでintegerにする.)
+	private static final String CREATE_TABLE_BOOKMARKS = "create table " + TABLE_BOOKMARKS + " ( _id integer primary key, title string, url string, datemillisec long);";	// TABLE_BOOKMARKSのCREATE_TABLE文.
 	private static final String DROP_TABLE_TABS = "drop table " + TABLE_TABS + ";";	// TABLE_TABSのDROP_TABLE文.
+	private static final String DROP_TABLE_BOOKMARKS = "drop table " + TABLE_BOOKMARKS + ";";	// TABLE_BOOKMARKSのDROP_TABLE文.
 	private Context mContext;	// コンテキスト.
 	
 	// コンストラクタ
@@ -39,6 +42,7 @@ public class UrlListDatabaseHelper extends SQLiteOpenHelper {
 		// テーブル作成実行.
 		try{	// tryで囲む.
 			db.execSQL(CREATE_TABLE_TABS);	// db.execSQLでCREATE_TABLE_TABSを実行.
+			db.execSQL(CREATE_TABLE_BOOKMARKS);	// db.exeqSQLでCREATE_TABLE_BOOKMARKSを実行.
 		}
 		catch (Exception ex){	// 例外をcatch.
 			Log.d(TAG, ex.toString());	// ex.toStringをログに出力.
@@ -52,6 +56,7 @@ public class UrlListDatabaseHelper extends SQLiteOpenHelper {
 		
 		// テーブル再作成.
 		db.execSQL(DROP_TABLE_TABS);	// db.execSQLでDROP_TABLE_TABSを実行.
+		db.execSQL(DROP_TABLE_BOOKMARKS);	// db.execSQLでDROP_TABLE_BOOKMARKSを実行.
 		onCreate(db);	// onCreateにdbを渡して再作成.
 		
 	}
@@ -72,6 +77,37 @@ public class UrlListDatabaseHelper extends SQLiteOpenHelper {
 			values.put("url", url);	// urlを登録.
 			values.put("datemillisec", datemillisec);	// datemillisecを登録.
 			id = sqlite.insertOrThrow(TABLE_TABS, null, values);	// sqlite.insertOrThrowで挿入.
+			return id;	// idを返す.
+		}
+		catch (Exception ex){	// 例外をcatch.
+			id = -1;	// idに-1を代入.
+			Log.d(TAG, ex.toString());	// ex.toStringをログに出力.
+			return id;	// idを返す.
+		}
+		finally{	// 必ず行う処理.
+			if (sqlite != null){	// sqliteがnullでなければ.
+				sqlite.close();	// sqlite.closeで閉じる.
+				sqlite = null;	// sqliteにnullを格納.
+			}
+		}
+		
+	}
+	
+	// ブックマークの追加.
+	public long insertRowBookmark(String title, String url, long datemillisec){
+		
+		// 変数の初期化.
+		long id = -1;	// 行IDを-1で初期化.
+		SQLiteDatabase sqlite = null;	// SQLiteDatabaseオブジェクトsqliteをnullで初期化.
+
+		// 挿入.
+		try{	// tryで囲む.
+			sqlite = getWritableDatabase();	// getWritableDatabaseでsqliteを取得.
+			ContentValues values = new ContentValues();	// ContentValuesオブジェクトvaluesを生成.
+			values.put("title", title);	// titleを登録.
+			values.put("url", url);	// urlを登録.
+			values.put("datemillisec", datemillisec);	// datemillisecを登録.
+			id = sqlite.insertOrThrow(TABLE_BOOKMARKS, null, values);	// sqlite.insertOrThrowで挿入.
 			return id;	// idを返す.
 		}
 		catch (Exception ex){	// 例外をcatch.
@@ -259,6 +295,51 @@ public class UrlListDatabaseHelper extends SQLiteOpenHelper {
 				sqlite = null;	// sqliteにnullを格納.
 			}
 		}
+	}
+	
+	// ブックマーク一覧の取得.
+	public List<BookmarkInfo> getBookmarkList(){
+		
+		// 変数の初期化.
+		SQLiteDatabase sqlite = null;	// SQLiteDatabaseオブジェクトsqliteをnullで初期化.
+        String[] projection = new String[]{	// 取得したいカラム名の配列projection.
+        		"_id",	// ID.
+        		"title",	// タイトル.
+        		"url",	// URL.
+        		"datemillisec"	// 日時.
+        };
+        List<BookmarkInfo> bookmarkList = new ArrayList<BookmarkInfo>();	// bookmarkListの生成.
+        Cursor c = null;	// cをnullに初期化.
+        
+        // DBからタブ情報を得る.
+		try{	// tryで囲む.
+			sqlite = getReadableDatabase();	// getReadableDatabaseでsqliteを取得.
+			c = sqlite.query(TABLE_BOOKMARKS, projection, null, null, null, null, "datemillisec desc");	// sqlite.queryで一覧取得.("datemillisec desc"で日付降順.)
+			c.moveToFirst();	// 先頭にセット.
+			do{
+				BookmarkInfo bookmarkInfo = new BookmarkInfo();	// bookmarkInfoの生成.
+				bookmarkInfo.title = c.getString(c.getColumnIndex("title"));	// title.
+				bookmarkInfo.url = c.getString(c.getColumnIndex("url"));	// url.
+				bookmarkInfo.date = c.getLong(c.getColumnIndex("datemillisec"));	// datemillisec.
+				bookmarkList.add(bookmarkInfo);	// bookmarkList.addでbookmarkInfoを追加.
+			} while(c.moveToNext());
+			return bookmarkList;	// bookmarkListを返す.
+		}
+		catch (Exception ex){	// 例外をcatch.
+			Log.d(TAG, ex.toString());	// ex.toStringをログに出力.
+			return null;	// nullを返す.
+		}
+		finally{	// 必ず行う処理.
+			if (c != null){	// cがnullでなければ.
+				c.close();	// c.closeで閉じる.
+				c = null;	// cにnullを格納.
+			}
+			if (sqlite != null){	// sqliteがnullでなければ.
+				sqlite.close();	// sqlite.closeで閉じる.
+				sqlite = null;	// sqliteにnullを格納.
+			}
+		}
+				
 	}
 	
 	// 最後に更新したタブ情報を取得.
