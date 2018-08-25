@@ -6,4 +6,5 @@ public class BookmarkInfo {
 	public String title;	// タイトル
 	public String url;	// URL
 	public long date;	// 日時(UNIXミリ秒)
+	public long id;	// ID
 }

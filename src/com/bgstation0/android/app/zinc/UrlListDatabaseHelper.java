@@ -251,6 +251,31 @@ public class UrlListDatabaseHelper extends SQLiteOpenHelper {
 		
 	}
 	
+	// ブックマークの削除.
+	public boolean removeRowBookmark(int id){
+		
+		// 変数の初期化.
+		SQLiteDatabase sqlite = null;	// SQLiteDatabaseオブジェクトsqliteをnullで初期化.
+						
+		// 削除.
+		try{	// tryで囲む.
+			sqlite = getWritableDatabase();	// getWritableDatabaseでsqliteを取得.
+			int row = sqlite.delete(TABLE_BOOKMARKS, "_id = ?", new String[]{String.valueOf(id)});	// sqlite.deleteで_idがidな行を削除.
+			return true;
+		}
+		catch (Exception ex){	// 例外をcatch.
+			Log.d(TAG, ex.toString());	// ex.toStringをログに出力.
+			return false;
+		}
+		finally{	// 必ず行う処理.
+			if (sqlite != null){	// sqliteがnullでなければ.
+				sqlite.close();	// sqlite.closeで閉じる.
+				sqlite = null;	// sqliteにnullを格納.
+			}
+		}
+				
+	}
+	
 	// タブ一覧の取得.
 	public List<TabInfo> getTabInfoList(){
 		
@@ -311,16 +336,20 @@ public class UrlListDatabaseHelper extends SQLiteOpenHelper {
         List<BookmarkInfo> bookmarkList = new ArrayList<BookmarkInfo>();	// bookmarkListの生成.
         Cursor c = null;	// cをnullに初期化.
         
-        // DBからタブ情報を得る.
+        // DBからブックマーク情報を得る.
 		try{	// tryで囲む.
 			sqlite = getReadableDatabase();	// getReadableDatabaseでsqliteを取得.
 			c = sqlite.query(TABLE_BOOKMARKS, projection, null, null, null, null, "datemillisec desc");	// sqlite.queryで一覧取得.("datemillisec desc"で日付降順.)
+			if (c.getCount() <= 0){	// 1つもない.
+				return null;
+			}
 			c.moveToFirst();	// 先頭にセット.
 			do{
 				BookmarkInfo bookmarkInfo = new BookmarkInfo();	// bookmarkInfoの生成.
 				bookmarkInfo.title = c.getString(c.getColumnIndex("title"));	// title.
 				bookmarkInfo.url = c.getString(c.getColumnIndex("url"));	// url.
 				bookmarkInfo.date = c.getLong(c.getColumnIndex("datemillisec"));	// datemillisec.
+				bookmarkInfo.id = c.getInt(c.getColumnIndex("_id"));	// _id.
 				bookmarkList.add(bookmarkInfo);	// bookmarkList.addでbookmarkInfoを追加.
 			} while(c.moveToNext());
 			return bookmarkList;	// bookmarkListを返す.

@@ -5,4 +5,5 @@ package com.bgstation0.android.app.zinc;
 public class BookmarkItem {
 	public String title;	// ƒ^ƒCƒgƒ‹
 	public String url;	// URL
+	public long id;	// ID
 }

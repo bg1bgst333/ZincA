@@ -122,7 +122,8 @@ public class BookmarkActivity extends Activity implements OnItemClickListener, O
 					int position = args.getInt("position");	// positionを取得.
 			    	final ListView lv = (ListView)findViewById(R.id.listview_bookmark);	// リストビューlvの取得.
 			    	final BookmarkItem item = (BookmarkItem)lv.getItemAtPosition(position);	// lv.getItemAtPositionでitemを取得.
-			    	removeBookmark(item);	// removeBookmarkで削除.
+			    	//removeBookmark(item);	// removeBookmarkで削除.
+			    	removeBookmarkFromDB(item);	// removeBookmarkFromDBで削除.
 			    	removeDialog(id);	// removeDialogでダイアログを削除.
 				}				
 				
@@ -214,10 +215,15 @@ public class BookmarkActivity extends Activity implements OnItemClickListener, O
     	List<BookmarkItem> bookmarks = new ArrayList<BookmarkItem>();	// ブックマークスbookmarksの生成.
     	
     	// ソート済みDBからBookmarkInfoを取り出して, BookmarkItemにセット.
-    	for (BookmarkInfo bookmarkInfo: mApp.mHlpr.getBookmarkList()){
+    	List<BookmarkInfo> list = mApp.mHlpr.getBookmarkList();	// list取得.
+    	if (list == null){	// nullなら.
+    		return null;	// nullを返す.
+    	}
+    	for (BookmarkInfo bookmarkInfo: list){	// listから取りに行く.
     		BookmarkItem item = new BookmarkItem();	// BookmarkItemオブジェクトitemを生成.
     		item.title = bookmarkInfo.title;	// title.
     		item.url = bookmarkInfo.url;	// url.
+    		item.id = bookmarkInfo.id;	// id.
     		bookmarks.add(item);	// bookmarks.addでitemを追加.
     	}
     	
@@ -226,13 +232,19 @@ public class BookmarkActivity extends Activity implements OnItemClickListener, O
     	
     }
     
-    
     // ブックマークのロード.
     public void loadBookmarks(){
     	
     	// adapterの生成
-        BookmarkAdapter adapter = new BookmarkAdapter(this, R.layout.adapter_bookmark_item, getAllBookmarksFromDB());	// アダプタadapterの生成.(getAllBookmarksFromDBでブックマークリストを取得し, 第3引数にセット.)
-        
+    	List<BookmarkItem> list = getAllBookmarksFromDB();
+    	BookmarkAdapter adapter = null;	// adapterをnullに.
+    	if (list == null){	// nullなら.
+    		adapter = new BookmarkAdapter(this, R.layout.adapter_bookmark_item);	// listは不要.
+    	}
+    	else{
+    		adapter = new BookmarkAdapter(this, R.layout.adapter_bookmark_item, list);	// アダプタadapterの生成.(getAllBookmarksFromDBでブックマークリストを取得し, 第3引数にセット.)
+    	}
+    	
         // ListViewの取得
         ListView lvBookmark = (ListView)findViewById(R.id.listview_bookmark);	// リストビューlvBookmarkの取得.
         
@@ -263,8 +275,8 @@ public class BookmarkActivity extends Activity implements OnItemClickListener, O
     	    	
     }
     
-    // ブックマークの削除.
-    public void removeBookmark(BookmarkItem item){
+    // ブックマークの削除.(Browserクラス版.)
+    public void removeBookmarkFromBrowser(BookmarkItem item){
     	
     	// BOOKMARKフラグを降ろす.
     	//Cursor c1 = this.getContentResolver().query(Browser.BOOKMARKS_URI, new String[]{Browser.BookmarkColumns.URL}, null, null, null);
@@ -287,6 +299,26 @@ public class BookmarkActivity extends Activity implements OnItemClickListener, O
         // 更新.
         adapter.notifyDataSetChanged();	// adapter.notifyDataSetChangedで更新.
         
+    }
+    
+    // ブックマークの削除.(独自DB版.)
+    public void removeBookmarkFromDB(BookmarkItem item){
+
+    	// DBからの削除.
+    	mApp.mHlpr.removeRowBookmark((int)item.id);	// idのブックマークを削除.
+    	
+    	// ListViewの取得
+        ListView lvBookmark = (ListView)findViewById(R.id.listview_bookmark);	// リストビューlvBookmarkの取得.
+        
+        // adapterの取得.
+        BookmarkAdapter adapter = (BookmarkAdapter)lvBookmark.getAdapter();	// lvBookmark.getAdapterでadapterを取得.
+        
+        // 削除.
+        adapter.remove(item);	// adapter.removeでitemを削除.
+        
+        // 更新.
+        adapter.notifyDataSetChanged();	// adapter.notifyDataSetChangedで更新.
+
     }
     
     // ブックマークの全削除.
