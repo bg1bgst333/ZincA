@@ -153,7 +153,7 @@ public class BookmarkActivity extends Activity implements OnItemClickListener, O
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					// 全てのブックマークを削除.
-			    	removeAllBookmarks();	// removeAllBookmarksで全削除.
+			    	removeAllBookmarksFromDB();	// removeAllBookmarksFromDBで全削除.
 			    	removeDialog(id);	// removeDialogでダイアログを削除.
 				}				
 				
@@ -321,14 +321,34 @@ public class BookmarkActivity extends Activity implements OnItemClickListener, O
 
     }
     
-    // ブックマークの全削除.
-    public void removeAllBookmarks(){
+    // ブックマークの全削除.(Browserクラス版.)
+    public void removeAllBookmarksFromBrowser(){
     	
     	// BOOKMARKフラグの立っている行全てのをBOOKMARKフラグを降ろす.
     	ContentValues values = new ContentValues();	// ContentValuesオブジェクトvaluesの生成.
     	values.put(Browser.BookmarkColumns.BOOKMARK, "0");	// values.putでBOOKMARKフラグは"0"として登録.
     	int row = getContentResolver().update(Browser.BOOKMARKS_URI, values, Browser.BookmarkColumns.BOOKMARK + "=1", null);	// getContentResolver().updateでBOOKMARKが1の行を更新.
     	//Toast.makeText(this, String.valueOf("delete row = " + row), Toast.LENGTH_LONG).show();	// rowをToastで表示.
+    	
+    	// ListViewの取得
+        ListView lvBookmark = (ListView)findViewById(R.id.listview_bookmark);	// リストビューlvBookmarkの取得.
+        
+        // adapterの取得.
+        BookmarkAdapter adapter = (BookmarkAdapter)lvBookmark.getAdapter();	// lvBookmark.getAdapterでadapterを取得.
+        
+        // 全削除.
+        adapter.clear();	// adapter.clearで全削除.
+        
+        // 更新.
+        adapter.notifyDataSetChanged();	// adapter.notifyDataSetChangedで更新.
+        
+    }
+    
+    // ブックマークの全削除.(独自DB版.)
+    public void removeAllBookmarksFromDB(){
+    	
+    	// DBからの全削除.
+    	mApp.mHlpr.removeAllBookmarks();	// mApp.mHlpr.removeAllBookmarksで全削除.
     	
     	// ListViewの取得
         ListView lvBookmark = (ListView)findViewById(R.id.listview_bookmark);	// リストビューlvBookmarkの取得.
