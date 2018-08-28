@@ -155,7 +155,7 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					// 全ての履歴を削除.
-			    	removeAllHistories();	// removeAllHistoriesで全削除.
+			    	removeAllHistoriesFromDB();	// removeAllHistoriesFromDBで全削除.
 			    	removeDialog(id);	// removeDialogでダイアログを削除.
 				}				
 				
@@ -223,7 +223,11 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
     	List<HistoryItem> histories = new ArrayList<HistoryItem>();	// ヒストリーズhistoriesの作成.
     	
     	// ソート済みDBからHistoryInfoを取り出して, HistoryItemにセット.
-    	for (HistoryInfo historyInfo: mApp.mHlpr.getHistoryList()){
+    	List<HistoryInfo> list = mApp.mHlpr.getHistoryList();	// list取得.
+    	if (list == null){	// nullなら.
+    		return null;	// nullを返す.
+    	}
+    	for (HistoryInfo historyInfo: list){	// listから取りに行く.
     		HistoryItem item = new HistoryItem();	// HistoryItemオブジェクトitemを生成.
     		item.title = historyInfo.title;	// title.
     		item.url = historyInfo.url;	// url.
@@ -241,9 +245,16 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
     // 履歴のロード.
     public void loadHistories(){
     	
-    	// adapterの生成
-        HistoryAdapter adapter = new HistoryAdapter(this, R.layout.adapter_history_item, getAllHistoriesFromDB());	// アダプタadapterの生成.(getAllHistoriesFromDB()で履歴リストを取得し, 第3引数にセット.)
-        
+    	// adapterの生成.
+    	List<HistoryItem> list = getAllHistoriesFromDB();
+    	HistoryAdapter adapter = null;	// adapterをnullに.
+    	if (list == null){	// nullなら.
+    		adapter = new HistoryAdapter(this, R.layout.adapter_history_item);	// listは不要.
+    	}
+    	else{
+    		adapter = new HistoryAdapter(this, R.layout.adapter_history_item, list);	// アダプタadapterの生成.(getAllBookmarksFromDBでブックマークリストを取得し, 第3引数にセット.)
+    	}
+    	
         // ListViewの取得
         ListView lvHistory = (ListView)findViewById(R.id.listview_history);	// リストビューlvHistoryの取得.
         
@@ -344,8 +355,8 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
         
     }
     
-    // 履歴の全削除.
-    public void removeAllHistories(){
+    // 履歴の全削除.(Browserクラス版.)
+    public void removeAllHistoriesFromBrowser(){
     	
     	// BOOKMARKが1の行全てのVISITSを0にする.
 		ContentValues values = new ContentValues();	// ContentValuesオブジェクトvaluesの生成.
@@ -357,6 +368,26 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
 		//Toast.makeText(this, "row2 = "+String.valueOf(row2), Toast.LENGTH_LONG).show();	// row2をToastで表示.
 		
 		// ListViewの取得
+    	ListView lvHistory = (ListView)findViewById(R.id.listview_history);	// リストビューlvHistoryの取得.
+    	
+    	// adapterの取得.
+    	HistoryAdapter adapter = (HistoryAdapter)lvHistory.getAdapter();	// lvHistory.getAdapterでadapterを取得.
+    	
+    	// 全削除.
+        adapter.clear();	// adapter.clearで全削除.
+    	
+    	// 更新.
+    	adapter.notifyDataSetChanged();	// adapter.notifyDataSetChangedで更新.
+    	
+    }
+    
+    // 履歴の全削除.(独自DB版.)
+    public void removeAllHistoriesFromDB(){
+    	
+    	// DBからの全削除.
+    	mApp.mHlpr.removeAllHistories();	// mApp.mHlpr.removeAllHistoriesで全削除.
+    	
+    	// ListViewの取得
     	ListView lvHistory = (ListView)findViewById(R.id.listview_history);	// リストビューlvHistoryの取得.
     	
     	// adapterの取得.

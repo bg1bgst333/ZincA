@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bgstation0.android.app.zinc"
-    android:versionCode="91"
-    android:versionName="0.1.9(Komagawa #91)" >
+    android:versionCode="92"
+    android:versionName="0.1.9(Komagawa #92)" >
 
     <uses-sdk
         android:minSdkVersion="15"

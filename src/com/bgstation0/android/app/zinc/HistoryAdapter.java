@@ -17,6 +17,15 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
 	private LayoutInflater inflater;	// LayoutInflaterオブジェクトinflater
 	
 	// コンストラクタ
+	public HistoryAdapter(Context context, int resource){
+		
+		// インフレータの取得
+		super(context, resource);	// 親コンストラクタを呼ぶ.
+		inflater = (LayoutInflater)context.getSystemService(context.LAYOUT_INFLATER_SERVICE);	// context.getSystemServiceでLAYOUT_INFLATER_SERVICEを取得し, inflaterに格納.
+				
+	}
+		
+	// コンストラクタ
 	public HistoryAdapter(Context context, int resource, List<HistoryItem> objects){
 		
 		// インフレータの取得

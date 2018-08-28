@@ -361,6 +361,30 @@ public class UrlListDatabaseHelper extends SQLiteOpenHelper {
 				
 	}
 	
+	// 履歴の全削除.
+	public boolean removeAllHistories(){
+		
+		// 変数の初期化.
+		SQLiteDatabase sqlite = null;	// SQLiteDatabaseオブジェクトsqliteをnullで初期化.
+		
+		// 削除.
+		try{	// tryで囲む.
+			sqlite = getWritableDatabase();	// getWritableDatabaseでsqliteを取得.
+			int row = sqlite.delete(TABLE_HISTORIES, null, null);	// sqlite.deleteですべての行を削除.
+			return true;
+		}
+		catch (Exception ex){	// 例外をcatch.
+			Log.d(TAG, ex.toString());	// ex.toStringをログに出力.
+			return false;
+		}
+		finally{	// 必ず行う処理.
+			if (sqlite != null){	// sqliteがnullでなければ.
+				sqlite.close();	// sqlite.closeで閉じる.
+				sqlite = null;	// sqliteにnullを格納.
+			}
+		}
+	}
+	
 	// タブ一覧の取得.
 	public List<TabInfo> getTabInfoList(){
 		
