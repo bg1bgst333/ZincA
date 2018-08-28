@@ -6,4 +6,5 @@ public class HistoryItem {
 	public String title;	// ƒ^ƒCƒgƒ‹
 	public String url;	// URL
 	public String date;	// “ú
+	public long id;	// ID
 }

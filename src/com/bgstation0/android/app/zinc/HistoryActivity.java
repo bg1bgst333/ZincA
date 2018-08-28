@@ -28,6 +28,7 @@ import android.widget.Toast;
 public class HistoryActivity extends Activity implements OnItemClickListener, OnItemLongClickListener {	// AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListenerインターフェースの追加.
 
 	// メンバフィールドの初期化.
+	public MainApplication mApp = null;	// MainApplicationオブジェクトmAppをnullで初期化.
 	public static final int DIALOG_ID_CONFIRM_HISTORY_REMOVE = 0;	// 履歴削除確認のダイアログID.
 	public static final int DIALOG_ID_CONFIRM_ALL_HISTORIES_REMOVE = 1;	// 履歴全削除確認のダイアログID.
 	
@@ -38,6 +39,7 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
     	// ビューのセット
         super.onCreate(savedInstanceState);	// 親クラスのonCreateを呼ぶ.
         setContentView(R.layout.activity_history);	// setContentViewでR.layout.activity_historyをセット.
+        mApp = (MainApplication)getApplicationContext();	// getApplicationContextでmAppを取得.
         
         // 履歴のクリーンナップ.
         //cleanUpHistories();	// cleanUpHistoriesで履歴をクリーンナップ.
@@ -177,8 +179,8 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
     	
     }
     
-    // 履歴一覧の取得.
-    public List<HistoryItem> getAllHistories(){
+    // 履歴一覧の取得.(Browserクラス版.)
+    public List<HistoryItem> getAllHistoriesFromBrowser(){
     	
     	// historiesの作成
     	List<HistoryItem> histories = new ArrayList<HistoryItem>();	// 履歴historiesの生成.
@@ -214,11 +216,33 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
         
     }
     
+    // 履歴一覧の取得.(独自DB版.)
+    public List<HistoryItem> getAllHistoriesFromDB(){
+    	
+    	// historiesの作成.
+    	List<HistoryItem> histories = new ArrayList<HistoryItem>();	// ヒストリーズhistoriesの作成.
+    	
+    	// ソート済みDBからHistoryInfoを取り出して, HistoryItemにセット.
+    	for (HistoryInfo historyInfo: mApp.mHlpr.getHistoryList()){
+    		HistoryItem item = new HistoryItem();	// HistoryItemオブジェクトitemを生成.
+    		item.title = historyInfo.title;	// title.
+    		item.url = historyInfo.url;	// url.
+    		item.id = historyInfo.id;	// id.
+    		Date dtDate = new Date(historyInfo.date);	// historyInfo.dateを基にDateオブジェクトdtDateを作成.
+            item.date = dtDate.toString();	// item.dateにdtDate.toStringで変換した日時文字列をセット.
+    		histories.add(item);	// histories.addでitemを追加.
+    	}
+    	
+    	// historiesを返す.
+    	return histories;	// returnでhistoriesを返す.
+    	
+    }
+    
     // 履歴のロード.
     public void loadHistories(){
     	
     	// adapterの生成
-        HistoryAdapter adapter = new HistoryAdapter(this, R.layout.adapter_history_item, getAllHistories());	// アダプタadapterの生成.(getAllHistories()で履歴リストを取得し, 第3引数にセット.)
+        HistoryAdapter adapter = new HistoryAdapter(this, R.layout.adapter_history_item, getAllHistoriesFromDB());	// アダプタadapterの生成.(getAllHistoriesFromDB()で履歴リストを取得し, 第3引数にセット.)
         
         // ListViewの取得
         ListView lvHistory = (ListView)findViewById(R.id.listview_history);	// リストビューlvHistoryの取得.

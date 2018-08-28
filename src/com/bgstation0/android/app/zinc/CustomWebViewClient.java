@@ -20,6 +20,7 @@ public class CustomWebViewClient extends WebViewClient {
 	// メンバフィールドの初期化
 	private static final String TAG = "CustomWebViewClient";	// TAGを"CustomWebViewClient"に初期化.
 	private Context mContext = null;	// Context型mContextをnullに初期化.
+	public MainApplication mApp = null;	// MainApplicationオブジェクトmAppをnullで初期化.
 	private String mStartUrl = "";	// mStartUrlを""で初期化.
 	//private String mFinishUrl = "";	// mFinishUrlを""で初期化.
 	private int mCount = 0;	// mCountを""で初期化.
@@ -29,6 +30,7 @@ public class CustomWebViewClient extends WebViewClient {
 			
 		// 引数をメンバにセット.
 		mContext = context;	// mContextにcontextをセット.
+		mApp = (MainApplication)mContext.getApplicationContext();	// getApplicationContextでmAppを取得.
 		
 	}
 	
@@ -84,7 +86,7 @@ public class CustomWebViewClient extends WebViewClient {
 		
 		// 履歴登録条件を満たすかどうかを判定.
 		if (url.equals(mStartUrl) && mCount == 0){	// 直近の開始URLで一番最初の時.
-			addHistory(view, url);	// addHistoryでurlを履歴に登録.
+			addHistoryToDB(view, url);	// addHistoryToDBでurlを履歴に登録.
 		}
 		mCount++;	// mCountを1増やす.
 		
@@ -156,8 +158,8 @@ public class CustomWebViewClient extends WebViewClient {
     	
     }
     
-	// 履歴にURLを登録.
-	public void addHistory(WebView view, String url){
+	// 履歴にURLを登録.(Rrowserクラス版.)
+	public void addHistoryToBrowser(WebView view, String url){
 		
 		// mContextからMainActivityを取得し, それのgetContentResolverを使う.
 		if (mContext != null){	// mContextがnullでなければ.
@@ -212,6 +214,24 @@ public class CustomWebViewClient extends WebViewClient {
 				Toast.makeText(mainActivity, mainActivity.getString(R.string.toast_message_history_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_history_regist_errorに定義されたメッセージをToastで表示.
 			}
 			
+		}
+		
+	}
+	
+	// 履歴にURLを登録.(独自DB版.)
+	public void addHistoryToDB(WebView view, String url){
+		
+		// URLとタイトルを取得.
+		String title = view.getTitle();	// view.getTitleでタイトルを取得.
+		long datemillisec = System.currentTimeMillis();	// System.currentTimeMillisで現在時刻を取得し, datemillisecに格納.
+		
+		// MainActivityにキャスト.
+		MainActivity mainActivity = (MainActivity)mContext;	// mContextをMainActivityにキャストし, mainActivityに格納.
+					
+		// このURLを履歴へ追加.
+		long id = mApp.mHlpr.insertRowHistory(title, url, datemillisec);	// mApp.mHlpr.insertRowHistoryでtitle, url, datemillisecを追加.
+		if (id == -1){	// -1なら.
+			Toast.makeText(mainActivity, mainActivity.getString(R.string.toast_message_history_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_history_regist_errorに定義されたメッセージをToastで表示.
 		}
 		
 	}
