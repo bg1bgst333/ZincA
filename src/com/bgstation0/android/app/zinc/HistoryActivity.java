@@ -125,7 +125,7 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
 					int position = args.getInt("position");	// positionを取得.
 					final ListView lv = (ListView)findViewById(R.id.listview_history);	// リストビューlvの取得.
 					final HistoryItem item = (HistoryItem)lv.getItemAtPosition(position);	// lv.getItemAtPositionでitemを取得.
-					removeHistory(item);	// removeHistoryで削除.
+					removeHistoryFromDB(item);	// removeHistoryFromDBで削除.
 					removeDialog(id);	// removeDialogでダイアログを削除.
 				}
 				
@@ -285,8 +285,8 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
     	
     }
     
-    // 履歴の削除.
-    public void removeHistory(HistoryItem item){
+    // 履歴の削除.(Browserクラス版.)
+    public void removeHistoryFromBrowser(HistoryItem item){
     	
     	// まずBOOKMARKフラグが立っているかを確認.
     	String[] projection = new String[]{
@@ -322,6 +322,26 @@ public class HistoryActivity extends Activity implements OnItemClickListener, On
     	// 更新.
     	adapter.notifyDataSetChanged();	// adapter.notifyDataSetChangedで更新.
     	
+    }
+    
+    // 履歴の削除.(独自DB版.)
+    public void removeHistoryFromDB(HistoryItem item){
+    	
+    	// DBからの削除.
+    	mApp.mHlpr.removeRowHistory((int)item.id);	// idの履歴を削除.
+    	
+    	// ListViewの取得
+        ListView lvHistory = (ListView)findViewById(R.id.listview_history);	// リストビューlvHistoryの取得.
+        
+        // adapterの取得.
+        HistoryAdapter adapter = (HistoryAdapter)lvHistory.getAdapter();	// lvHistory.getAdapterでadapterを取得.
+        
+        // 削除.
+        adapter.remove(item);	// adapter.removeでitemを削除.
+        
+        // 更新.
+        adapter.notifyDataSetChanged();	// adapter.notifyDataSetChangedで更新.
+        
     }
     
     // 履歴の全削除.
