@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
+import android.app.TabActivity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -30,12 +31,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
 
 //メインアクティビティクラスMainActivity
-public class MainActivity extends Activity implements OnClickListener, OnEditorActionListener{	// View.OnClickListener, TextView.OnEditorActionListenerインターフェースの追加.
+public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickListener, OnEditorActionListener*/{	// View.OnClickListener, TextView.OnEditorActionListenerインターフェースの追加.
 
 	// メンバフィールドの初期化.
 	public static final int REQUEST_CODE_BOOKMARK = 1001;	// REQUEST_CODE_BOOKMARKを1001とする.
@@ -53,7 +55,58 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 	// アクティビティが作成された時.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-    	
+    	super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        
+    	// tabHostの取得.
+        TabHost tabHost = getTabHost();	// getTabHostでtabHostを取得.
+        
+        // tabSpecの作成.
+        TabHost.TabSpec tabSpec = tabHost.newTabSpec("MainTab");	// tabSpec作成.        
+        // テキストのセット.
+        tabSpec.setIndicator("MainTab");	// テキストは"MainTab".
+        // コンテンツのセット.
+        tabSpec.setContent(R.id.main_content);	// R.id.main_contentをセット.
+        // タブの追加.
+        tabHost.addTab(tabSpec);	// tabSpecを追加.
+        
+        // tabSpec2の作成.(これで追加すると, 最初のタブのテキストMainContentが表示されない.)
+        /*
+        TabHost.TabSpec tabSpec2 = tabHost.newTabSpec("MainTab2");	// tabSpec2作成.      
+        // テキストのセット.
+        tabSpec2.setIndicator("MainTab2");	// テキストは"MainTab2".
+        // コンテンツのセット.
+        View v = (View)findViewById(R.id.main_content);	// vを取得.
+        TextView tv = (TextView)v.findViewById(R.id.textview1);	// tvを取得.
+        tv.setText("MainContent2");	// テキストを変更.
+        tabSpec2.setContent(R.id.main_content);	// R.id.main_contentをセット.
+        // タブの追加.
+        tabHost.addTab(tabSpec2);	// tabSpec2を追加.
+        */
+        
+        // tabSpec2の作成.(IntentでActivityを追加.)
+        TabHost.TabSpec tabSpec2 = tabHost.newTabSpec("MainTab2");	// tabSpec2作成.
+        // テキストのセット.
+        tabSpec2.setIndicator("MainTab2");	// テキストは"MainTab2".
+        // コンテンツのセット.
+        tabSpec2.setContent(new Intent(this, SubActivity.class));	// SubActivityをセット.
+        // タブの追加.
+        tabHost.addTab(tabSpec2);	// tabSpec2を追加.
+        
+        // tabSpec3の作成.(IntentでActivityを追加.)
+        TabHost.TabSpec tabSpec3 = tabHost.newTabSpec("MainTab3");	// tabSpec3作成.
+        // テキストのセット.
+        tabSpec3.setIndicator("MainTab3");	// テキストは"MainTab3".
+        // コンテンツのセット.
+        Intent intent = new Intent(this, SubActivity.class);	// intentを生成.
+        Bundle args = new Bundle();	// args作成.
+        args.putString("tag", "Activity3");	// ("tag", "Activity3")で登録.
+        intent.putExtras(args);	// args登録.
+        tabSpec3.setContent(intent);	// intentをセット.
+        // タブの追加.
+        tabHost.addTab(tabSpec3);	// tabSpec3を追加.
+        
+    	/*
     	// ビューのセット
         super.onCreate(savedInstanceState);	// 親クラスのonCreateを呼ぶ.
         setContentView(R.layout.activity_main);	// setContentViewでR.layout.activity_mainをセット.
@@ -63,6 +116,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
         initDownloadManager();	// initDownloadManagerでmDownloadManagerを初期化.
         //loadUrlFromIntent();	// loadUrlFromIntentでインテントで指定されたURLをロード.
         initMainApplication();	// initMainApplicationでメインアプリケーションを初期化.
+        */
         
     }
     
@@ -266,6 +320,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     }
     
     // ボタンが押された時.
+    /*
     @Override
     public void onClick(View v){	// OnClickListener.onClickをオーバーライド.
     	
@@ -281,7 +336,8 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	}
     	
     }
-    
+    */
+    /*
     // エディットテキストでEnterキーが押された時.
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event){
@@ -305,30 +361,34 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	return false;	// returnでfalseを返す.
     	
     }
+    */
     
     // URLバーの初期化.
     public void initUrlBar(){
     	
     	// etUrlを取得し, OnEditorActionListenerとして自身(this)をセット.
+    	/*
     	EditText etUrl = (EditText)findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
     	etUrl.setOnEditorActionListener(this);	// etUrl.setOnEditorActionListeneでthis(自身)をセット.
-    	
+    	*/
     }
     
     // プログレスバーの初期化.
     public void initProgressBar(){
     	
     	// progressBarを取得し, 最初は非表示にしておく.
+    	/*
     	ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressbar);	// findViewByIdでR.id.progressbarからProgressBarオブジェクトprogressBarを取得.
     	//progressBar.setVisibility(View.INVISIBLE);	// progressBar.setVisibilityで非表示にする.
     	progressBar.setVisibility(View.GONE);	// progressBar.setVisibilityで非表示(View.GONE)にする.
     	//progressBar.setVisibility(View.VISIBLE);	// progressBar.setVisibilityで最初から表示にする.
-    	
+    	*/
     }
     
     // ウェブビューの初期化.
     public void initWebView(){
     	
+    	/*
     	// webViewの取得.
         WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
         // JavaScript有効化.
@@ -343,7 +403,8 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
         webView.setWebViewClient(new CustomWebViewClient(this));	// newで生成したCustomWebViewClientオブジェクト(コンストラクタの引数にthisを渡す.)をwebView.setWebViewClientでセット.
         // CustomWebChromeClientのセット.
         webView.setWebChromeClient(new CustomWebChromeClient(this));	// newで生成したCustomWebChromeClientオブジェクト(コンストラクタの引数にthisを渡す.)をwebView.setWebChromeClientでセット.
-        
+        */
+    	
     }
     
     // ダウンロードマネージャーの初期化.
@@ -414,6 +475,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     public void registTabMapx(){
     
     	// 現在のタブを新規作成し, ビューマップに追加.
+    	/*
     	//mCurrentTabName = "web" + String.valueOf(mApp.mNextViewNo);	// 現在のタブ名を新規作成.
 		View rootView = getWindow().getDecorView();	// getWindow().getDecorViewでrootViewを取得.
 		View content = rootView.findViewById(R.id.layout_main);	// rootViewからlayout_mainを抜き出す.
@@ -425,7 +487,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 		tabInfo.view = content;	//contentをセット.
 		mApp.mTabMap.put(mCurrentTabName, tabInfo);	// tabInfoを登録.
 		//mApp.mNextViewNo++;	// mApp.mNextViewNoを増やす.
-		
+		*/
     }
     
     // タブの登録.
@@ -440,6 +502,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	//c = b;
     	
     	// マップ側の更新.
+    	/*
     	View rootView = getWindow().getDecorView();	// getWindow().getDecorViewでrootViewを取得.
 		View content = rootView.findViewById(R.id.layout_main);	// rootViewからlayout_mainを抜き出す.
 		TabInfo tabInfo = new TabInfo();	// tabInfoを作成.
@@ -450,13 +513,14 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 		tabInfo.view = content;	//contentをセット.
 		mApp.mTabMap.put(currentTabName, tabInfo);	// tabInfoを登録.
 		mCurrentTabName = currentTabName;	// mCurrentTabNameにセット.
-		
+		*/
     }
     
     // タブ情報からタブを生成.
     public void loadTab(TabInfo tabInfo){
     	
     	// マップ側の更新.
+    	/*
     	View rootView = getWindow().getDecorView();	// getWindow().getDecorViewでrootViewを取得.
 		View content = rootView.findViewById(R.id.layout_main);	// rootViewからlayout_mainを抜き出す.
 		tabInfo.date = System.currentTimeMillis();	// 現在時刻をセット.
@@ -467,7 +531,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 		}
 		mCurrentTabName = tabInfo.tabName;	// tabInfo.tabNameをセット.
 		mApp.mTabMap.put(mCurrentTabName, tabInfo);	// tabInfoを登録.
-		
+		*/
     }
     
     // タブ名から取得したビューをセット.
@@ -506,6 +570,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     public void setUrl(String url){
     	
     	// etUrlを取得し, urlをセット.
+    	/*
     	EditText etUrl = (EditText)findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
     	if (etUrl == null){
     		Toast.makeText(this, "null", Toast.LENGTH_LONG).show();
@@ -513,6 +578,8 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	else{
     		etUrl.setText(url);	// etUrl.SetTextでURLバーのetUrlにurlをセット.
     	}
+    	*/
+    	
     }
     
     // URLバーにURLをセットする時に"http"の場合は省略する.
@@ -532,18 +599,24 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     // URLバーからURLを取得.
     public String getUrl(){
     	
+    	/*
     	// etUrlのURLを取得.
     	EditText etUrl = (EditText)findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
     	return etUrl.getText().toString();	// etUrl.getText().toStringでURLを返す.
+    	*/
+    	return null;
     	
     }
     
     // ウェブビューからURLを取得.
     public String getWebUrl(){
     	
+    	/*
     	// webViewのURLを取得.
     	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
     	return webView.getUrl();	// returnでwebView.getUrlで取得したURLを返す.
+    	*/
+    	return null;
     	
     }
     
@@ -624,10 +697,12 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     // 指定されたURLをロード.
     public void loadUrl(String url){
     	
+    	/*
     	// webViewを取得し, urlをロード.
     	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
 		webView.loadUrl(url);	// webView.loadUrlでurlの指すWebページをロード.
-		
+		*/
+    	
     }
     
     // 指定されたURLを"http"を補完してロード.
@@ -672,15 +747,18 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     // プログレスバーに進捗度をセット.
     public void setProgressValue(int progress){
     	
+    	/*
     	// プログレスバーを取得し, 指定された進捗度をセット.
     	ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressbar);	// findViewByIdでR.id.progressbarからProgressBarオブジェクトprogressBarを取得.
     	progressBar.setProgress(progress);	// progressBar.setProgressでprogressをセット.
+    	*/
     	
     }
     
     // プログレスバーの表示/非表示をセット.
     public void setProgressBarVisible(boolean visible){
     	
+    	/*
     	// プログレスバーを取得し, 表示/非表示をセット.
     	ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressbar);	// findViewByIdでR.id.progressbarからProgressBarオブジェクトprogressBarを取得.
     	if (visible){	// trueなら表示.
@@ -690,6 +768,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     		//progressBar.setVisibility(View.INVISIBLE);	// progressBar.setVisibilityでINVISIBLE.
     		progressBar.setVisibility(View.GONE);	// progressBar.setVisibilityでGONE.
     	}
+    	*/
     	
     }
     
@@ -704,6 +783,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     // バックキーが押された時のWebViewの動作.
     public void onBackPressedWebView(){
     	
+    	/*
     	// 戻れる場合は, 1つ前のページに戻る.
     	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
     	if (webView.canGoBack()){	// バック可能な場合.
@@ -712,6 +792,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     	else{	// そうでない時.
     		super.onBackPressed();	// 親クラスのonBackPressedを呼ぶ.
     	}
+    	*/
     	
     }
     
@@ -734,10 +815,12 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     // タブ状態の保存.
     public void saveTabState(){
     	
+    	/*
     	// 現在のタブをマップに保存.
     	View rootView = getWindow().getDecorView();	// getWindow().getDecorViewでrootViewを取得.
 		View content = rootView.findViewById(R.id.layout_main);	// rootViewからlayout_mainを抜き出す.
 		TabInfo tabInfo = mApp.mTabMap.get(mCurrentTabName);	// tabInfo取得.
+		*/
 		/*
 		if (tabInfo == null){	// タブが無い.
 			tabInfo = new TabInfo();	// 生成.
@@ -750,6 +833,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 		}
 		else{
 		*/
+    	/*
 		tabInfo.view = content;	// contentを保存.
 		tabInfo.tabName = mCurrentTabName;	// 現在のタブ名をセット.
 		tabInfo.title = getActionBar().getTitle().toString();	// タイトルを取得.(アクションバーから取得が確実かも.)
@@ -760,6 +844,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 		
 		// DBにも保存.
 		mApp.mHlpr.updateTabInfo(mCurrentTabName, tabInfo);	// updateTabInfoでtabInfoを更新.
+		*/
 		
     }
     
@@ -780,6 +865,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     // ブックマークへの追加.(Browserクラス版.)
     public void addBookmarkToBrowser(){
     	
+    	/*
     	// webViewを取得し, URLとタイトルを取得.
     	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
 		String title = webView.getTitle();	// webView.getTitleでタイトルを取得.
@@ -800,12 +886,14 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 		catch (Exception ex){	// 例外のcatch.
 			Toast.makeText(this, getString(R.string.toast_message_bookmark_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_bookmark_regist_errorに定義されたメッセージをToastで表示.
 		}
+		*/
 		
     }
     
     // ブックマークへの追加.(独自DB版.)
     public void addBookmarkToDB(){
     	
+    	/*
     	// webViewを取得し, URLとタイトルを取得.
     	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
 		String title = webView.getTitle();	// webView.getTitleでタイトルを取得.
@@ -820,6 +908,7 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
 		else{
 			Toast.makeText(this, getString(R.string.toast_message_bookmark_regist_success), Toast.LENGTH_LONG).show();	// R.string.toast_message_bookmark_regist_successに定義されたメッセージをToastで表示.
 		}
+		*/
 		
     }
     
@@ -899,12 +988,14 @@ public class MainActivity extends Activity implements OnClickListener, OnEditorA
     // ユーザエージェントの変更.
     public void setUserAgent(String strUA){
     	
+    	/*
     	// webViewの取得.
     	mCurrentUA = strUA;	// mCurrentUAにstrUAをセット.
         WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
         webView.getSettings().setUserAgentString(mCurrentUA);	// webView.getSettings().setUserAgentStringでmCurrentUAをセット.
         webView.reload();	// webView.reloadでリロード.
-        
+        */
+    	
     }
     
     // 電話/PCサイトブラウザの表示切替.

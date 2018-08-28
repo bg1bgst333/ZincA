@@ -31,5 +31,6 @@
 	<string name="dialog_message_confirm_tab_remove">このアイテムを削除しますか?</string>
 	<string name="dialog_title_confirm_all_tabs_remove">タブの全削除</string>
 	<string name="dialog_message_confirm_all_tabs_remove">全てのアイテムを削除しますか?</string>
-	
+	<string name="textview1_text">MainContent</string>
+	<string name="textview_sub_text">SubText</string>
 </resources>
