@@ -82,11 +82,11 @@ public class CustomWebViewClient extends WebViewClient {
 		Log.d(TAG, "onPageFinished: url = " + url);	// Log.dでurlを出力.
 		
 		// タイトルの変更.
-		setActionBarTitle(view.getTitle());	// view.getTitleで取得したタイトルをsetActionBarTitleでセット.
+		//setActionBarTitle(view.getTitle());	// view.getTitleで取得したタイトルをsetActionBarTitleでセット.
 		
 		// 履歴登録条件を満たすかどうかを判定.
 		if (url.equals(mStartUrl) && mCount == 0){	// 直近の開始URLで一番最初の時.
-			addHistoryToDB(view, url);	// addHistoryToDBでurlを履歴に登録.
+			//addHistoryToDB(view, url);	// addHistoryToDBでurlを履歴に登録.
 		}
 		mCount++;	// mCountを1増やす.
 		
@@ -103,8 +103,8 @@ public class CustomWebViewClient extends WebViewClient {
 		if (mContext != null){	// mContextがnullでなければ.
 					
 			// URLバーに反映.
-			MainActivity mainActivity = (MainActivity)mContext;	// mContextをMainActivityにキャストし, mainActivityに格納.
-			mainActivity.setUrlOmit(url);	// mainActivity.setUrlOmitでURLバーにURLをセット.
+			SubActivity subActivity = (SubActivity)mContext;	// mContextをSubActivityにキャストし, subActivityに格納.
+			subActivity.setUrlOmit(url);	// subActivity.setUrlOmitでURLバーにURLをセット.
 			
 		}
 				
@@ -117,8 +117,8 @@ public class CustomWebViewClient extends WebViewClient {
 		if (mContext != null){	// mContextがnullでなければ.
 							
 			// プログレスバーに反映.
-			MainActivity mainActivity = (MainActivity)mContext;	// mContextをMainActivityにキャストし, mainActivityに格納.
-			mainActivity.setProgressBarVisible(visible);	// mainActivity.setProgressBarVisibleにvisibleをセット.
+			SubActivity subActivity = (SubActivity)mContext;	// mContextをSubActivityにキャストし, subActivityに格納.
+			subActivity.setProgressBarVisible(visible);	// subActivity.setProgressBarVisibleにvisibleをセット.
 							
 		}
 				
@@ -131,8 +131,8 @@ public class CustomWebViewClient extends WebViewClient {
 		if (mContext != null){	// mContextがnullでなければ.
 						
 			// プログレスバーに反映.
-			MainActivity mainActivity = (MainActivity)mContext;	// mContextをMainActivityにキャストし, mainActivityに格納.
-			mainActivity.setProgressValue(progress);	// mainActivity.setProgressValueにprogressをセット.
+			SubActivity subActivity = (SubActivity)mContext;	// mContextをSubActivityにキャストし, subActivityに格納.
+			subActivity.setProgressValue(progress);	// subActivity.setProgressValueにprogressをセット.
 						
 		}
 			

@@ -637,12 +637,9 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     // URLバーからURLを取得.
     public String getUrl(){
     	
-    	/*
     	// etUrlのURLを取得.
-    	EditText etUrl = (EditText)findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
+    	EditText etUrl = (EditText)findViewById(R.id.edittext_sub_urlbar);	// findViewByIdでR.id.edittext_sub_urlbarからEditTextオブジェクトetUrlを取得.
     	return etUrl.getText().toString();	// etUrl.getText().toStringでURLを返す.
-    	*/
-    	return null;
     	
     }
     

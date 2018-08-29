@@ -546,6 +546,7 @@ public class UrlListDatabaseHelper extends SQLiteOpenHelper {
         // DBからタブ情報を得る.
 		try{	// tryで囲む.
 			sqlite = getReadableDatabase();	// getReadableDatabaseでsqliteを取得.
+			//sqlite = getWritableDatabase();	// こっちじゃないとエミュレータで落ちる. -> 関係なかった.(エミュレータだと毎回アップグレードされる.)
 			c = sqlite.query(TABLE_TABS, projection, null, null, null, null, "datemillisec desc");	// sqlite.queryで一覧取得.("datemillisec desc"で日時降順.)
 			if (c.getCount() == 0){	// タブが0.
 				return null;	// nullを返す.
