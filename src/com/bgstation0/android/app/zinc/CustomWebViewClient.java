@@ -88,7 +88,8 @@ public class CustomWebViewClient extends WebViewClient {
 		if (url.equals(mStartUrl) && mCount == 0){	// 直近の開始URLで一番最初の時.
 			addHistoryToDB(view, url);	// addHistoryToDBでurlを履歴に登録.
 			updateTabInfoToDB(view.getTitle(), url);	// タブ情報の更新.
-			mApp.changeTabTitle(view.getTitle());
+			SubActivity subActivity = (SubActivity)mContext;
+			mApp.changeTabTitle(view.getTitle(), subActivity.mTabName);
 		}
 		mCount++;	// mCountを1増やす.
 		

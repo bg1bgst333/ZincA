@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import android.R.integer;
 import android.app.Application;
 import android.util.Log;
 import android.view.View;
@@ -27,6 +28,7 @@ public class MainApplication extends Application {
 	//public int mNextViewNo = 0;	// mNextViewNoを0に初期化.
 	public UrlListDatabaseHelper mHlpr = null;	// UrlListDatabaseHelperオブジェクトmHlprをnullに初期化.
 	TabHost mTabHost = null;	// mTabHostをnullにセット.
+	ArrayList<String> mTabNameList = null;
 	
 	// アプリケーションが生成された時.
 	@Override
@@ -42,6 +44,9 @@ public class MainApplication extends Application {
 		// タブマップの生成.
 		mTabMap = new HashMap<String, TabInfo>();	// mTabMapをHashMapで作成.
 		//mNextViewNo = 0;	// mNextViewNoを0としておく.
+		
+		// タブネームリストの生成.
+		mTabNameList = new ArrayList<String>();
 		
 	}
 	
@@ -87,10 +92,21 @@ public class MainApplication extends Application {
 	}
 	
 	// タブタイトルの変更.
-	public void changeTabTitle(String title){
+	public void changeTabTitle(String title, String tag){
 		if (mTabHost != null){
 			TabWidget widget = mTabHost.getTabWidget();
-			TextView tv = (TextView)widget.findViewById(android.R.id.title);
+			View v = mTabHost.findViewWithTag(tag);
+			int i = mTabNameList.indexOf(tag);
+			
+			int c = widget.getChildCount();
+			//Toast.makeText(this, "c = " + String.valueOf(c), Toast.LENGTH_LONG).show();
+			//int i = mTabHost.getCurrentTab();
+			View v2 = (View)widget.getChildAt(i);
+			//View v = widget.findViewWithTag(tag);
+			if (v == null){
+				//Toast.makeText(this, "v == null: " + String.valueOf(i), Toast.LENGTH_LONG).show();
+			}
+			TextView tv = (TextView)v2.findViewById(android.R.id.title);
 			tv.setText(title);
 		}
 	}

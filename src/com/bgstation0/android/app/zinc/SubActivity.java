@@ -33,7 +33,7 @@ public class SubActivity extends Activity implements OnEditorActionListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sub);
-        
+        //Toast.makeText(this, "SubActivity.onCreate()", Toast.LENGTH_LONG).show();
         // メインアプリケーションの取得.
     	mApp = (MainApplication)getApplicationContext();	// getApplicationContextで取得したMainApplicationオブジェクトをmAppに格納.
     	

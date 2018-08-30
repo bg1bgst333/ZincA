@@ -14,6 +14,7 @@ import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
 import android.app.TabActivity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
@@ -51,24 +52,26 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
 	public static final String PC_WIN_UA_SUBSTRING = "(Windows NT 10.0; Win64; x64)";	// WindowsPCのユーザエージェントであることを示す部分.
 	public MainApplication mApp = null;	// MainApplicationオブジェクトmAppをnullで初期化.
 	public String mCurrentTabName = "";	// mCurrentTabNameを""で初期化.
+	public Context mContext = null;	// mContextにnullをセット.
 	
 	// アクティビティが作成された時.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
+        mContext = this;	// mContextにnullをセット.
+        //Toast.makeText(this, "MainActivity.onCreate()", Toast.LENGTH_LONG).show();
         // メインアプリケーションの取得.
     	mApp = (MainApplication)getApplicationContext();	// getApplicationContextで取得したMainApplicationオブジェクトをmAppに格納.
     	if (mApp.mHlpr != null){	// mApp.mHlprがnullでない.
-    		Toast.makeText(this, "1", Toast.LENGTH_LONG).show();
+    		//Toast.makeText(this, "1", Toast.LENGTH_LONG).show();
             TabHost tabHost = getTabHost();	// getTabHostでtabHostを取得.
             mApp.mTabHost = tabHost;	// tabHostをもっておく.
     		List<TabInfo> tabInfoList = mApp.mHlpr.getTabInfoList();
     		if (tabInfoList != null){
-    			Toast.makeText(this, "3", Toast.LENGTH_LONG).show();
+    			//Toast.makeText(this, "3", Toast.LENGTH_LONG).show();
     			for (int i = tabInfoList.size() - 1; i >= 0; i--){
-    				Toast.makeText(this, "4", Toast.LENGTH_LONG).show();
+    				//Toast.makeText(this, "4", Toast.LENGTH_LONG).show();
     				TabInfo tabInfo = tabInfoList.get(i);
     				TabHost.TabSpec tabSpec = tabHost.newTabSpec(tabInfo.tabName);	// tabName
     				tabSpec.setIndicator(tabInfo.title);	// title.
@@ -78,10 +81,11 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     		        intent.putExtras(args);	// args登録.
     		        tabSpec.setContent(intent);	// intentをセット.
     		        tabHost.addTab(tabSpec);	// tabSpecを追加.
+    		        mApp.mTabNameList.add(tabInfo.tabName);
     			}
     		}
     		else{
-    			Toast.makeText(this, "3b", Toast.LENGTH_LONG).show();
+    			//Toast.makeText(this, "3b", Toast.LENGTH_LONG).show();
     			registTab();	// registTabで新規タブを登録.
     			TabInfo tabInfo = mApp.mHlpr.getLastTabInfo();
     			TabHost.TabSpec tabSpec = tabHost.newTabSpec(tabInfo.tabName);	// tabName
@@ -92,9 +96,10 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
 		        intent.putExtras(args);	// args登録.
 		        tabSpec.setContent(intent);	// intentをセット.
 		        tabHost.addTab(tabSpec);	// tabSpecを追加.
+		        mApp.mTabNameList.add(tabInfo.tabName);
     		}
     	}
-    	Toast.makeText(this, "5", Toast.LENGTH_LONG).show();
+    	//Toast.makeText(this, "5", Toast.LENGTH_LONG).show();
         /*
     	// tabHostの取得.
         TabHost tabHost = getTabHost();	// getTabHostでtabHostを取得.
@@ -251,6 +256,7 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     				}
     			}
     			else if (resultCode == RESULT_CANCELED){	// RESULT_CANCELEDの場合.
+    				/*
     				if (!mApp.mTabMap.containsKey(mCurrentTabName)){	// 表示していたタブが消えた時.
     					// 直近タブかどうか.
     					TabInfo tabInfo = mApp.mHlpr.getLastTabInfo();	// 直近のタブを取得.
@@ -280,6 +286,11 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     				    	startActivity(intent);	// startActivityにintentを渡す.
     					}
     				}
+    				*/
+    				
+    				// そのまま終われば帰ってきたとき, タブは再生成されない.
+    				//Toast.makeText(mContext, "RESULT_CANCEL", Toast.LENGTH_LONG).show();
+    				
     			}
     			
     			// 抜ける.
@@ -313,7 +324,8 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     	if (id == R.id.menu_item_new_tab){	// R.id.menu_item_new_tab("新しいタブ")の時.
     		
     		//　新しいタブの追加.
-    		addTab();	// addTabで追加.
+    		//addTab();	// addTabで追加.
+    		addTabToActivity();	// addTabToActivityで追加.
     		
     	}
     	else if (id == R.id.menu_item_tabs_show){	// R.id.menu_item_tabs_show("タブ一覧の表示")の時.
@@ -832,8 +844,8 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     	
     }
     
-    // タブの追加.
-    public void addTab(){
+    // タブの追加.(Intent版.)
+    public void addTabByIntent(){
     	
     	// 現在のタブをマップに保存.
     	saveTabState();	// saveTabStateで保存.
@@ -846,6 +858,31 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     	intent.putExtra("LaunchMode", "NewTab");	// "LaunchMode"をキー, "NewTab"を値として登録.
     	startActivity(intent);	// startActivityにintentを渡す.
     	
+    }
+    
+    // タブの追加.(TabActivity版.)
+    public void addTabToActivity(){
+    	
+    	// タブ状態の保存.(簡易的. ロード中の切り替えを考慮していない.)
+    	String tag = mApp.mTabHost.getCurrentTabTag();
+    	Toast.makeText(mContext, "tag = " + tag, Toast.LENGTH_LONG).show();
+    	TabInfo tabInfo = mApp.mHlpr.getTabInfo(tag);
+    	tabInfo.date = System.currentTimeMillis();
+    	mApp.mHlpr.updateTabInfo(tag, tabInfo);
+    	
+    	// 新規タブの追加.
+    	registTab();	// registTabで新規タブを登録.
+		TabInfo newTabInfo = mApp.mHlpr.getLastTabInfo();
+		TabHost.TabSpec tabSpec = mApp.mTabHost.newTabSpec(newTabInfo.tabName);	// tabName
+		tabSpec.setIndicator(newTabInfo.tabName);	// ここではtabName.
+		mApp.mTabNameList.add(newTabInfo.tabName);
+        Intent intent = new Intent(this, SubActivity.class);	// intentを生成.
+        Bundle args = new Bundle();	// args作成.
+        args.putString("tag", newTabInfo.tabName);	// ("tag", newTabInfo.tabName)で登録.
+        intent.putExtras(args);	// args登録.
+        tabSpec.setContent(intent);	// intentをセット.
+        mApp.mTabHost.addTab(tabSpec);	// tabSpecを追加.
+        
     }
     
     // タブ状態の保存.
