@@ -6,11 +6,13 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TabWidget;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
@@ -24,6 +26,8 @@ public class SubActivity extends Activity implements OnEditorActionListener{
 	public static final String PC_WIN_UA_SUBSTRING = "(Windows NT 10.0; Win64; x64)";	// WindowsPCのユーザエージェントであることを示す部分.
 	MainApplication mApp = null;	// mAppをnullにする.
 	public static final String SEARCH_URL_GOOGLE = "https://www.google.co.jp/search?q=";	// SEARCH_URL_GOOGLEを"https://www.google.co.jp/search?q="とする.
+	String mTabName = "";	// mTabNameを""で初期化.
+	MainActivity mMainActivity = null;	// mMainActivityにnullをセット.
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +43,38 @@ public class SubActivity extends Activity implements OnEditorActionListener{
 	        String tag = args.getString("tag");	// tag取得.
 	        //TextView tv = (TextView)findViewById(R.id.textview_sub);	// tv取得.
         	//tv.setText(tag);	// tagをセット.
+	        mTabName = tag;	// mTabNameにtagをセット.
         	TabInfo tabInfo = mApp.mHlpr.getTabInfo(tag);
         	tabInfo.title = tag;
         	mApp.mHlpr.updateTabInfo(tag, tabInfo);
         	initUrlBar();
         	initProgressBar();
         	initWebView();
+        	if (tabInfo.url != null){
+        		if (!tabInfo.url.equals("")){
+        			/*
+        			TabWidget widget = mApp.mTabHost.getTabWidget();
+        			if (widget != null){
+        				Toast.makeText(this, "10", Toast.LENGTH_LONG).show();
+        			}
+        			int c = widget.getChildCount();
+        			Toast.makeText(this, "c = " + String.valueOf(c), Toast.LENGTH_LONG).show();
+        			View v = widget.getChildAt(0);
+        			Toast.makeText(this,  "v = " + v.toString(), Toast.LENGTH_LONG).show();
+        			ViewGroup vg = (ViewGroup)v;
+        			int c2 = vg.getChildCount();
+        			Toast.makeText(this, "c2 = " + String.valueOf(c2), Toast.LENGTH_LONG).show();
+        			View v2 = vg.getChildAt(0);
+        			Toast.makeText(this, "v2 = " + v2.toString(), Toast.LENGTH_LONG).show();
+        			View v3 = vg.getChildAt(1);
+        			Toast.makeText(this, "v3 = " + v3.toString(), Toast.LENGTH_LONG).show();
+        			TextView tv = (TextView)widget.findViewById(android.R.id.title);
+        			tv.setText("hogehoge");
+        			*/
+        			setUrlOmit(tabInfo.url);
+        			loadUrl();
+        		}
+        	}
         }
         
     }

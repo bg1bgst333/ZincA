@@ -13,6 +13,9 @@ import java.util.Map.Entry;
 import android.app.Application;
 import android.util.Log;
 import android.view.View;
+import android.widget.TabHost;
+import android.widget.TabWidget;
+import android.widget.TextView;
 import android.widget.Toast;
 
 // メインアプリケーションクラスMainApplication
@@ -23,6 +26,7 @@ public class MainApplication extends Application {
 	public Map<String, TabInfo> mTabMap = null;	// タブmTabMapをnullで初期化.
 	//public int mNextViewNo = 0;	// mNextViewNoを0に初期化.
 	public UrlListDatabaseHelper mHlpr = null;	// UrlListDatabaseHelperオブジェクトmHlprをnullに初期化.
+	TabHost mTabHost = null;	// mTabHostをnullにセット.
 	
 	// アプリケーションが生成された時.
 	@Override
@@ -80,6 +84,15 @@ public class MainApplication extends Application {
         });
         return list_entries;	// list_entriesを返す.
         
+	}
+	
+	// タブタイトルの変更.
+	public void changeTabTitle(String title){
+		if (mTabHost != null){
+			TabWidget widget = mTabHost.getTabWidget();
+			TextView tv = (TextView)widget.findViewById(android.R.id.title);
+			tv.setText(title);
+		}
 	}
 	
 }

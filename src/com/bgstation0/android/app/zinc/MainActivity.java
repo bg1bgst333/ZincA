@@ -63,6 +63,7 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     	if (mApp.mHlpr != null){	// mApp.mHlpr‚ªnull‚Å‚È‚¢.
     		Toast.makeText(this, "1", Toast.LENGTH_LONG).show();
             TabHost tabHost = getTabHost();	// getTabHost‚ÅtabHost‚ðŽæ“¾.
+            mApp.mTabHost = tabHost;	// tabHost‚ð‚à‚Á‚Ä‚¨‚­.
     		List<TabInfo> tabInfoList = mApp.mHlpr.getTabInfoList();
     		if (tabInfoList != null){
     			Toast.makeText(this, "3", Toast.LENGTH_LONG).show();

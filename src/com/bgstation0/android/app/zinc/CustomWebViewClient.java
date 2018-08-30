@@ -86,13 +86,15 @@ public class CustomWebViewClient extends WebViewClient {
 		
 		// 履歴登録条件を満たすかどうかを判定.
 		if (url.equals(mStartUrl) && mCount == 0){	// 直近の開始URLで一番最初の時.
-			//addHistoryToDB(view, url);	// addHistoryToDBでurlを履歴に登録.
+			addHistoryToDB(view, url);	// addHistoryToDBでurlを履歴に登録.
+			updateTabInfoToDB(view.getTitle(), url);	// タブ情報の更新.
+			mApp.changeTabTitle(view.getTitle());
 		}
 		mCount++;	// mCountを1増やす.
 		
 		// プログレスバーを非表示.
 		setProgressBarVisible(false);	// setProgressBarVisible(false)で非表示.
-		//setProgress(0);	// setProgressで進捗度を0にセット.
+		setProgress(0);	// setProgressで進捗度を0にセット.
 		
 	}
 	
@@ -225,13 +227,30 @@ public class CustomWebViewClient extends WebViewClient {
 		String title = view.getTitle();	// view.getTitleでタイトルを取得.
 		long datemillisec = System.currentTimeMillis();	// System.currentTimeMillisで現在時刻を取得し, datemillisecに格納.
 		
-		// MainActivityにキャスト.
-		MainActivity mainActivity = (MainActivity)mContext;	// mContextをMainActivityにキャストし, mainActivityに格納.
-					
+		// SubActivityにキャスト.
+		SubActivity subActivity = (SubActivity)mContext;	// mContextをSubActivityにキャストし, subActivityに格納.
+		
 		// このURLを履歴へ追加.
 		long id = mApp.mHlpr.insertRowHistory(title, url, datemillisec);	// mApp.mHlpr.insertRowHistoryでtitle, url, datemillisecを追加.
 		if (id == -1){	// -1なら.
-			Toast.makeText(mainActivity, mainActivity.getString(R.string.toast_message_history_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_history_regist_errorに定義されたメッセージをToastで表示.
+			Toast.makeText(subActivity, subActivity.getString(R.string.toast_message_history_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_history_regist_errorに定義されたメッセージをToastで表示.
+		}
+	
+	}
+	
+	// タブ情報を更新.(独自DB版.)
+	public void updateTabInfoToDB(String title, String url){
+		
+		// SubActivityにキャスト.
+		SubActivity subActivity = (SubActivity)mContext;	// mContextをSubActivityにキャストし, subActivityに格納.
+				
+		// タブ情報の取得.
+		TabInfo tabInfo = mApp.mHlpr.getTabInfo(subActivity.mTabName);
+		if (tabInfo != null){
+			tabInfo.title = title;
+			tabInfo.url = url;
+			tabInfo.date = System.currentTimeMillis();
+			mApp.mHlpr.updateTabInfo(tabInfo.tabName, tabInfo);
 		}
 		
 	}
