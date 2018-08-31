@@ -4,10 +4,12 @@
         android:title="@string/menu_item_new_tab_text"
         android:orderInCategory="101"
         android:showAsAction="never" />
+    <!--
     <item android:id="@+id/menu_item_tabs_show"
         android:title="@string/menu_item_tabs_show_text"
         android:orderInCategory="102"
         android:showAsAction="never" />
+    -->
     <item android:id="@+id/menu_item_bookmark_add"
         android:title="@string/menu_item_bookmark_add_text"
         android:orderInCategory="103"

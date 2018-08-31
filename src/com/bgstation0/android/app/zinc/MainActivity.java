@@ -332,12 +332,14 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     		addTabToActivity();	// addTabToActivityで追加.
     		
     	}
+    	/*
     	else if (id == R.id.menu_item_tabs_show){	// R.id.menu_item_tabs_show("タブ一覧の表示")の時.
 
     		// タブ一覧の表示.
     		showTabs();	// showTabsで追加.
     		
     	}
+    	*/
     	else if (id == R.id.menu_item_bookmark_add){	// R.id.menu_item_bookmark_add("ブックマークの追加")の時.
 
     		// ブックマークの追加.
