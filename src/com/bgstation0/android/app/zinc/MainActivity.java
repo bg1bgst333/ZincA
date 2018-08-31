@@ -70,7 +70,8 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     		List<TabInfo> tabInfoList = mApp.mHlpr.getTabInfoList();
     		if (tabInfoList != null){
     			//Toast.makeText(this, "3", Toast.LENGTH_LONG).show();
-    			for (int i = tabInfoList.size() - 1; i >= 0; i--){
+    			int last = tabInfoList.size() - 1;	// tabInfoの数-1をlastに格納.
+    			for (int i = last, j = 0; i >= 0; i--){	// lastから0まで繰り返す.
     				//Toast.makeText(this, "4", Toast.LENGTH_LONG).show();
     				TabInfo tabInfo = tabInfoList.get(i);
     				TabHost.TabSpec tabSpec = tabHost.newTabSpec(tabInfo.tabName);	// tabName
@@ -82,7 +83,10 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     		        tabSpec.setContent(intent);	// intentをセット.
     		        tabHost.addTab(tabSpec);	// tabSpecを追加.
     		        mApp.mTabNameList.add(tabInfo.tabName);
+    		        tabHost.setCurrentTab(j);
+    		        j++;
     			}
+    			//tabHost.setCurrentTab(last);	// 最後のタブをカレントにセット.
     		}
     		else{
     			//Toast.makeText(this, "3b", Toast.LENGTH_LONG).show();
@@ -865,7 +869,7 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     	
     	// タブ状態の保存.(簡易的. ロード中の切り替えを考慮していない.)
     	String tag = mApp.mTabHost.getCurrentTabTag();
-    	Toast.makeText(mContext, "tag = " + tag, Toast.LENGTH_LONG).show();
+    	//Toast.makeText(mContext, "tag = " + tag, Toast.LENGTH_LONG).show();
     	TabInfo tabInfo = mApp.mHlpr.getTabInfo(tag);
     	tabInfo.date = System.currentTimeMillis();
     	mApp.mHlpr.updateTabInfo(tag, tabInfo);
@@ -882,6 +886,8 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
         intent.putExtras(args);	// args登録.
         tabSpec.setContent(intent);	// intentをセット.
         mApp.mTabHost.addTab(tabSpec);	// tabSpecを追加.
+        int last = mApp.mTabNameList.size() - 1;	// last.
+        getTabHost().setCurrentTab(last);
         
     }
     
