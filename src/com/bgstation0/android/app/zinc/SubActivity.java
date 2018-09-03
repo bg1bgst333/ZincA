@@ -3,6 +3,7 @@ package com.bgstation0.android.app.zinc;
 import java.net.URLEncoder;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -87,10 +88,74 @@ public class SubActivity extends Activity implements OnEditorActionListener{
 	        	View rootView = getWindow().getDecorView();	// getWindow().getDecorViewでrootViewを取得.
 	    		View content = rootView.findViewById(R.id.layout_sub);	// rootViewからlayout_subを抜き出す.
 	        	ti.view = content;
+	        	Toast.makeText(this, "ti.view = " + ti.view.toString(), Toast.LENGTH_LONG).show();
 	        	mApp.mTabMap.put(tag, ti);
 	        }
         }
         
+    }
+    
+    // Activityが開始されたとき.
+    protected void onStart() {	// onStartの定義
+    	
+    	// 親クラスの処理
+    	super.onStart();	// super.onStartで親クラスの既定処理.
+    	
+    	// onStartのログを表示.
+    	//Log.v(TAG, "onStart()");	// Log.vで"onStart()"と出力.
+    	Toast.makeText(this, "onStart", Toast.LENGTH_LONG).show();
+    }
+    
+    // Activityが開始されたとき.
+    protected void onResume() {	// onResumeの定義
+    	
+    	// 親クラスの処理
+    	super.onResume();	// super.onStartで親クラスの既定処理.
+    	
+    	// onStartのログを表示.
+    	//Log.v(TAG, "onStart()");	// Log.vで"onStart()"と出力.
+    	Toast.makeText(this, "onResume", Toast.LENGTH_LONG).show();
+    	
+    	TabInfo ti = mApp.mTabMap.get(mTabName);
+    	if (ti != null){
+    		//Toast.makeText(this, "about:blank", Toast.LENGTH_LONG).show();
+			//WebView wv = (WebView)findViewById(R.id.webview_sub);
+			//wv.loadUrl("about:blank");
+    		if (ti.url != null){
+    			if (ti.url.equals("")){	// url ""
+    				//Toast.makeText(this, "about:blank", Toast.LENGTH_LONG).show();
+    				//WebView wv2 = (WebView)findViewById(R.id.webview_sub);
+    				//wv2.loadUrl("about:blank");
+    			}
+    		}
+    		else{	// url null
+    			
+    		}
+    	}
+    	else{	// null
+    		Toast.makeText(this, "about:blank", Toast.LENGTH_LONG).show();
+			WebView wv = (WebView)findViewById(R.id.webview_sub);
+			wv.loadUrl("about:blank");
+			EditText et = (EditText)findViewById(R.id.edittext_sub_urlbar);
+			et.setText("");
+    	}
+    	
+    }
+    
+    @Override
+    protected void onNewIntent(Intent intent){
+    	super.onNewIntent(intent);
+    	Toast.makeText(this, "onNewIntent", Toast.LENGTH_LONG).show();
+    }
+    
+ // Activityが破棄されたとき.
+    protected void onDestroy() {	// onDestroyの定義
+    	
+    	// 親クラスの処理
+    	super.onDestroy();	// super.onDestroyで親クラスの既定処理.
+    	
+    	// onDestroyのログを表示.
+    	Toast.makeText(this, "onDestroy", Toast.LENGTH_LONG).show();
     }
     
     // URLバーの初期化.

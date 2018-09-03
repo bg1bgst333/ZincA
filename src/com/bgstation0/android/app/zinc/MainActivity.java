@@ -77,6 +77,8 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     				TabHost.TabSpec tabSpec = tabHost.newTabSpec(tabInfo.tabName);	// tabName
     				tabSpec.setIndicator(tabInfo.title);	// title.
     		        Intent intent = new Intent(this, SubActivity.class);	// intentÇê∂ê¨.
+    		        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    		        //intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
     		        Bundle args = new Bundle();	// argsçÏê¨.
     		        args.putString("tag", tabInfo.tabName);	// ("tag", tabInfo.tabName)Ç≈ìoò^.
     		        args.putBoolean("remove", false);
@@ -96,6 +98,8 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     			TabHost.TabSpec tabSpec = tabHost.newTabSpec(tabInfo.tabName);	// tabName
 				tabSpec.setIndicator(tabInfo.tabName);	// Ç±Ç±Ç≈ÇÕtabName.
 		        Intent intent = new Intent(this, SubActivity.class);	// intentÇê∂ê¨.
+		        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		        //intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 		        Bundle args = new Bundle();	// argsçÏê¨.
 		        args.putString("tag", tabInfo.tabName);	// ("tag", tabInfo.tabName)Ç≈ìoò^.
 		        args.putBoolean("remove", false);
@@ -887,10 +891,13 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     	// êVãKÉ^ÉuÇÃí«â¡.
     	registTab();	// registTabÇ≈êVãKÉ^ÉuÇìoò^.
 		TabInfo newTabInfo = mApp.mHlpr.getLastTabInfo();
+		Toast.makeText(this, "url = " + newTabInfo.url, Toast.LENGTH_LONG).show();
 		TabHost.TabSpec tabSpec = mApp.mTabHost.newTabSpec(newTabInfo.tabName);	// tabName
 		tabSpec.setIndicator(newTabInfo.tabName);	// Ç±Ç±Ç≈ÇÕtabName.
 		mApp.mTabNameList.add(newTabInfo.tabName);
         Intent intent = new Intent(this, SubActivity.class);	// intentÇê∂ê¨.
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle args = new Bundle();	// argsçÏê¨.
         args.putString("tag", newTabInfo.tabName);	// ("tag", newTabInfo.tabName)Ç≈ìoò^.
         args.putBoolean("remove", false);
@@ -911,7 +918,13 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     	//mApp.mTabHost.getTabWidget().removeAllViews();
     	mApp.mTabHost.clearAllTabs();
     	//Toast.makeText(this, "after", Toast.LENGTH_LONG).show();
-    	mApp.mHlpr.removeRowTab(tag);
+    	boolean b = mApp.mHlpr.removeRowTab(tag);
+    	if (b){
+    		Toast.makeText(this, "true", Toast.LENGTH_LONG).show();
+    	}
+    	else{
+    		Toast.makeText(this, "false", Toast.LENGTH_LONG).show();
+    	}
     	mApp.mTabMap.remove(tag);
     	mApp.mTabNameList.remove(i);
     	int s = mApp.mTabMap.size();
