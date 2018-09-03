@@ -87,7 +87,7 @@ public class CustomWebViewClient extends WebViewClient {
 		// 履歴登録条件を満たすかどうかを判定.
 		if (url.equals(mStartUrl) && mCount == 0){	// 直近の開始URLで一番最初の時.
 			addHistoryToDB(view, url);	// addHistoryToDBでurlを履歴に登録.
-			updateTabInfoToDB(view.getTitle(), url);	// タブ情報の更新.
+			updateTabInfoToDBAndMap(view.getTitle(), url);	// タブ情報の更新.
 			SubActivity subActivity = (SubActivity)mContext;
 			mApp.changeTabTitle(view.getTitle(), subActivity.mTabName);
 		}
@@ -239,8 +239,8 @@ public class CustomWebViewClient extends WebViewClient {
 	
 	}
 	
-	// タブ情報を更新.(独自DB版.)
-	public void updateTabInfoToDB(String title, String url){
+	// タブ情報を更新.(独自DBとマップ版.)
+	public void updateTabInfoToDBAndMap(String title, String url){
 		
 		// SubActivityにキャスト.
 		SubActivity subActivity = (SubActivity)mContext;	// mContextをSubActivityにキャストし, subActivityに格納.
@@ -252,6 +252,12 @@ public class CustomWebViewClient extends WebViewClient {
 			tabInfo.url = url;
 			tabInfo.date = System.currentTimeMillis();
 			mApp.mHlpr.updateTabInfo(tabInfo.tabName, tabInfo);
+			TabInfo mapti = mApp.mTabMap.get(tabInfo.tabName);
+			if (mapti != null){
+				mapti.title = title;
+				mapti.url = url;
+				mapti.date = tabInfo.date;
+			}
 		}
 		
 	}

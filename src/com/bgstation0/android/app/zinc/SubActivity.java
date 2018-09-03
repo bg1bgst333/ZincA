@@ -36,45 +36,59 @@ public class SubActivity extends Activity implements OnEditorActionListener{
         //Toast.makeText(this, "SubActivity.onCreate()", Toast.LENGTH_LONG).show();
         // メインアプリケーションの取得.
     	mApp = (MainApplication)getApplicationContext();	// getApplicationContextで取得したMainApplicationオブジェクトをmAppに格納.
-    	
+    	Toast.makeText(this, "mTabMap = " + String.valueOf(mApp.mTabMap.size()), Toast.LENGTH_LONG).show();
         // Bundleをチェック.
         Bundle args = getIntent().getExtras();	// args取得.
         if (args != null){	// nullでない.
 	        String tag = args.getString("tag");	// tag取得.
-	        //TextView tv = (TextView)findViewById(R.id.textview_sub);	// tv取得.
-        	//tv.setText(tag);	// tagをセット.
-	        mTabName = tag;	// mTabNameにtagをセット.
-        	TabInfo tabInfo = mApp.mHlpr.getTabInfo(tag);
-        	tabInfo.title = tag;
-        	mApp.mHlpr.updateTabInfo(tag, tabInfo);
-        	initUrlBar();
-        	initProgressBar();
-        	initWebView();
-        	if (tabInfo.url != null){
-        		if (!tabInfo.url.equals("")){
-        			/*
-        			TabWidget widget = mApp.mTabHost.getTabWidget();
-        			if (widget != null){
-        				Toast.makeText(this, "10", Toast.LENGTH_LONG).show();
-        			}
-        			int c = widget.getChildCount();
-        			Toast.makeText(this, "c = " + String.valueOf(c), Toast.LENGTH_LONG).show();
-        			View v = widget.getChildAt(0);
-        			Toast.makeText(this,  "v = " + v.toString(), Toast.LENGTH_LONG).show();
-        			ViewGroup vg = (ViewGroup)v;
-        			int c2 = vg.getChildCount();
-        			Toast.makeText(this, "c2 = " + String.valueOf(c2), Toast.LENGTH_LONG).show();
-        			View v2 = vg.getChildAt(0);
-        			Toast.makeText(this, "v2 = " + v2.toString(), Toast.LENGTH_LONG).show();
-        			View v3 = vg.getChildAt(1);
-        			Toast.makeText(this, "v3 = " + v3.toString(), Toast.LENGTH_LONG).show();
-        			TextView tv = (TextView)widget.findViewById(android.R.id.title);
-        			tv.setText("hogehoge");
-        			*/
-        			setUrlOmit(tabInfo.url);
-        			loadUrl();
-        		}
-        	}
+	        boolean remove = args.getBoolean("remove");
+	        if (remove){
+	        	TabInfo mapti = mApp.mTabMap.get(tag);
+	        	Toast.makeText(this, "view = " + mapti.view.toString(), Toast.LENGTH_LONG).show();
+	        	setContentView(mapti.view);
+	        }
+	        else{
+		        //TextView tv = (TextView)findViewById(R.id.textview_sub);	// tv取得.
+	        	//tv.setText(tag);	// tagをセット.
+		        mTabName = tag;	// mTabNameにtagをセット.
+	        	TabInfo tabInfo = mApp.mHlpr.getTabInfo(tag);
+	        	tabInfo.title = tag;
+	        	mApp.mHlpr.updateTabInfo(tag, tabInfo);
+	        	initUrlBar();
+	        	initProgressBar();
+	        	initWebView();
+	        	if (tabInfo.url != null){
+	        		if (!tabInfo.url.equals("")){
+	        			/*
+	        			TabWidget widget = mApp.mTabHost.getTabWidget();
+	        			if (widget != null){
+	        				Toast.makeText(this, "10", Toast.LENGTH_LONG).show();
+	        			}
+	        			int c = widget.getChildCount();
+	        			Toast.makeText(this, "c = " + String.valueOf(c), Toast.LENGTH_LONG).show();
+	        			View v = widget.getChildAt(0);
+	        			Toast.makeText(this,  "v = " + v.toString(), Toast.LENGTH_LONG).show();
+	        			ViewGroup vg = (ViewGroup)v;
+	        			int c2 = vg.getChildCount();
+	        			Toast.makeText(this, "c2 = " + String.valueOf(c2), Toast.LENGTH_LONG).show();
+	        			View v2 = vg.getChildAt(0);
+	        			Toast.makeText(this, "v2 = " + v2.toString(), Toast.LENGTH_LONG).show();
+	        			View v3 = vg.getChildAt(1);
+	        			Toast.makeText(this, "v3 = " + v3.toString(), Toast.LENGTH_LONG).show();
+	        			TextView tv = (TextView)widget.findViewById(android.R.id.title);
+	        			tv.setText("hogehoge");
+	        			*/
+	        			setUrlOmit(tabInfo.url);
+	        			loadUrl();
+	        		}
+	        	}
+	        	// タブマップにビューを保存.
+	        	TabInfo ti = mApp.mHlpr.getTabInfo(tag);
+	        	View rootView = getWindow().getDecorView();	// getWindow().getDecorViewでrootViewを取得.
+	    		View content = rootView.findViewById(R.id.layout_sub);	// rootViewからlayout_subを抜き出す.
+	        	ti.view = content;
+	        	mApp.mTabMap.put(tag, ti);
+	        }
         }
         
     }

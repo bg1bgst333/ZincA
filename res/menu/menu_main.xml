@@ -10,6 +10,10 @@
         android:orderInCategory="102"
         android:showAsAction="never" />
     -->
+    <item android:id="@+id/menu_item_remove_tab"
+        android:title="@string/menu_item_temove_tab_text"
+        android:orderInCategory="102"
+        android:showAsAction="never" />"
     <item android:id="@+id/menu_item_bookmark_add"
         android:title="@string/menu_item_bookmark_add_text"
         android:orderInCategory="103"

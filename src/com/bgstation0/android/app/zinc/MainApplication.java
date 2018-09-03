@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -42,7 +43,8 @@ public class MainApplication extends Application {
 		mHlpr = new UrlListDatabaseHelper(this);	// UrlListDatabaseHelperにthisを渡して生成.
 		
 		// タブマップの生成.
-		mTabMap = new HashMap<String, TabInfo>();	// mTabMapをHashMapで作成.
+		//mTabMap = new HashMap<String, TabInfo>();	// mTabMapをHashMapで作成.
+		mTabMap = new LinkedHashMap<String, TabInfo>();
 		//mNextViewNo = 0;	// mNextViewNoを0としておく.
 		
 		// タブネームリストの生成.
@@ -106,8 +108,12 @@ public class MainApplication extends Application {
 			if (v == null){
 				//Toast.makeText(this, "v == null: " + String.valueOf(i), Toast.LENGTH_LONG).show();
 			}
-			TextView tv = (TextView)v2.findViewById(android.R.id.title);
-			tv.setText(title);
+			if (v2 != null){
+				TextView tv = (TextView)v2.findViewById(android.R.id.title);
+				if (tv != null){
+					tv.setText(title);
+				}
+			}
 		}
 	}
 	

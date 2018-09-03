@@ -79,6 +79,7 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     		        Intent intent = new Intent(this, SubActivity.class);	// intentを生成.
     		        Bundle args = new Bundle();	// args作成.
     		        args.putString("tag", tabInfo.tabName);	// ("tag", tabInfo.tabName)で登録.
+    		        args.putBoolean("remove", false);
     		        intent.putExtras(args);	// args登録.
     		        tabSpec.setContent(intent);	// intentをセット.
     		        tabHost.addTab(tabSpec);	// tabSpecを追加.
@@ -97,6 +98,7 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
 		        Intent intent = new Intent(this, SubActivity.class);	// intentを生成.
 		        Bundle args = new Bundle();	// args作成.
 		        args.putString("tag", tabInfo.tabName);	// ("tag", tabInfo.tabName)で登録.
+		        args.putBoolean("remove", false);
 		        intent.putExtras(args);	// args登録.
 		        tabSpec.setContent(intent);	// intentをセット.
 		        tabHost.addTab(tabSpec);	// tabSpecを追加.
@@ -340,6 +342,12 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     		
     	}
     	*/
+    	else if (id == R.id.menu_item_remove_tab){	// R.id.menu_item_remove_tab("タブの削除")の時.
+    		
+    		// タブの削除.
+    		removeTab();	// removeTabで削除.
+    		
+    	}
     	else if (id == R.id.menu_item_bookmark_add){	// R.id.menu_item_bookmark_add("ブックマークの追加")の時.
 
     		// ブックマークの追加.
@@ -885,12 +893,42 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
         Intent intent = new Intent(this, SubActivity.class);	// intentを生成.
         Bundle args = new Bundle();	// args作成.
         args.putString("tag", newTabInfo.tabName);	// ("tag", newTabInfo.tabName)で登録.
+        args.putBoolean("remove", false);
         intent.putExtras(args);	// args登録.
         tabSpec.setContent(intent);	// intentをセット.
         mApp.mTabHost.addTab(tabSpec);	// tabSpecを追加.
         int last = mApp.mTabNameList.size() - 1;	// last.
         getTabHost().setCurrentTab(last);
         
+    }
+    
+    // タブの削除.(現在表示されているタブを削除.)
+    public void removeTab(){
+    
+    	String tag = mApp.mTabHost.getCurrentTabTag();
+    	Toast.makeText(this, "before", Toast.LENGTH_LONG).show();
+    	int i = mApp.mTabHost.getCurrentTab();
+    	//mApp.mTabHost.getTabWidget().removeAllViews();
+    	mApp.mTabHost.clearAllTabs();
+    	//Toast.makeText(this, "after", Toast.LENGTH_LONG).show();
+    	mApp.mHlpr.removeRowTab(tag);
+    	mApp.mTabMap.remove(tag);
+    	mApp.mTabNameList.remove(i);
+    	int s = mApp.mTabMap.size();
+    	Toast.makeText(this, "s = " + String.valueOf(s), Toast.LENGTH_LONG).show();
+    	for (TabInfo ti : mApp.mTabMap.values()){
+    		TabHost.TabSpec tabSpec = mApp.mTabHost.newTabSpec(ti.tabName);
+    		tabSpec.setIndicator(ti.title);
+    		Intent intent = new Intent(this, SubActivity.class);	// intentを生成.
+            Bundle args = new Bundle();	// args作成.
+            args.putString("tag", ti.tabName);	// ("tag", ti.tabName)で登録.
+            args.putBoolean("remove", true);
+            intent.putExtras(args);	// args登録.
+            tabSpec.setContent(intent);	// intentをセット.
+            mApp.mTabHost.addTab(tabSpec);	// tabSpecを追加.
+            Toast.makeText(this, "add tabName = " + ti.tabName + " title = " + ti.title, Toast.LENGTH_LONG).show();
+    	}
+    	
     }
     
     // タブ状態の保存.
