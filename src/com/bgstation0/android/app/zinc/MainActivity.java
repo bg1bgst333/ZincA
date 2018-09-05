@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Browser;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,12 +34,13 @@ import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TabHost;
+import android.widget.TabHost.TabContentFactory;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
 
 //メインアクティビティクラスMainActivity
-public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickListener, OnEditorActionListener*/{	// View.OnClickListener, TextView.OnEditorActionListenerインターフェースの追加.
+public class MainActivity extends TabActivity implements TabContentFactory, OnEditorActionListener/*Activity*/ /*implements OnClickListener, OnEditorActionListener*/{	// View.OnClickListener, TextView.OnEditorActionListenerインターフェースの追加.
 
 	// メンバフィールドの初期化.
 	public static final int REQUEST_CODE_BOOKMARK = 1001;	// REQUEST_CODE_BOOKMARKを1001とする.
@@ -83,7 +85,8 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     		        args.putString("tag", tabInfo.tabName);	// ("tag", tabInfo.tabName)で登録.
     		        args.putBoolean("remove", false);
     		        intent.putExtras(args);	// args登録.
-    		        tabSpec.setContent(intent);	// intentをセット.
+    		        //tabSpec.setContent(intent);	// intentをセット.
+    		        tabSpec.setContent(this);
     		        tabHost.addTab(tabSpec);	// tabSpecを追加.
     		        mApp.mTabNameList.add(tabInfo.tabName);
     		        tabHost.setCurrentTab(j);
@@ -104,7 +107,8 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
 		        args.putString("tag", tabInfo.tabName);	// ("tag", tabInfo.tabName)で登録.
 		        args.putBoolean("remove", false);
 		        intent.putExtras(args);	// args登録.
-		        tabSpec.setContent(intent);	// intentをセット.
+		        //tabSpec.setContent(intent);	// intentをセット.
+		        tabSpec.setContent(this);
 		        tabHost.addTab(tabSpec);	// tabSpecを追加.
 		        mApp.mTabNameList.add(tabInfo.tabName);
     		}
@@ -174,12 +178,88 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
         
     }
     
+    @Override
+    public View createTabContent(String tag){
+    	//Toast.makeText(this, "createTabContent tag = " + tag, Toast.LENGTH_LONG).show();
+    	LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
+    	View view = inflater.inflate(R.layout.activity_sub, null);
+    	initUrlBar2(view);
+    	initProgressBar2(view);
+    	initWebView2(view, tag);
+    	
+    	// タブ情報をタブマップから取得.
+    	TabInfo ti = mApp.mTabMap.get(tag);
+    	if (ti != null){
+    		//Toast.makeText(this, "TabMapExist", Toast.LENGTH_LONG).show();
+    		return ti.view;
+    	}
+    	else{
+    		// タブ情報をタブDBから取得.
+    		TabInfo ti2 = mApp.mHlpr.getTabInfo(tag);
+    		if (ti2 != null){
+    			//Toast.makeText(this, "TabDBExist", Toast.LENGTH_LONG).show();
+    			ti2.view = view;
+    			mApp.mTabMap.put(tag, ti2);
+    			if (ti2.url != null){
+	        		if (!ti2.url.equals("")){
+	        			setUrlOmit(ti2.url, tag);
+	        			loadUrl();
+	        		}
+    			}
+    			return ti2.view;
+    		}
+    		else{
+    			//Toast.makeText(this, "TabNotExist", Toast.LENGTH_LONG).show();
+    			return view;
+    		}
+    	}    	
+    }
+    
+    // URLバーの初期化.
+    public void initUrlBar2(View view){
+    	
+    	// etUrlを取得し, OnEditorActionListenerとして自身(this)をセット.
+    	EditText etUrl = (EditText)view.findViewById(R.id.edittext_sub_urlbar);	// findViewByIdでR.id.edittext_sub_urlbarからEditTextオブジェクトetUrlを取得.
+    	etUrl.setOnEditorActionListener(this);	// etUrl.setOnEditorActionListeneでthis(自身)をセット.
+    	
+    }
+    
+    // プログレスバーの初期化.
+    public void initProgressBar2(View view){
+    	
+    	// progressBarを取得し, 最初は非表示にしておく.
+    	ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progressbar_sub);	// findViewByIdでR.id.progressbarからProgressBarオブジェクトprogressBarを取得.
+    	//progressBar.setVisibility(View.INVISIBLE);	// progressBar.setVisibilityで非表示にする.
+    	progressBar.setVisibility(View.GONE);	// progressBar.setVisibilityで非表示(View.GONE)にする.
+    	//progressBar.setVisibility(View.VISIBLE);	// progressBar.setVisibilityで最初から表示にする.
+    }
+    
+    // ウェブビューの初期化.
+    public void initWebView2(View view, String tag){
+    	
+    	// webViewの取得.
+        WebView webView = (WebView)view.findViewById(R.id.webview_sub);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
+        // JavaScript有効化.
+        webView.getSettings().setJavaScriptEnabled(true);	// webView.getSettings().setJavaScriptEnabledでJavaScriptを有効にする.
+        // デフォルトのユーザエージェントを取得.
+        mPhoneUA = webView.getSettings().getUserAgentString();	// webView.getSettings().getUserAgentStringで取得したUAをmPhoneUAに格納.(最初は電話用と思われるので, mPhoneUAに格納.)
+        //Toast.makeText(this, mPhoneUA, Toast.LENGTH_LONG).show();	// mPhoneUAをToastで表示.
+        mPCUA = generatePCUserAgentString(mPhoneUA);	// mPhoneUAからPC用ユーザエージェント文字列を生成.
+        //Toast.makeText(this, mPCUA, Toast.LENGTH_LONG).show();	// mPCUAをToastで表示.
+        mCurrentUA = mPhoneUA;	// 現在のユーザエージェントをmPhoneUAとする.
+        // CustomWebViewClientのセット.
+        webView.setWebViewClient(new CustomWebViewClient(this, tag));	// newで生成したCustomWebViewClientオブジェクト(コンストラクタの引数にthisを渡す.)をwebView.setWebViewClientでセット.
+        // CustomWebChromeClientのセット.
+        webView.setWebChromeClient(new CustomWebChromeClient(this, tag));	// newで生成したCustomWebChromeClientオブジェクト(コンストラクタの引数にthisを渡す.)をwebView.setWebChromeClientでセット.
+    	
+    }
+    
     // 既存のインスタンスが再利用され, インテントが飛んで来た時.
     @Override
     protected void onNewIntent(Intent intent){
     	
     	// OnNewIntentに来た事をトーストで表示.
-    	Toast.makeText(this, "OnNewIntent", Toast.LENGTH_LONG).show();	// "OnNewIntent"とToastで表示.
+    	//Toast.makeText(this, "OnNewIntent", Toast.LENGTH_LONG).show();	// "OnNewIntent"とToastで表示.
     	
     }
     
@@ -406,7 +486,7 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     	
     }
     */
-    /*
+    
     // エディットテキストでEnterキーが押された時.
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event){
@@ -430,7 +510,6 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     	return false;	// returnでfalseを返す.
     	
     }
-    */
     
     // URLバーの初期化.
     public void initUrlBar(){
@@ -636,31 +715,35 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     }
     
     // URLバーにURLをセット.
-    public void setUrl(String url){
+    public void setUrl(String url, String tag){
     	
     	// etUrlを取得し, urlをセット.
-    	/*
-    	EditText etUrl = (EditText)findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
-    	if (etUrl == null){
-    		Toast.makeText(this, "null", Toast.LENGTH_LONG).show();
+    	//EditText etUrl = (EditText)findViewById(R.id.edittext_urlbar);	// findViewByIdでR.id.edittext_urlbarからEditTextオブジェクトetUrlを取得.
+    	TabInfo ti = mApp.mTabMap.get(tag);
+    	if (ti != null){
+    		if (ti.view != null){
+				EditText etUrl = (EditText)ti.view.findViewById(R.id.edittext_sub_urlbar);
+				if (etUrl == null){
+					//Toast.makeText(this, "null", Toast.LENGTH_LONG).show();
+				}
+				else{
+					etUrl.setText(url);	// etUrl.SetTextでURLバーのetUrlにurlをセット.
+				}
+    		}
     	}
-    	else{
-    		etUrl.setText(url);	// etUrl.SetTextでURLバーのetUrlにurlをセット.
-    	}
-    	*/
     	
     }
     
     // URLバーにURLをセットする時に"http"の場合は省略する.
-    public void setUrlOmit(String url){
+    public void setUrlOmit(String url, String tag){
     	
     	// 先頭文字列から省略するかを判定.
     	if (url.startsWith("http://")){	// "http"の時.
     		String omitUrl = url.substring(7);	// url.substringで7文字目からの文字列をomitUrlに返す.
-    		setUrl(omitUrl);	// setUrlでomitUrlをセット.
+    		setUrl(omitUrl, tag);	// setUrlでomitUrlをセット.
     	}
     	else{
-    		setUrl(url);	// setUrlでそのままurlを渡す.
+    		setUrl(url, tag);	// setUrlでそのままurlを渡す.
     	}
     	
     }
@@ -669,8 +752,15 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     public String getUrl(){
     	
     	// etUrlのURLを取得.
-    	EditText etUrl = (EditText)findViewById(R.id.edittext_sub_urlbar);	// findViewByIdでR.id.edittext_sub_urlbarからEditTextオブジェクトetUrlを取得.
-    	return etUrl.getText().toString();	// etUrl.getText().toStringでURLを返す.
+    	String tag = this.getTabHost().getCurrentTabTag();
+    	TabInfo ti = mApp.mTabMap.get(tag);
+    	if (ti != null){
+    		if (ti.view != null){
+    			EditText etUrl = (EditText)ti.view.findViewById(R.id.edittext_sub_urlbar);	// findViewByIdでR.id.edittext_sub_urlbarからEditTextオブジェクトetUrlを取得.
+    	    	return etUrl.getText().toString();	// etUrl.getText().toStringでURLを返す.
+    		}
+    	}
+    	return "";
     	
     }
     
@@ -763,11 +853,16 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     // 指定されたURLをロード.
     public void loadUrl(String url){
     	
-    	/*
     	// webViewを取得し, urlをロード.
-    	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
-		webView.loadUrl(url);	// webView.loadUrlでurlの指すWebページをロード.
-		*/
+    	//WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
+    	String tag = this.getTabHost().getCurrentTabTag();
+    	TabInfo ti = mApp.mTabMap.get(tag);
+    	if (ti != null){
+    		if (ti.view != null){
+    			WebView webView = (WebView)ti.view.findViewById(R.id.webview_sub);
+    			webView.loadUrl(url);	// webView.loadUrlでurlの指すWebページをロード.    	
+    		}
+    	}
     	
     }
     
@@ -790,7 +885,7 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     	
     	// bundleからURLを取得しロード.
     	String url = bundle.getString("url");	// bundle.getStringでurlを取得.
-		setUrlOmit(url);	// setUrlOmitでURLバーにURLをセット.
+		//setUrlOmit(url);	// setUrlOmitでURLバーにURLをセット.
 		loadUrl();	// loadUrlでURLバーのURLをロード.
 		
     }
@@ -804,37 +899,46 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
         String schema = intent.getScheme();	// intent.getSchemaでschemaを取得.
         String url = intent.getDataString();	// intent.getDataStringでurlを取得.
         if (action != null && action.equals(Intent.ACTION_VIEW) && (schema.equals("http") || schema.equals("https"))){	// ACTION_VIEWでhttpまたはhttpsの時.
-        	setUrlOmit(url);	// setUrlOmitでURLバーにURLをセット.
+        	//setUrlOmit(url);	// setUrlOmitでURLバーにURLをセット.
     		loadUrl();	// loadUrlでURLバーのURLをロード.
         }
         
     }
     
     // プログレスバーに進捗度をセット.
-    public void setProgressValue(int progress){
+    public void setProgressValue(int progress, String tag){
     	
-    	/*
-    	// プログレスバーを取得し, 指定された進捗度をセット.
-    	ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressbar);	// findViewByIdでR.id.progressbarからProgressBarオブジェクトprogressBarを取得.
-    	progressBar.setProgress(progress);	// progressBar.setProgressでprogressをセット.
-    	*/
+    	TabInfo ti = mApp.mTabMap.get(tag);
+    	if (ti != null){
+    		if (ti.view != null){
+		    	// プログレスバーを取得し, 指定された進捗度をセット.
+		    	//ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressbar);	// findViewByIdでR.id.progressbarからProgressBarオブジェクトprogressBarを取得.
+		    	//progressBar.setProgress(progress);	// progressBar.setProgressでprogressをセット.
+		    	ProgressBar progressBar = (ProgressBar)ti.view.findViewById(R.id.progressbar_sub);	// findViewByIdでR.id.progressbarからProgressBarオブジェクトprogressBarを取得.
+		    	progressBar.setProgress(progress);	// progressBar.setProgressでprogressをセット.
+    		}
+    	}
     	
     }
     
     // プログレスバーの表示/非表示をセット.
-    public void setProgressBarVisible(boolean visible){
+    public void setProgressBarVisible(boolean visible, String tag){
     	
-    	/*
-    	// プログレスバーを取得し, 表示/非表示をセット.
-    	ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressbar);	// findViewByIdでR.id.progressbarからProgressBarオブジェクトprogressBarを取得.
-    	if (visible){	// trueなら表示.
-    		progressBar.setVisibility(View.VISIBLE);	// progressBar.setVisibilityでVISIBLE.
+    	TabInfo ti = mApp.mTabMap.get(tag);
+    	if (ti != null){
+    		if (ti.view != null){
+				// プログレスバーを取得し, 表示/非表示をセット.
+				//ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressbar);	// findViewByIdでR.id.progressbarからProgressBarオブジェクトprogressBarを取得.
+				ProgressBar progressBar = (ProgressBar)ti.view.findViewById(R.id.progressbar_sub);
+				if (visible){	// trueなら表示.
+					progressBar.setVisibility(View.VISIBLE);	// progressBar.setVisibilityでVISIBLE.
+				}
+				else{	// falseなら非表示.
+					//progressBar.setVisibility(View.INVISIBLE);	// progressBar.setVisibilityでINVISIBLE.
+					progressBar.setVisibility(View.GONE);	// progressBar.setVisibilityでGONE.
+				}
+    		}
     	}
-    	else{	// falseなら非表示.
-    		//progressBar.setVisibility(View.INVISIBLE);	// progressBar.setVisibilityでINVISIBLE.
-    		progressBar.setVisibility(View.GONE);	// progressBar.setVisibilityでGONE.
-    	}
-    	*/
     	
     }
     
@@ -891,7 +995,7 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     	// 新規タブの追加.
     	registTab();	// registTabで新規タブを登録.
 		TabInfo newTabInfo = mApp.mHlpr.getLastTabInfo();
-		Toast.makeText(this, "url = " + newTabInfo.url, Toast.LENGTH_LONG).show();
+		//Toast.makeText(this, "url = " + newTabInfo.url, Toast.LENGTH_LONG).show();
 		TabHost.TabSpec tabSpec = mApp.mTabHost.newTabSpec(newTabInfo.tabName);	// tabName
 		tabSpec.setIndicator(newTabInfo.tabName);	// ここではtabName.
 		mApp.mTabNameList.add(newTabInfo.tabName);
@@ -902,7 +1006,8 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
         args.putString("tag", newTabInfo.tabName);	// ("tag", newTabInfo.tabName)で登録.
         args.putBoolean("remove", false);
         intent.putExtras(args);	// args登録.
-        tabSpec.setContent(intent);	// intentをセット.
+        //tabSpec.setContent(intent);	// intentをセット.
+        tabSpec.setContent(this);
         mApp.mTabHost.addTab(tabSpec);	// tabSpecを追加.
         int last = mApp.mTabNameList.size() - 1;	// last.
         getTabHost().setCurrentTab(last);
@@ -913,22 +1018,22 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
     public void removeTab(){
     
     	String tag = mApp.mTabHost.getCurrentTabTag();
-    	Toast.makeText(this, "before", Toast.LENGTH_LONG).show();
+    	//Toast.makeText(this, "before", Toast.LENGTH_LONG).show();
     	int i = mApp.mTabHost.getCurrentTab();
     	//mApp.mTabHost.getTabWidget().removeAllViews();
     	mApp.mTabHost.clearAllTabs();
     	//Toast.makeText(this, "after", Toast.LENGTH_LONG).show();
     	boolean b = mApp.mHlpr.removeRowTab(tag);
     	if (b){
-    		Toast.makeText(this, "true", Toast.LENGTH_LONG).show();
+    		//Toast.makeText(this, "true", Toast.LENGTH_LONG).show();
     	}
     	else{
-    		Toast.makeText(this, "false", Toast.LENGTH_LONG).show();
+    		//Toast.makeText(this, "false", Toast.LENGTH_LONG).show();
     	}
     	mApp.mTabMap.remove(tag);
     	mApp.mTabNameList.remove(i);
     	int s = mApp.mTabMap.size();
-    	Toast.makeText(this, "s = " + String.valueOf(s), Toast.LENGTH_LONG).show();
+    	//Toast.makeText(this, "s = " + String.valueOf(s), Toast.LENGTH_LONG).show();
     	for (TabInfo ti : mApp.mTabMap.values()){
     		TabHost.TabSpec tabSpec = mApp.mTabHost.newTabSpec(ti.tabName);
     		tabSpec.setIndicator(ti.title);
@@ -937,9 +1042,10 @@ public class MainActivity extends TabActivity/*Activity*/ /*implements OnClickLi
             args.putString("tag", ti.tabName);	// ("tag", ti.tabName)で登録.
             args.putBoolean("remove", true);
             intent.putExtras(args);	// args登録.
-            tabSpec.setContent(intent);	// intentをセット.
+            //tabSpec.setContent(intent);	// intentをセット.
+            tabSpec.setContent(this);
             mApp.mTabHost.addTab(tabSpec);	// tabSpecを追加.
-            Toast.makeText(this, "add tabName = " + ti.tabName + " title = " + ti.title, Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "add tabName = " + ti.tabName + " title = " + ti.title, Toast.LENGTH_LONG).show();
     	}
     	
     }

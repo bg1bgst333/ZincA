@@ -37,7 +37,7 @@ public class SubActivity extends Activity implements OnEditorActionListener{
         //Toast.makeText(this, "SubActivity.onCreate()", Toast.LENGTH_LONG).show();
         // メインアプリケーションの取得.
     	mApp = (MainApplication)getApplicationContext();	// getApplicationContextで取得したMainApplicationオブジェクトをmAppに格納.
-    	Toast.makeText(this, "mTabMap = " + String.valueOf(mApp.mTabMap.size()), Toast.LENGTH_LONG).show();
+    	//Toast.makeText(this, "mTabMap = " + String.valueOf(mApp.mTabMap.size()), Toast.LENGTH_LONG).show();
         // Bundleをチェック.
         Bundle args = getIntent().getExtras();	// args取得.
         if (args != null){	// nullでない.
@@ -45,7 +45,7 @@ public class SubActivity extends Activity implements OnEditorActionListener{
 	        boolean remove = args.getBoolean("remove");
 	        if (remove){
 	        	TabInfo mapti = mApp.mTabMap.get(tag);
-	        	Toast.makeText(this, "view = " + mapti.view.toString(), Toast.LENGTH_LONG).show();
+	        	//Toast.makeText(this, "view = " + mapti.view.toString(), Toast.LENGTH_LONG).show();
 	        	setContentView(mapti.view);
 	        }
 	        else{
@@ -88,7 +88,7 @@ public class SubActivity extends Activity implements OnEditorActionListener{
 	        	View rootView = getWindow().getDecorView();	// getWindow().getDecorViewでrootViewを取得.
 	    		View content = rootView.findViewById(R.id.layout_sub);	// rootViewからlayout_subを抜き出す.
 	        	ti.view = content;
-	        	Toast.makeText(this, "ti.view = " + ti.view.toString(), Toast.LENGTH_LONG).show();
+	        	//Toast.makeText(this, "ti.view = " + ti.view.toString(), Toast.LENGTH_LONG).show();
 	        	mApp.mTabMap.put(tag, ti);
 	        }
         }
@@ -103,7 +103,7 @@ public class SubActivity extends Activity implements OnEditorActionListener{
     	
     	// onStartのログを表示.
     	//Log.v(TAG, "onStart()");	// Log.vで"onStart()"と出力.
-    	Toast.makeText(this, "onStart", Toast.LENGTH_LONG).show();
+    	//Toast.makeText(this, "onStart", Toast.LENGTH_LONG).show();
     }
     
     // Activityが開始されたとき.
@@ -114,7 +114,7 @@ public class SubActivity extends Activity implements OnEditorActionListener{
     	
     	// onStartのログを表示.
     	//Log.v(TAG, "onStart()");	// Log.vで"onStart()"と出力.
-    	Toast.makeText(this, "onResume", Toast.LENGTH_LONG).show();
+    	//Toast.makeText(this, "onResume", Toast.LENGTH_LONG).show();
     	
     	TabInfo ti = mApp.mTabMap.get(mTabName);
     	if (ti != null){
@@ -133,7 +133,7 @@ public class SubActivity extends Activity implements OnEditorActionListener{
     		}
     	}
     	else{	// null
-    		Toast.makeText(this, "about:blank", Toast.LENGTH_LONG).show();
+    		//Toast.makeText(this, "about:blank", Toast.LENGTH_LONG).show();
 			WebView wv = (WebView)findViewById(R.id.webview_sub);
 			wv.loadUrl("about:blank");
 			EditText et = (EditText)findViewById(R.id.edittext_sub_urlbar);
@@ -145,7 +145,7 @@ public class SubActivity extends Activity implements OnEditorActionListener{
     @Override
     protected void onNewIntent(Intent intent){
     	super.onNewIntent(intent);
-    	Toast.makeText(this, "onNewIntent", Toast.LENGTH_LONG).show();
+    	//Toast.makeText(this, "onNewIntent", Toast.LENGTH_LONG).show();
     }
     
  // Activityが破棄されたとき.
@@ -155,7 +155,7 @@ public class SubActivity extends Activity implements OnEditorActionListener{
     	super.onDestroy();	// super.onDestroyで親クラスの既定処理.
     	
     	// onDestroyのログを表示.
-    	Toast.makeText(this, "onDestroy", Toast.LENGTH_LONG).show();
+    	//Toast.makeText(this, "onDestroy", Toast.LENGTH_LONG).show();
     }
     
     // URLバーの初期化.
@@ -227,7 +227,7 @@ public class SubActivity extends Activity implements OnEditorActionListener{
     	// etUrlを取得し, urlをセット.
     	EditText etUrl = (EditText)findViewById(R.id.edittext_sub_urlbar);	// findViewByIdでR.id.edittext_sub_urlbarからEditTextオブジェクトetUrlを取得.
     	if (etUrl == null){
-    		Toast.makeText(this, "null", Toast.LENGTH_LONG).show();
+    		//Toast.makeText(this, "null", Toast.LENGTH_LONG).show();
     	}
     	else{
     		etUrl.setText(url);	// etUrl.SetTextでURLバーのetUrlにurlをセット.
