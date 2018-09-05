@@ -77,7 +77,18 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     				//Toast.makeText(this, "4", Toast.LENGTH_LONG).show();
     				TabInfo tabInfo = tabInfoList.get(i);
     				TabHost.TabSpec tabSpec = tabHost.newTabSpec(tabInfo.tabName);	// tabName
-    				tabSpec.setIndicator(tabInfo.title);	// title.
+    				//tabSpec.setIndicator(tabInfo.title);	// title.
+    				final String tag = tabInfo.tabName;
+    				final CustomTabWidget widget = new CustomTabWidget(this, tabInfo.title, tabInfo.tabName, new View.OnClickListener() {
+						
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							Toast.makeText(mContext, "click : " + tag, Toast.LENGTH_LONG).show();
+						}
+						
+					});
+    				tabSpec.setIndicator(widget);
     		        Intent intent = new Intent(this, SubActivity.class);	// intentÇê∂ê¨.
     		        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     		        //intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -99,7 +110,19 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     			registTab();	// registTabÇ≈êVãKÉ^ÉuÇìoò^.
     			TabInfo tabInfo = mApp.mHlpr.getLastTabInfo();
     			TabHost.TabSpec tabSpec = tabHost.newTabSpec(tabInfo.tabName);	// tabName
-				tabSpec.setIndicator(tabInfo.tabName);	// Ç±Ç±Ç≈ÇÕtabName.
+    			//tabSpec.setIndicator(tabInfo.title);	// title.
+				final String tag = tabInfo.tabName;
+				tabInfo.title = tabInfo.tabName;
+				final CustomTabWidget widget = new CustomTabWidget(this, tabInfo.title, tabInfo.tabName, new View.OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						Toast.makeText(mContext, "click : " + tag, Toast.LENGTH_LONG).show();
+					}
+					
+				});
+				tabSpec.setIndicator(widget);
 		        Intent intent = new Intent(this, SubActivity.class);	// intentÇê∂ê¨.
 		        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		        //intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -997,7 +1020,19 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
 		TabInfo newTabInfo = mApp.mHlpr.getLastTabInfo();
 		//Toast.makeText(this, "url = " + newTabInfo.url, Toast.LENGTH_LONG).show();
 		TabHost.TabSpec tabSpec = mApp.mTabHost.newTabSpec(newTabInfo.tabName);	// tabName
-		tabSpec.setIndicator(newTabInfo.tabName);	// Ç±Ç±Ç≈ÇÕtabName.
+		//tabSpec.setIndicator(tabInfo.title);	// title.
+		final String tag2 = newTabInfo.tabName;
+		newTabInfo.title = newTabInfo.tabName;
+		final CustomTabWidget widget = new CustomTabWidget(this, newTabInfo.title, newTabInfo.tabName, new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Toast.makeText(mContext, "click : " + tag2, Toast.LENGTH_LONG).show();
+			}
+			
+		});
+		tabSpec.setIndicator(widget);
 		mApp.mTabNameList.add(newTabInfo.tabName);
         Intent intent = new Intent(this, SubActivity.class);	// intentÇê∂ê¨.
         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -1036,7 +1071,18 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     	//Toast.makeText(this, "s = " + String.valueOf(s), Toast.LENGTH_LONG).show();
     	for (TabInfo ti : mApp.mTabMap.values()){
     		TabHost.TabSpec tabSpec = mApp.mTabHost.newTabSpec(ti.tabName);
-    		tabSpec.setIndicator(ti.title);
+    		//tabSpec.setIndicator(tabInfo.title);	// title.
+    		final String tag2 = ti.tabName;
+    		final CustomTabWidget widget = new CustomTabWidget(this, ti.title, ti.tabName, new View.OnClickListener() {
+    			
+    			@Override
+    			public void onClick(View v) {
+    				// TODO Auto-generated method stub
+    				Toast.makeText(mContext, "click : " + tag2, Toast.LENGTH_LONG).show();
+    			}
+    			
+    		});
+    		tabSpec.setIndicator(widget);
     		Intent intent = new Intent(this, SubActivity.class);	// intentÇê∂ê¨.
             Bundle args = new Bundle();	// argsçÏê¨.
             args.putString("tag", ti.tabName);	// ("tag", ti.tabName)Ç≈ìoò^.

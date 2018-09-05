@@ -109,7 +109,8 @@ public class MainApplication extends Application {
 				//Toast.makeText(this, "v == null: " + String.valueOf(i), Toast.LENGTH_LONG).show();
 			}
 			if (v2 != null){
-				TextView tv = (TextView)v2.findViewById(android.R.id.title);
+				//TextView tv = (TextView)v2.findViewById(android.R.id.title);
+				TextView tv = (TextView)v2.findViewById(R.id.textview_title);
 				if (tv != null){
 					tv.setText(title);
 				}
