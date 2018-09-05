@@ -134,6 +134,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
 		        tabSpec.setContent(this);
 		        tabHost.addTab(tabSpec);	// tabSpecを追加.
 		        mApp.mTabNameList.add(tabInfo.tabName);
+		        mApp.mHlpr.updateTabInfo(tag, tabInfo);
     		}
     	}
     	//Toast.makeText(this, "5", Toast.LENGTH_LONG).show();
@@ -1046,7 +1047,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
         mApp.mTabHost.addTab(tabSpec);	// tabSpecを追加.
         int last = mApp.mTabNameList.size() - 1;	// last.
         getTabHost().setCurrentTab(last);
-        
+        mApp.mHlpr.updateTabInfo(newTabInfo.tabName, newTabInfo);
     }
     
     // タブの削除.(現在表示されているタブを削除.)
