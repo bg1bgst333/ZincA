@@ -84,7 +84,8 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
 						@Override
 						public void onClick(View v) {
 							// TODO Auto-generated method stub
-							Toast.makeText(mContext, "click : " + tag, Toast.LENGTH_LONG).show();
+							Toast.makeText(mContext, "click(1) : " + tag, Toast.LENGTH_LONG).show();
+							removeTab(tag);
 						}
 						
 					});
@@ -118,7 +119,8 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
 					@Override
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
-						Toast.makeText(mContext, "click : " + tag, Toast.LENGTH_LONG).show();
+						Toast.makeText(mContext, "click(2) : " + tag, Toast.LENGTH_LONG).show();
+						removeTab(tag);
 					}
 					
 				});
@@ -1029,7 +1031,8 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Toast.makeText(mContext, "click : " + tag2, Toast.LENGTH_LONG).show();
+				Toast.makeText(mContext, "click(3) : " + tag2, Toast.LENGTH_LONG).show();
+				removeTab(tag2);
 			}
 			
 		});
@@ -1050,7 +1053,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
         mApp.mHlpr.updateTabInfo(newTabInfo.tabName, newTabInfo);
     }
     
-    // タブの削除.(現在表示されているタブを削除.)
+ // タブの削除.(現在表示されているタブを削除.)
     public void removeTab(){
     
     	String tag = mApp.mTabHost.getCurrentTabTag();
@@ -1079,7 +1082,64 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     			@Override
     			public void onClick(View v) {
     				// TODO Auto-generated method stub
-    				Toast.makeText(mContext, "click : " + tag2, Toast.LENGTH_LONG).show();
+    				Toast.makeText(mContext, "click(4) : " + tag2, Toast.LENGTH_LONG).show();
+    				removeTab(tag2);
+    			}
+    			
+    		});
+    		tabSpec.setIndicator(widget);
+    		Intent intent = new Intent(this, SubActivity.class);	// intentを生成.
+            Bundle args = new Bundle();	// args作成.
+            args.putString("tag", ti.tabName);	// ("tag", ti.tabName)で登録.
+            args.putBoolean("remove", true);
+            intent.putExtras(args);	// args登録.
+            //tabSpec.setContent(intent);	// intentをセット.
+            tabSpec.setContent(this);
+            mApp.mTabHost.addTab(tabSpec);	// tabSpecを追加.
+            //Toast.makeText(this, "add tabName = " + ti.tabName + " title = " + ti.title, Toast.LENGTH_LONG).show();
+    	}
+    	
+    }
+    
+    // タブの削除.（押されたタブを削除.)
+    public void removeTab(String tag){
+    
+    	//String tag = mApp.mTabHost.getCurrentTabTag();
+    	//Toast.makeText(this, "before", Toast.LENGTH_LONG).show();
+    	//int i = mApp.mTabHost.getCurrentTab();
+    	int i = -1;
+    	for (int ii = 0; ii < mApp.mTabNameList.size(); ii++){
+    		if (mApp.mTabNameList.get(ii).equals(tag)){
+    			i = ii;
+    		}
+    	}
+    	//mApp.mTabHost.getTabWidget().removeAllViews();
+    	mApp.mTabHost.clearAllTabs();
+    	//Toast.makeText(this, "after", Toast.LENGTH_LONG).show();
+    	boolean b = mApp.mHlpr.removeRowTab(tag);
+    	if (b){
+    		//Toast.makeText(this, "true", Toast.LENGTH_LONG).show();
+    	}
+    	else{
+    		//Toast.makeText(this, "false", Toast.LENGTH_LONG).show();
+    	}
+    	mApp.mTabMap.remove(tag);
+    	if (i != -1){
+    		mApp.mTabNameList.remove(i);
+    	}
+    	int s = mApp.mTabMap.size();
+    	//Toast.makeText(this, "s = " + String.valueOf(s), Toast.LENGTH_LONG).show();
+    	for (TabInfo ti : mApp.mTabMap.values()){
+    		TabHost.TabSpec tabSpec = mApp.mTabHost.newTabSpec(ti.tabName);
+    		//tabSpec.setIndicator(tabInfo.title);	// title.
+    		final String tag2 = ti.tabName;
+    		final CustomTabWidget widget = new CustomTabWidget(this, ti.title, ti.tabName, new View.OnClickListener() {
+    			
+    			@Override
+    			public void onClick(View v) {
+    				// TODO Auto-generated method stub
+    				Toast.makeText(mContext, "click(4) : " + tag2, Toast.LENGTH_LONG).show();
+    				removeTab(tag2);
     			}
     			
     		});
