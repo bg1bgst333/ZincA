@@ -1078,6 +1078,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     		//tabSpec.setIndicator(tabInfo.title);	// title.
     		final String tag2 = ti.tabName;
     		if (ti.title.equals("")){
+    			Toast.makeText(this, "add tab title = " + ti.tabName, Toast.LENGTH_LONG).show();
     			ti.title = ti.tabName;
     		}
     		final CustomTabWidget widget = new CustomTabWidget(this, ti.title, ti.tabName, new View.OnClickListener() {
@@ -1135,6 +1136,10 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     	for (TabInfo ti : mApp.mTabMap.values()){
     		TabHost.TabSpec tabSpec = mApp.mTabHost.newTabSpec(ti.tabName);
     		//tabSpec.setIndicator(tabInfo.title);	// title.
+    		if (ti.title.equals("")){
+    			Toast.makeText(this, "add tab title = " + ti.tabName, Toast.LENGTH_LONG).show();
+    			ti.title = ti.tabName;
+    		}
     		final String tag2 = ti.tabName;
     		final CustomTabWidget widget = new CustomTabWidget(this, ti.title, ti.tabName, new View.OnClickListener() {
     			
