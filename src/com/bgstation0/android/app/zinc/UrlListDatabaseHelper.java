@@ -403,7 +403,8 @@ public class UrlListDatabaseHelper extends SQLiteOpenHelper {
         // DBからタブ情報を得る.
 		try{	// tryで囲む.
 			sqlite = getReadableDatabase();	// getReadableDatabaseでsqliteを取得.
-			c = sqlite.query(TABLE_TABS, projection, null, null, null, null, "datemillisec desc");	// sqlite.queryで一覧取得.("datemillisec desc"で日時降順.)
+			//c = sqlite.query(TABLE_TABS, projection, null, null, null, null, "datemillisec desc");	// sqlite.queryで一覧取得.("datemillisec desc"で日時降順.)
+			c = sqlite.query(TABLE_TABS, projection, null, null, null, null, "_id desc");	// sqlite.queryで一覧取得.("_id desc"でID降順.)
 			c.moveToFirst();	// 先頭にセット.
 			do{
 				TabInfo tabInfo = new TabInfo();	// tabInfoの生成.
