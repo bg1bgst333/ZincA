@@ -1077,6 +1077,9 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     		TabHost.TabSpec tabSpec = mApp.mTabHost.newTabSpec(ti.tabName);
     		//tabSpec.setIndicator(tabInfo.title);	// title.
     		final String tag2 = ti.tabName;
+    		if (ti.title.equals("")){
+    			ti.title = ti.tabName;
+    		}
     		final CustomTabWidget widget = new CustomTabWidget(this, ti.title, ti.tabName, new View.OnClickListener() {
     			
     			@Override
