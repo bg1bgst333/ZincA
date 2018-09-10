@@ -760,6 +760,15 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     	
     }
     
+    // カレントタブにURLをセット.
+    public void setUrlOmit(String url){
+    	
+    	// カレントタブにセット.
+    	String tag = this.getTabHost().getCurrentTabTag();
+    	setUrlOmit(url ,tag);
+    	
+    }
+    
     // URLバーにURLをセットする時に"http"の場合は省略する.
     public void setUrlOmit(String url, String tag){
     	
@@ -938,7 +947,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     	
     	// bundleからURLを取得しロード.
     	String url = bundle.getString("url");	// bundle.getStringでurlを取得.
-		//setUrlOmit(url);	// setUrlOmitでURLバーにURLをセット.
+		setUrlOmit(url);	// setUrlOmitでURLバーにURLをセット.
 		loadUrl();	// loadUrlでURLバーのURLをロード.
 		
     }
