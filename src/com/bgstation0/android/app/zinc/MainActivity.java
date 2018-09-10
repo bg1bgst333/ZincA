@@ -1025,6 +1025,20 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     		super.onBackPressed();	// 親クラスのonBackPressedを呼ぶ.
     	}
     	*/
+    	// WebViewのURLを取得.
+    	String tag = this.getTabHost().getCurrentTabTag();
+    	TabInfo ti = mApp.mTabMap.get(tag);
+    	if (ti != null){
+    		if (ti.view != null){
+    			WebView webView = (WebView)ti.view.findViewById(R.id.webview_sub);
+    			if (webView.canGoBack()){	// バック可能な場合.
+    	    		webView.goBack();	// webView.goBackで戻る.
+    	    	}
+    	    	else{	// そうでない時.
+    	    		super.onBackPressed();	// 親クラスのonBackPressedを呼ぶ.
+    	    	}
+    		}
+    	}
     	
     }
     
