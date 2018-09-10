@@ -790,6 +790,22 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     	
     }
     
+    // ウェブビューからタイトルを取得.
+    public String getWebTitle(){
+    	
+    	// WebViewのURLを取得.
+    	String tag = this.getTabHost().getCurrentTabTag();
+    	TabInfo ti = mApp.mTabMap.get(tag);
+    	if (ti != null){
+    		if (ti.view != null){
+    			WebView webView = (WebView)ti.view.findViewById(R.id.webview_sub);
+    			return webView.getTitle();
+    		}
+    	}
+    	return "";
+    	
+    }
+    
     // ウェブビューからURLを取得.
     public String getWebUrl(){
     	
@@ -798,7 +814,18 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
     	return webView.getUrl();	// returnでwebView.getUrlで取得したURLを返す.
     	*/
-    	return null;
+    	//return null;
+    	
+    	// WebViewのURLを取得.
+    	String tag = this.getTabHost().getCurrentTabTag();
+    	TabInfo ti = mApp.mTabMap.get(tag);
+    	if (ti != null){
+    		if (ti.view != null){
+    			WebView webView = (WebView)ti.view.findViewById(R.id.webview_sub);
+    			return webView.getUrl();
+    		}
+    	}
+    	return "";
     	
     }
     
@@ -1246,6 +1273,19 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     // ブックマークへの追加.(独自DB版.)
     public void addBookmarkToDB(){
     	
+    	// カレントタブからタイトルとURLを取得.
+    	String title = getWebTitle();
+    	String url = getWebUrl();
+    	long datemillisec = System.currentTimeMillis();	// System.currentTimeMillisで現在時刻を取得し, datemillisecに格納.
+    	//Toast.makeText(this, "title = " + title + ", url = " + url, Toast.LENGTH_LONG).show();
+    	// このURLをブックマークへ追加.
+		long id = mApp.mHlpr.insertRowBookmark(title, url, datemillisec);	// mApp.mHlpr.insertRowBookmarkでtitle, url, datemillisecを追加.
+		if (id <= 0){	// 更新失敗.
+			Toast.makeText(this, getString(R.string.toast_message_bookmark_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_bookmark_regist_errorに定義されたメッセージをToastで表示.
+		}
+		else{
+			Toast.makeText(this, getString(R.string.toast_message_bookmark_regist_success), Toast.LENGTH_LONG).show();	// R.string.toast_message_bookmark_regist_successに定義されたメッセージをToastで表示.
+		}
     	/*
     	// webViewを取得し, URLとタイトルを取得.
     	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
