@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import android.app.Activity;
+import android.app.ActivityGroup;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
+import android.app.LocalActivityManager;
 import android.app.TabActivity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -28,10 +30,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TabHost;
 import android.widget.TabHost.TabContentFactory;
@@ -40,7 +44,7 @@ import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
 
 //メインアクティビティクラスMainActivity
-public class MainActivity extends TabActivity implements TabContentFactory, OnEditorActionListener/*Activity*/ /*implements OnClickListener, OnEditorActionListener*/{	// View.OnClickListener, TextView.OnEditorActionListenerインターフェースの追加.
+public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabContentFactory,*/ OnEditorActionListener/*Activity*/ /*implements OnClickListener, OnEditorActionListener*/{	// View.OnClickListener, TextView.OnEditorActionListenerインターフェースの追加.
 
 	// メンバフィールドの初期化.
 	public static final int REQUEST_CODE_BOOKMARK = 1001;	// REQUEST_CODE_BOOKMARKを1001とする.
@@ -55,6 +59,8 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
 	public MainApplication mApp = null;	// MainApplicationオブジェクトmAppをnullで初期化.
 	public String mCurrentTabName = "";	// mCurrentTabNameを""で初期化.
 	public Context mContext = null;	// mContextにnullをセット.
+	public LocalActivityManager mLAM = null;	// mLAMにnullをセット.
+	public FrameLayout mFL = null;	// mFLにnullをセット.
 	
 	// アクティビティが作成された時.
     @Override
@@ -63,8 +69,30 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
         setContentView(R.layout.activity_main);
         mContext = this;	// mContextにnullをセット.
         //Toast.makeText(this, "MainActivity.onCreate()", Toast.LENGTH_LONG).show();
+        
         // メインアプリケーションの取得.
     	mApp = (MainApplication)getApplicationContext();	// getApplicationContextで取得したMainApplicationオブジェクトをmAppに格納.
+    	mLAM = getLocalActivityManager();	// mLAMの取得.
+    	mFL = (FrameLayout)this.findViewById(R.id.frame_main);
+    	if (mApp.mHlpr != null){
+    		TabInfo tabInfo = mApp.mHlpr.getLastTabInfo();
+    		if (tabInfo != null){
+    			// SubActivityのIntent作成.
+    			Intent intent = new Intent(this, SubActivity.class);
+    			Window window = mLAM.startActivity(tabInfo.tabName, intent);
+    			View view = window.getDecorView();
+    			mFL.addView(view);
+    		}
+    		else{
+    			registTab();
+    			TabInfo ti = mApp.mHlpr.getLastTabInfo();
+    			Intent intent = new Intent(this, SubActivity.class);
+    			Window window = mLAM.startActivity(ti.tabName, intent);
+    			View view = window.getDecorView();
+    			mFL.addView(view);
+    		}
+    	}
+    	/*
     	if (mApp.mHlpr != null){	// mApp.mHlprがnullでない.
     		//Toast.makeText(this, "1", Toast.LENGTH_LONG).show();
             TabHost tabHost = getTabHost();	// getTabHostでtabHostを取得.
@@ -139,6 +167,8 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
 		        mApp.mHlpr.updateTabInfo(tag, tabInfo);
     		}
     	}
+    	*/
+    	
     	//Toast.makeText(this, "5", Toast.LENGTH_LONG).show();
         /*
     	// tabHostの取得.
@@ -204,6 +234,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
         
     }
     
+    /*
     @Override
     public View createTabContent(String tag){
     	//Toast.makeText(this, "createTabContent tag = " + tag, Toast.LENGTH_LONG).show();
@@ -240,6 +271,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     		}
     	}    	
     }
+    */
     
     // URLバーの初期化.
     public void initUrlBar2(View view){
@@ -529,7 +561,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     		inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);	// inputMethodManager.hideSoftInputFromWindowで非表示.
     		
     		// URLのロード.
-    		loadUrl();	// loadUrlでURLバーのURLをロード.
+    		//loadUrl();	// loadUrlでURLバーのURLをロード.
     	
     		// trueを返す.
     		return true;	// returnでtrueを返す.
@@ -764,6 +796,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     	
     }
     
+    /*
     // カレントタブにURLをセット.
     public void setUrlOmit(String url){
     	
@@ -772,6 +805,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     	setUrlOmit(url ,tag);
     	
     }
+    */
     
     // URLバーにURLをセットする時に"http"の場合は省略する.
     public void setUrlOmit(String url, String tag){
@@ -787,6 +821,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     	
     }
     
+    /*
     // URLバーからURLを取得.
     public String getUrl(){
     	
@@ -802,7 +837,9 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     	return "";
     	
     }
+    */
     
+    /*
     // ウェブビューからタイトルを取得.
     public String getWebTitle(){
     	
@@ -818,6 +855,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     	return "";
     	
     }
+    */
     
     // ウェブビューからURLを取得.
     public String getWebUrl(){
@@ -829,6 +867,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     	*/
     	//return null;
     	
+    	/*
     	// WebViewのURLを取得.
     	String tag = this.getTabHost().getCurrentTabTag();
     	TabInfo ti = mApp.mTabMap.get(tag);
@@ -838,6 +877,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     			return webView.getUrl();
     		}
     	}
+    	*/
     	return "";
     	
     }
@@ -900,6 +940,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     	
     }
     
+    /*
     //　URLバーのURLを検索キーワードかどうかを判定してから, 適切にロード.
     public void loadUrl(){
     	
@@ -915,10 +956,12 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     	}
     	
     }
+    */
     
     // 指定されたURLをロード.
     public void loadUrl(String url){
     	
+    	/*
     	// webViewを取得し, urlをロード.
     	//WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
     	String tag = this.getTabHost().getCurrentTabTag();
@@ -929,6 +972,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     			webView.loadUrl(url);	// webView.loadUrlでurlの指すWebページをロード.    	
     		}
     	}
+    	*/
     	
     }
     
@@ -951,14 +995,15 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     	
     	// bundleからURLを取得しロード.
     	String url = bundle.getString("url");	// bundle.getStringでurlを取得.
-		setUrlOmit(url);	// setUrlOmitでURLバーにURLをセット.
-		loadUrl();	// loadUrlでURLバーのURLをロード.
+		//setUrlOmit(url);	// setUrlOmitでURLバーにURLをセット.
+		//loadUrl();	// loadUrlでURLバーのURLをロード.
 		
     }
     
     // インテントで指定されたURLをロード.
     public void loadUrlFromIntent(){
     	
+    	/*
     	// 起動時のインテントからURLを取得し, それを使ってロード.
         Intent intent = getIntent();	// getIntentでintentを取得.
         String action = intent.getAction();	// intent.getActionでactionを取得.
@@ -968,6 +1013,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
         	//setUrlOmit(url);	// setUrlOmitでURLバーにURLをセット.
     		loadUrl();	// loadUrlでURLバーのURLをロード.
         }
+        */
         
     }
     
@@ -1029,6 +1075,8 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     		super.onBackPressed();	// 親クラスのonBackPressedを呼ぶ.
     	}
     	*/
+    	
+    	/*
     	// WebViewのURLを取得.
     	String tag = this.getTabHost().getCurrentTabTag();
     	TabInfo ti = mApp.mTabMap.get(tag);
@@ -1043,6 +1091,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     	    	}
     		}
     	}
+    	*/
     	
     }
     
@@ -1100,10 +1149,10 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
         args.putBoolean("remove", false);
         intent.putExtras(args);	// args登録.
         //tabSpec.setContent(intent);	// intentをセット.
-        tabSpec.setContent(this);
+        //tabSpec.setContent(this);
         mApp.mTabHost.addTab(tabSpec);	// tabSpecを追加.
         int last = mApp.mTabNameList.size() - 1;	// last.
-        getTabHost().setCurrentTab(last);
+        //getTabHost().setCurrentTab(last);
         mApp.mHlpr.updateTabInfo(newTabInfo.tabName, newTabInfo);
     }
     
@@ -1152,7 +1201,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
             args.putBoolean("remove", true);
             intent.putExtras(args);	// args登録.
             //tabSpec.setContent(intent);	// intentをセット.
-            tabSpec.setContent(this);
+            //tabSpec.setContent(this);
             mApp.mTabHost.addTab(tabSpec);	// tabSpecを追加.
             //Toast.makeText(this, "add tabName = " + ti.tabName + " title = " + ti.title, Toast.LENGTH_LONG).show();
     	}
@@ -1212,7 +1261,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
             args.putBoolean("remove", true);
             intent.putExtras(args);	// args登録.
             //tabSpec.setContent(intent);	// intentをセット.
-            tabSpec.setContent(this);
+            //tabSpec.setContent(this);
             mApp.mTabHost.addTab(tabSpec);	// tabSpecを追加.
             //Toast.makeText(this, "add tabName = " + ti.tabName + " title = " + ti.title, Toast.LENGTH_LONG).show();
     	}
@@ -1301,18 +1350,20 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     public void addBookmarkToDB(){
     	
     	// カレントタブからタイトルとURLを取得.
-    	String title = getWebTitle();
+    	//String title = getWebTitle();
     	String url = getWebUrl();
     	long datemillisec = System.currentTimeMillis();	// System.currentTimeMillisで現在時刻を取得し, datemillisecに格納.
     	//Toast.makeText(this, "title = " + title + ", url = " + url, Toast.LENGTH_LONG).show();
     	// このURLをブックマークへ追加.
-		long id = mApp.mHlpr.insertRowBookmark(title, url, datemillisec);	// mApp.mHlpr.insertRowBookmarkでtitle, url, datemillisecを追加.
+		/*
+    	long id = mApp.mHlpr.insertRowBookmark(title, url, datemillisec);	// mApp.mHlpr.insertRowBookmarkでtitle, url, datemillisecを追加.
 		if (id <= 0){	// 更新失敗.
 			Toast.makeText(this, getString(R.string.toast_message_bookmark_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_bookmark_regist_errorに定義されたメッセージをToastで表示.
 		}
 		else{
 			Toast.makeText(this, getString(R.string.toast_message_bookmark_regist_success), Toast.LENGTH_LONG).show();	// R.string.toast_message_bookmark_regist_successに定義されたメッセージをToastで表示.
 		}
+		*/
     	/*
     	// webViewを取得し, URLとタイトルを取得.
     	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.

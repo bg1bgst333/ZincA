@@ -34,6 +34,8 @@ public class SubActivity extends Activity implements OnEditorActionListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sub);
+        
+        /*
         //Toast.makeText(this, "SubActivity.onCreate()", Toast.LENGTH_LONG).show();
         // メインアプリケーションの取得.
     	mApp = (MainApplication)getApplicationContext();	// getApplicationContextで取得したMainApplicationオブジェクトをmAppに格納.
@@ -60,26 +62,26 @@ public class SubActivity extends Activity implements OnEditorActionListener{
 	        	initWebView();
 	        	if (tabInfo.url != null){
 	        		if (!tabInfo.url.equals("")){
-	        			/*
-	        			TabWidget widget = mApp.mTabHost.getTabWidget();
-	        			if (widget != null){
-	        				Toast.makeText(this, "10", Toast.LENGTH_LONG).show();
-	        			}
-	        			int c = widget.getChildCount();
-	        			Toast.makeText(this, "c = " + String.valueOf(c), Toast.LENGTH_LONG).show();
-	        			View v = widget.getChildAt(0);
-	        			Toast.makeText(this,  "v = " + v.toString(), Toast.LENGTH_LONG).show();
-	        			ViewGroup vg = (ViewGroup)v;
-	        			int c2 = vg.getChildCount();
-	        			Toast.makeText(this, "c2 = " + String.valueOf(c2), Toast.LENGTH_LONG).show();
-	        			View v2 = vg.getChildAt(0);
-	        			Toast.makeText(this, "v2 = " + v2.toString(), Toast.LENGTH_LONG).show();
-	        			View v3 = vg.getChildAt(1);
-	        			Toast.makeText(this, "v3 = " + v3.toString(), Toast.LENGTH_LONG).show();
-	        			TextView tv = (TextView)widget.findViewById(android.R.id.title);
-	        			tv.setText("hogehoge");
-	        			*/
-	        			setUrlOmit(tabInfo.url);
+	        			
+	        			//TabWidget widget = mApp.mTabHost.getTabWidget();
+	        			//if (widget != null){
+	        			//	Toast.makeText(this, "10", Toast.LENGTH_LONG).show();
+	        			//}
+	        			//int c = widget.getChildCount();
+	        			//Toast.makeText(this, "c = " + String.valueOf(c), Toast.LENGTH_LONG).show();
+	        			//View v = widget.getChildAt(0);
+	        			//Toast.makeText(this,  "v = " + v.toString(), Toast.LENGTH_LONG).show();
+	        			//ViewGroup vg = (ViewGroup)v;
+	        			//int c2 = vg.getChildCount();
+	        			//Toast.makeText(this, "c2 = " + String.valueOf(c2), Toast.LENGTH_LONG).show();
+	        			//View v2 = vg.getChildAt(0);
+	        			//Toast.makeText(this, "v2 = " + v2.toString(), Toast.LENGTH_LONG).show();
+	        			//View v3 = vg.getChildAt(1);
+	        			//Toast.makeText(this, "v3 = " + v3.toString(), Toast.LENGTH_LONG).show();
+	        			//TextView tv = (TextView)widget.findViewById(android.R.id.title);
+	        			//tv.setText("hogehoge");
+	        			
+	        			//setUrlOmit(tabInfo.url);
 	        			loadUrl();
 	        		}
 	        	}
@@ -92,6 +94,7 @@ public class SubActivity extends Activity implements OnEditorActionListener{
 	        	mApp.mTabMap.put(tag, ti);
 	        }
         }
+        */
         
     }
     
@@ -116,29 +119,29 @@ public class SubActivity extends Activity implements OnEditorActionListener{
     	//Log.v(TAG, "onStart()");	// Log.vで"onStart()"と出力.
     	//Toast.makeText(this, "onResume", Toast.LENGTH_LONG).show();
     	
-    	TabInfo ti = mApp.mTabMap.get(mTabName);
-    	if (ti != null){
+    	//TabInfo ti = mApp.mTabMap.get(mTabName);
+    	//if (ti != null){
     		//Toast.makeText(this, "about:blank", Toast.LENGTH_LONG).show();
 			//WebView wv = (WebView)findViewById(R.id.webview_sub);
 			//wv.loadUrl("about:blank");
-    		if (ti.url != null){
-    			if (ti.url.equals("")){	// url ""
+    		//if (ti.url != null){
+    			//if (ti.url.equals("")){	// url ""
     				//Toast.makeText(this, "about:blank", Toast.LENGTH_LONG).show();
     				//WebView wv2 = (WebView)findViewById(R.id.webview_sub);
     				//wv2.loadUrl("about:blank");
-    			}
-    		}
-    		else{	// url null
+    			//}
+    		//}
+    		//else{	// url null
     			
-    		}
-    	}
-    	else{	// null
+    		//}
+    	//}
+    	//else{	// null
     		//Toast.makeText(this, "about:blank", Toast.LENGTH_LONG).show();
-			WebView wv = (WebView)findViewById(R.id.webview_sub);
-			wv.loadUrl("about:blank");
-			EditText et = (EditText)findViewById(R.id.edittext_sub_urlbar);
-			et.setText("");
-    	}
+			//WebView wv = (WebView)findViewById(R.id.webview_sub);
+			//wv.loadUrl("about:blank");
+			//EditText et = (EditText)findViewById(R.id.edittext_sub_urlbar);
+			//et.setText("");
+    	//}
     	
     }
     
