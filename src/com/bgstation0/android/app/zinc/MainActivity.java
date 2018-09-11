@@ -84,7 +84,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
 						@Override
 						public void onClick(View v) {
 							// TODO Auto-generated method stub
-							Toast.makeText(mContext, "click(1) : " + tag, Toast.LENGTH_LONG).show();
+							//Toast.makeText(mContext, "click(1) : " + tag, Toast.LENGTH_LONG).show();
 							removeTab(tag);
 						}
 						
@@ -119,7 +119,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
 					@Override
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
-						Toast.makeText(mContext, "click(2) : " + tag, Toast.LENGTH_LONG).show();
+						//Toast.makeText(mContext, "click(2) : " + tag, Toast.LENGTH_LONG).show();
 						removeTab(tag);
 					}
 					
@@ -452,12 +452,14 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     		
     	}
     	*/
+    	/*
     	else if (id == R.id.menu_item_remove_tab){	// R.id.menu_item_remove_tab("タブの削除")の時.
     		
     		// タブの削除.
     		removeTab();	// removeTabで削除.
     		
     	}
+    	*/
     	else if (id == R.id.menu_item_bookmark_add){	// R.id.menu_item_bookmark_add("ブックマークの追加")の時.
 
     		// ブックマークの追加.
@@ -476,6 +478,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     		showHistory();	// showHistoryで表示.
     		
     	}
+    	/*
     	else if (id == R.id.menu_item_download){	// R.id.menu_item_download("ダウンロード")の時.
     		
     		// ダウンロード.
@@ -488,6 +491,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     		changePhonePCSite(item);	// changePhonePCSiteにitemを渡す.
     		
     	}
+    	*/
     	
     	// あとは既定の処理に任せる.
     	return super.onOptionsItemSelected(item);	// 親クラスのonOptionsItemSelectedを呼ぶ.
@@ -1081,7 +1085,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Toast.makeText(mContext, "click(3) : " + tag2, Toast.LENGTH_LONG).show();
+				//Toast.makeText(mContext, "click(3) : " + tag2, Toast.LENGTH_LONG).show();
 				removeTab(tag2);
 			}
 			
@@ -1128,7 +1132,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     		//tabSpec.setIndicator(tabInfo.title);	// title.
     		final String tag2 = ti.tabName;
     		if (ti.title.equals("")){
-    			Toast.makeText(this, "add tab title = " + ti.tabName, Toast.LENGTH_LONG).show();
+    			//Toast.makeText(this, "add tab title = " + ti.tabName, Toast.LENGTH_LONG).show();
     			ti.title = ti.tabName;
     		}
     		final CustomTabWidget widget = new CustomTabWidget(this, ti.title, ti.tabName, new View.OnClickListener() {
@@ -1136,7 +1140,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     			@Override
     			public void onClick(View v) {
     				// TODO Auto-generated method stub
-    				Toast.makeText(mContext, "click(4) : " + tag2, Toast.LENGTH_LONG).show();
+    				//Toast.makeText(mContext, "click(4) : " + tag2, Toast.LENGTH_LONG).show();
     				removeTab(tag2);
     			}
     			
@@ -1187,7 +1191,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     		TabHost.TabSpec tabSpec = mApp.mTabHost.newTabSpec(ti.tabName);
     		//tabSpec.setIndicator(tabInfo.title);	// title.
     		if (ti.title.equals("")){
-    			Toast.makeText(this, "add tab title = " + ti.tabName, Toast.LENGTH_LONG).show();
+    			//Toast.makeText(this, "add tab title = " + ti.tabName, Toast.LENGTH_LONG).show();
     			ti.title = ti.tabName;
     		}
     		final String tag2 = ti.tabName;
@@ -1196,7 +1200,7 @@ public class MainActivity extends TabActivity implements TabContentFactory, OnEd
     			@Override
     			public void onClick(View v) {
     				// TODO Auto-generated method stub
-    				Toast.makeText(mContext, "click(4) : " + tag2, Toast.LENGTH_LONG).show();
+    				//Toast.makeText(mContext, "click(4) : " + tag2, Toast.LENGTH_LONG).show();
     				removeTab(tag2);
     			}
     			

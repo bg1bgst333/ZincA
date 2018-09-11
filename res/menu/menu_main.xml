@@ -10,22 +10,25 @@
         android:orderInCategory="102"
         android:showAsAction="never" />
     -->
+    <!--
     <item android:id="@+id/menu_item_remove_tab"
         android:title="@string/menu_item_temove_tab_text"
         android:orderInCategory="102"
-        android:showAsAction="never" />"
+        android:showAsAction="never" />
+    -->
     <item android:id="@+id/menu_item_bookmark_add"
         android:title="@string/menu_item_bookmark_add_text"
-        android:orderInCategory="103"
+        android:orderInCategory="102"
         android:showAsAction="never" />
     <item android:id="@+id/menu_item_bookmark_show"
         android:title="@string/menu_item_bookmark_show_text"
-        android:orderInCategory="104"
+        android:orderInCategory="103"
         android:showAsAction="never" />
     <item android:id="@+id/menu_item_history_show"
         android:title="@string/menu_item_history_show_text"
-        android:orderInCategory="105"
+        android:orderInCategory="104"
         android:showAsAction="never" />
+    <!--
     <item android:id="@+id/menu_item_download"
         android:title="@string/menu_item_download_text"
         android:orderInCategory="106"
@@ -35,4 +38,5 @@
         android:orderInCategory="107"
         android:checkable="true"
         android:showAsAction="never" />
+    -->
 </menu>
