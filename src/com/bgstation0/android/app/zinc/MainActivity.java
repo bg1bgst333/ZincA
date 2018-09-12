@@ -384,14 +384,30 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     			if (resultCode == RESULT_OK){	// RESULT_OKの場合.
     				if (bundle != null){	// bundleがnullでなければ.
     					String tabName = bundle.getString("tabName");	// bundleからtabNameを取得.
-    					String title = bundle.getString("title");	// bundleからtitleを取得.
+    					//String title = bundle.getString("title");	// bundleからtitleを取得.
     					if (mApp.mTabMap.containsKey(tabName)){	// タブマップにある場合.
-    						setContentViewByTabName(tabName, title);	// setContentViewByTabNameでtabNameからビューをセット.(タイトルもセットしておく.)
+    						//setContentViewByTabName(tabName, title);	// setContentViewByTabNameでtabNameからビューをセット.(タイトルもセットしておく.)
+    						setViewByTabName(tabName);
     					}
     					else{	// マップには無い場合.
     						// タブDBからの取得.
+    						TabInfo ti = mApp.mTabMap.get(mCurrentTabName);
+    				    	ti.date = System.currentTimeMillis();
+    				    	ti.view = mFL.findViewById(R.id.layout_sub);
+    				    	mApp.mHlpr.updateTabInfo(mCurrentTabName, ti);
+    				    	
     						TabInfo tabInfo = mApp.mHlpr.getTabInfo(tabName);	// tabNameからtabInfo取得
     						if (tabInfo != null){	// DBにはある場合.
+    							Intent intent = new Intent(this, SubActivity.class);
+    			    			Bundle args = new Bundle();
+    			    			args.putString("tag", tabInfo.tabName);
+    			    			intent.putExtra("args", args);
+    			    			mFL.removeAllViews();
+    			    			Window window = mLAM.startActivity(tabInfo.tabName, intent);
+    			    			View view = window.getDecorView();
+    			    			mFL.addView(view);
+    			    			mCurrentTabName = tabInfo.tabName;
+    							/*
     							// メインアクティビティを起動する.(タブを復元する.)
 	    				    	String packageName = getPackageName();	// getPackageNameでpackageNameを取得.
 	    				    	Intent intent = new Intent();	// Intentオブジェクトintentを作成.
@@ -401,7 +417,9 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
 	    				    	intent.putExtra("TabName", tabInfo.tabName);	// "TabName"でtabinfo.tabNameを登録.
 	    				    	intent.putExtra("Url", tabInfo.url);	// "Url"をキーにして, tabInfo.urlを送る.
 	    				    	startActivity(intent);	// startActivityにintentを渡す.
+	    				    	*/
     						}
+    						/*
     						else{	// DBにもない場合.(ここにくることはない.)
 	    						// メインアクティビティを起動する.(タブの新規作成する.)
 	    				    	String packageName = getPackageName();	// getPackageNameでpackageNameを取得.
@@ -411,6 +429,7 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
 	    				    	intent.putExtra("LaunchMode", "NewTab");	// "LaunchMode"をキー, "NewTab"を値として登録.
 	    				    	startActivity(intent);	// startActivityにintentを渡す.
     						}
+    						*/
     					}
     				}
     			}
@@ -752,6 +771,31 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
 		mCurrentTabName = tabInfo.tabName;	// tabInfo.tabNameをセット.
 		mApp.mTabMap.put(mCurrentTabName, tabInfo);	// tabInfoを登録.
 		*/
+    }
+    
+    // タブ名から取得したビューをセット.
+    public void setViewByTabName(String tabName){
+    	
+    	TabInfo tabInfo = mApp.mTabMap.get(mCurrentTabName);
+    	tabInfo.date = System.currentTimeMillis();
+    	tabInfo.view = mFL.findViewById(R.id.layout_sub);
+    	mApp.mHlpr.updateTabInfo(mCurrentTabName, tabInfo);
+    	
+    	TabInfo tabInfo2 = mApp.mTabMap.get(tabName);
+    	if (tabInfo2 != null){    		
+    		Toast.makeText(this, "change", Toast.LENGTH_LONG).show();
+			// SubActivityのIntent作成.
+			Intent intent = new Intent(this, SubActivity.class);
+			Bundle args = new Bundle();
+			args.putString("tag", tabInfo2.tabName);
+			intent.putExtra("args", args);
+			mFL.removeAllViews();
+			Window window = mLAM.startActivity(tabInfo2.tabName, intent);
+			View view = window.getDecorView();
+			mFL.addView(view);
+			mCurrentTabName = tabInfo2.tabName;
+    	}
+    	
     }
     
     // タブ名から取得したビューをセット.
