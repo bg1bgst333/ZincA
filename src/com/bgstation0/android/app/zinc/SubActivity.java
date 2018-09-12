@@ -35,6 +35,39 @@ public class SubActivity extends Activity implements OnEditorActionListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sub);
         
+        // タグ(タブ名)の取得.
+        Intent intent = getIntent();
+        Bundle args = intent.getBundleExtra("args");
+        String tag = args.getString("tag");
+        //Toast.makeText(this, "tag = " + tag, Toast.LENGTH_LONG).show();
+
+        Toast.makeText(this, "onCreate", Toast.LENGTH_LONG).show();
+        
+        // メインアプリケーションの取得.
+    	mApp = (MainApplication)getApplicationContext();	// getApplicationContextで取得したMainApplicationオブジェクトをmAppに格納.
+    	mTabName = tag;
+        initUrlBar();
+    	initProgressBar();
+    	initWebView();
+    	TabInfo tabInfo = mApp.mHlpr.getTabInfo(tag);
+    	if (tabInfo == null){
+    		Toast.makeText(this, "null", Toast.LENGTH_LONG).show();
+    	}
+    	if (tabInfo != null){
+    		if (tabInfo.url != null){
+    			Toast.makeText(this, "url = " + tabInfo.url, Toast.LENGTH_LONG).show();
+    			if (!tabInfo.url.equals("")){
+    				Toast.makeText(this, "url = " + tabInfo.url, Toast.LENGTH_LONG).show();
+    				setUrlOmit(tabInfo.url);
+    				loadUrl();
+    			}
+    		}
+    		TabInfo ti = mApp.mHlpr.getTabInfo(tag);
+        	View rootView = getWindow().getDecorView();
+    		View content = rootView.findViewById(R.id.layout_sub);
+        	ti.view = content;
+        	mApp.mTabMap.put(tag, ti);
+    	}
         /*
         //Toast.makeText(this, "SubActivity.onCreate()", Toast.LENGTH_LONG).show();
         // メインアプリケーションの取得.
@@ -194,7 +227,7 @@ public class SubActivity extends Activity implements OnEditorActionListener{
         //Toast.makeText(this, mPCUA, Toast.LENGTH_LONG).show();	// mPCUAをToastで表示.
         mCurrentUA = mPhoneUA;	// 現在のユーザエージェントをmPhoneUAとする.
         // CustomWebViewClientのセット.
-        webView.setWebViewClient(new CustomWebViewClient(this));	// newで生成したCustomWebViewClientオブジェクト(コンストラクタの引数にthisを渡す.)をwebView.setWebViewClientでセット.
+        webView.setWebViewClient(new CustomWebViewClient(this, mTabName));	// newで生成したCustomWebViewClientオブジェクト(コンストラクタの引数にthisを渡す.)をwebView.setWebViewClientでセット.
         // CustomWebChromeClientのセット.
         webView.setWebChromeClient(new CustomWebChromeClient(this));	// newで生成したCustomWebChromeClientオブジェクト(コンストラクタの引数にthisを渡す.)をwebView.setWebChromeClientでセット.
     	

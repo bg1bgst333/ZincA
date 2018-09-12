@@ -46,10 +46,10 @@ public class CustomWebChromeClient extends WebChromeClient {
 		if (mContext != null){	// mContextがnullでなければ.
 					
 			// プログレスバーに反映.
-			//SubActivity subActivity = (SubActivity)mContext;	// mContextをSubActivityにキャストし, subActivityに格納.
-			//subActivity.setProgressValue(progress);	// subActivity.setProgressValueにprogressをセット.
-			MainActivity mainActivity = (MainActivity)mContext;
-			mainActivity.setProgressValue(progress, mTag);
+			SubActivity subActivity = (SubActivity)mContext;	// mContextをSubActivityにキャストし, subActivityに格納.
+			subActivity.setProgressValue(progress);	// subActivity.setProgressValueにprogressをセット.
+			//MainActivity mainActivity = (MainActivity)mContext;
+			//mainActivity.setProgressValue(progress, mTag);
 			
 		}
 		

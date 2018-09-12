@@ -30,6 +30,7 @@ public class MainApplication extends Application {
 	public UrlListDatabaseHelper mHlpr = null;	// UrlListDatabaseHelperオブジェクトmHlprをnullに初期化.
 	TabHost mTabHost = null;	// mTabHostをnullにセット.
 	ArrayList<String> mTabNameList = null;
+	MainActivity mMainActivity = null;
 	
 	// アプリケーションが生成された時.
 	@Override

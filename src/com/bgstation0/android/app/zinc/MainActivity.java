@@ -72,21 +72,30 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
         
         // メインアプリケーションの取得.
     	mApp = (MainApplication)getApplicationContext();	// getApplicationContextで取得したMainApplicationオブジェクトをmAppに格納.
+    	mApp.mMainActivity = this;
     	mLAM = getLocalActivityManager();	// mLAMの取得.
     	mFL = (FrameLayout)this.findViewById(R.id.frame_main);
     	if (mApp.mHlpr != null){
     		TabInfo tabInfo = mApp.mHlpr.getLastTabInfo();
     		if (tabInfo != null){
+    			Toast.makeText(this, "last", Toast.LENGTH_LONG).show();
     			// SubActivityのIntent作成.
     			Intent intent = new Intent(this, SubActivity.class);
+    			Bundle args = new Bundle();
+    			args.putString("tag", tabInfo.tabName);
+    			intent.putExtra("args", args);
     			Window window = mLAM.startActivity(tabInfo.tabName, intent);
     			View view = window.getDecorView();
     			mFL.addView(view);
     		}
     		else{
+    			Toast.makeText(this, "new", Toast.LENGTH_LONG).show();
     			registTab();
     			TabInfo ti = mApp.mHlpr.getLastTabInfo();
     			Intent intent = new Intent(this, SubActivity.class);
+    			Bundle args = new Bundle();
+    			args.putString("tag", ti.tabName);
+    			intent.putExtra("args", args);
     			Window window = mLAM.startActivity(ti.tabName, intent);
     			View view = window.getDecorView();
     			mFL.addView(view);

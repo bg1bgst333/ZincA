@@ -56,10 +56,12 @@ public class CustomWebViewClient extends WebViewClient {
 		Log.d(TAG, "onPageStarted: url = " + url);	// Log.dでurlを出力.
 		
 		// URLバーにURLをセット.
-		setUrl(url, mTag);	// setUrlでurlをセット.
+		//setUrl(url, mTag);	// setUrlでurlをセット.
+		setUrl(url);
 		
 		// プログレスバーを表示.
-		setProgressBarVisible(true, mTag);	// setProgressBarVisible(true)で表示.
+		//setProgressBarVisible(true, mTag);	// setProgressBarVisible(true)で表示.
+		setProgressBarVisible(true);
 		
 		// ロードを開始したURLを保持しておく.
 		mStartUrl = url;	// mStartUrlにurlをセット.
@@ -75,7 +77,8 @@ public class CustomWebViewClient extends WebViewClient {
 		Log.d(TAG, "shouldOverrideUrlLoading: url = " + url);	// Log.dでurlを出力.
 				
 		// URLバーにURLをセット.
-		setUrl(url, mTag);	// setUrlでurlをセット.
+		//setUrl(url, mTag);	// setUrlでurlをセット.
+		setUrl(url);
 		
 		// Chromeなど既定のブラウザで開かないようにするにはfalseを返す.
 		return false;	// falseを返す.
@@ -91,24 +94,38 @@ public class CustomWebViewClient extends WebViewClient {
 
 		// urlをログに出力.
 		Log.d(TAG, "onPageFinished: url = " + url);	// Log.dでurlを出力.
+		Toast.makeText(mContext, "finished0", Toast.LENGTH_LONG).show();
 		
 		// タイトルの変更.
-		//setActionBarTitle(view.getTitle());	// view.getTitleで取得したタイトルをsetActionBarTitleでセット.
+		setActionBarTitle(view.getTitle());	// view.getTitleで取得したタイトルをsetActionBarTitleでセット.
 		
 		// 履歴登録条件を満たすかどうかを判定.
 		if (url.equals(mStartUrl) && mCount == 0){	// 直近の開始URLで一番最初の時.
 			addHistoryToDB(view, url);	// addHistoryToDBでurlを履歴に登録.
+			Toast.makeText(mContext, "finished", Toast.LENGTH_LONG).show();
 			updateTabInfoToDBAndMap(view.getTitle(), url);	// タブ情報の更新.
 			//SubActivity subActivity = (SubActivity)mContext;
 			//mApp.changeTabTitle(view.getTitle(), subActivity.mTabName);
-			MainActivity mainActivity = (MainActivity)mContext;
-			mApp.changeTabTitle(view.getTitle(), mTag);
+			//MainActivity mainActivity = (MainActivity)mContext;
+			//mApp.changeTabTitle(view.getTitle(), mTag);
 		}
 		mCount++;	// mCountを1増やす.
 		
 		// プログレスバーを非表示.
-		setProgressBarVisible(false, mTag);	// setProgressBarVisible(false)で非表示.
-		setProgress(0, mTag);	// setProgressで進捗度を0にセット.
+		//setProgressBarVisible(false, mTag);	// setProgressBarVisible(false)で非表示.
+		setProgressBarVisible(false);
+		//setProgress(0, mTag);	// setProgressで進捗度を0にセット.
+		setProgress(0);
+		
+	}
+	
+	// URLバーにURLをセット.
+	public void setUrl(String url){
+		
+		if (mContext != null){
+			SubActivity subActivity = (SubActivity)mContext;
+			subActivity.setUrlOmit(url);
+		}
 		
 	}
 	
@@ -128,19 +145,39 @@ public class CustomWebViewClient extends WebViewClient {
 	}
 	
 	// プログレスバーの表示/非表示をセット.
+	public void setProgressBarVisible(boolean visible){
+	
+		if (mContext != null){
+			SubActivity subActivity = (SubActivity)mContext;
+			subActivity.setProgressBarVisible(visible);
+		}
+		
+	}
+	
+	// プログレスバーの表示/非表示をセット.
 	public void setProgressBarVisible(boolean visible, String tag){
 		
 		// mContextからMainActivityを取得し, MainActivityのプログレスバーにセット.
 		if (mContext != null){	// mContextがnullでなければ.
 							
 			// プログレスバーに反映.
-			//SubActivity subActivity = (SubActivity)mContext;	// mContextをSubActivityにキャストし, subActivityに格納.
+			// mContextをSubActivityにキャストし, subActivityに格納.
 			//subActivity.setProgressBarVisible(visible);	// subActivity.setProgressBarVisibleにvisibleをセット.
 			MainActivity mainActivity = (MainActivity)mContext;
 			mainActivity.setProgressBarVisible(visible, tag);
 			
 		}
 				
+	}
+	
+	// 進捗度のセット.
+	public void setProgress(int progress){
+			
+		if (mContext != null){
+			SubActivity subActivity = (SubActivity)mContext;
+			subActivity.setProgressValue(progress);
+		}
+		
 	}
 	
 	// 進捗度のセット.
@@ -166,8 +203,9 @@ public class CustomWebViewClient extends WebViewClient {
     	if (mContext != null){	// mContextがnullでなければ.
     	
     		// アクションバーのタイトルに反映.
-    		MainActivity mainActivity = (MainActivity)mContext;	// mContextをMainActivityにキャストし, mainActivityに格納.
-    		mainActivity.setTitle(title);	// mainActivity.setTitleでtitleをセット.
+    		//MainActivity mainActivity = (MainActivity)mContext;	// mContextをMainActivityにキャストし, mainActivityに格納.
+    		MainActivity mainActivity = mApp.mMainActivity;
+    		//mainActivity.setTitle(title);	// mainActivity.setTitleでtitleをセット.
     		
     		// 上記のsetTitleだけだと反映されない時があるので, アクションバーからもセットする.
     		ActionBar act = mainActivity.getActionBar();	// mainActivity.getActionBarでactを取得.
@@ -247,13 +285,13 @@ public class CustomWebViewClient extends WebViewClient {
 		long datemillisec = System.currentTimeMillis();	// System.currentTimeMillisで現在時刻を取得し, datemillisecに格納.
 		
 		// SubActivityにキャスト.
-		//SubActivity subActivity = (SubActivity)mContext;	// mContextをSubActivityにキャストし, subActivityに格納.
-		MainActivity mainActivity = (MainActivity)mContext;
+		SubActivity subActivity = (SubActivity)mContext;	// mContextをSubActivityにキャストし, subActivityに格納.
+		//MainActivity mainActivity = (MainActivity)mContext;
 		
 		// このURLを履歴へ追加.
 		long id = mApp.mHlpr.insertRowHistory(title, url, datemillisec);	// mApp.mHlpr.insertRowHistoryでtitle, url, datemillisecを追加.
 		if (id == -1){	// -1なら.
-			Toast.makeText(mainActivity, mainActivity.getString(R.string.toast_message_history_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_history_regist_errorに定義されたメッセージをToastで表示.
+			Toast.makeText(subActivity, subActivity.getString(R.string.toast_message_history_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_history_regist_errorに定義されたメッセージをToastで表示.
 		}
 	
 	}
@@ -262,7 +300,7 @@ public class CustomWebViewClient extends WebViewClient {
 	public void updateTabInfoToDBAndMap(String title, String url){
 		
 		// SubActivityにキャスト.
-		//SubActivity subActivity = (SubActivity)mContext;	// mContextをSubActivityにキャストし, subActivityに格納.
+		SubActivity subActivity = (SubActivity)mContext;	// mContextをSubActivityにキャストし, subActivityに格納.
 				
 		// タブ情報の取得.
 		TabInfo tabInfo = mApp.mHlpr.getTabInfo(mTag);
@@ -271,6 +309,7 @@ public class CustomWebViewClient extends WebViewClient {
 			tabInfo.url = url;
 			tabInfo.date = System.currentTimeMillis();
 			mApp.mHlpr.updateTabInfo(tabInfo.tabName, tabInfo);
+			Toast.makeText(subActivity, "tabInfo.url = " + tabInfo.url, Toast.LENGTH_LONG).show();
 			TabInfo mapti = mApp.mTabMap.get(tabInfo.tabName);
 			if (mapti != null){
 				mapti.title = title;
