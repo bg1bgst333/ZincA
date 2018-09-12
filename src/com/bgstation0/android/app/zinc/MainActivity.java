@@ -87,6 +87,7 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     			Window window = mLAM.startActivity(tabInfo.tabName, intent);
     			View view = window.getDecorView();
     			mFL.addView(view);
+    			mCurrentTabName = tabInfo.tabName;
     		}
     		else{
     			Toast.makeText(this, "new", Toast.LENGTH_LONG).show();
@@ -99,6 +100,7 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     			Window window = mLAM.startActivity(ti.tabName, intent);
     			View view = window.getDecorView();
     			mFL.addView(view);
+    			mCurrentTabName = ti.tabName;
     		}
     	}
     	/*
@@ -482,17 +484,16 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     		
     		//　新しいタブの追加.
     		//addTab();	// addTabで追加.
-    		addTabToActivity();	// addTabToActivityで追加.
+    		//addTabToActivity();	// addTabToActivityで追加.
+    		addTabToLAM();
     		
     	}
-    	/*
     	else if (id == R.id.menu_item_tabs_show){	// R.id.menu_item_tabs_show("タブ一覧の表示")の時.
 
     		// タブ一覧の表示.
     		showTabs();	// showTabsで追加.
     		
     	}
-    	*/
     	/*
     	else if (id == R.id.menu_item_remove_tab){	// R.id.menu_item_remove_tab("タブの削除")の時.
     		
@@ -1120,6 +1121,31 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     	
     }
     
+    // タブの追加.(LocalActivityManager版.)
+    public void addTabToLAM(){
+    	
+    	//TabInfo tabInfo = mApp.mHlpr.getTabInfo(mCurrentTabName);
+    	TabInfo tabInfo = mApp.mTabMap.get(mCurrentTabName);
+    	tabInfo.date = System.currentTimeMillis();
+    	tabInfo.view = mFL.findViewById(R.id.layout_sub);
+    	mApp.mHlpr.updateTabInfo(mCurrentTabName, tabInfo);
+    	
+    	Toast.makeText(this, "newtab", Toast.LENGTH_LONG).show();
+    	
+    	registTab();
+    	TabInfo newTabInfo = mApp.mHlpr.getLastTabInfo();
+		Intent intent = new Intent(this, SubActivity.class);
+		Bundle args = new Bundle();
+		args.putString("tag", newTabInfo.tabName);
+		intent.putExtra("args", args);
+		mFL.removeAllViews();
+		Window window = mLAM.startActivity(newTabInfo.tabName, intent);
+		View view = window.getDecorView();
+		mFL.addView(view);
+		mCurrentTabName = newTabInfo.tabName;
+		
+    }
+    
     // タブの追加.(TabActivity版.)
     public void addTabToActivity(){
     	
@@ -1279,6 +1305,11 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     
     // タブ状態の保存.
     public void saveTabState(){
+    	
+    	TabInfo tabInfo = mApp.mTabMap.get(mCurrentTabName);
+    	tabInfo.date = System.currentTimeMillis();
+    	tabInfo.view = mFL.findViewById(R.id.layout_sub);
+    	mApp.mHlpr.updateTabInfo(mCurrentTabName, tabInfo);
     	
     	/*
     	// 現在のタブをマップに保存.
