@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityGroup;
 import android.app.DownloadManager;
@@ -407,6 +408,10 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     			    			View view = window.getDecorView();
     			    			mFL.addView(view);
     			    			mCurrentTabName = tabInfo.tabName;
+    			    			ActionBar act = getActionBar();
+    			        		if (act != null){
+    			        			act.setTitle(tabInfo.title);
+    			        		}
     							/*
     							// メインアクティビティを起動する.(タブを復元する.)
 	    				    	String packageName = getPackageName();	// getPackageNameでpackageNameを取得.
@@ -794,6 +799,15 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
 			View view = window.getDecorView();
 			mFL.addView(view);
 			mCurrentTabName = tabInfo2.tabName;
+			ActionBar act = getActionBar();
+    		if (act != null){
+    			if (tabInfo2.title.equals("")){
+    				act.setTitle("Zinc");
+    			}
+    			else{
+    				act.setTitle(tabInfo2.title);
+    			}
+    		}
     	}
     	
     }
@@ -1187,6 +1201,12 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
 		View view = window.getDecorView();
 		mFL.addView(view);
 		mCurrentTabName = newTabInfo.tabName;
+		ActionBar act = getActionBar();
+		if (act != null){
+			if (newTabInfo.title.equals("")){
+				act.setTitle("Zinc");
+			}
+		}
 		
     }
     
