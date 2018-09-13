@@ -85,6 +85,7 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     			Bundle args = new Bundle();
     			args.putString("tag", tabInfo.tabName);
     			intent.putExtra("args", args);
+    			mLAM.removeAllActivities();
     			Window window = mLAM.startActivity(tabInfo.tabName, intent);
     			View view = window.getDecorView();
     			mFL.addView(view);
@@ -98,6 +99,7 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     			Bundle args = new Bundle();
     			args.putString("tag", ti.tabName);
     			intent.putExtra("args", args);
+    			mLAM.removeAllActivities();
     			Window window = mLAM.startActivity(ti.tabName, intent);
     			View view = window.getDecorView();
     			mFL.addView(view);
@@ -346,19 +348,23 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
     	
+    	Toast.makeText(this, "0a", Toast.LENGTH_LONG).show();
     	// 既定の処理.
     	super.onActivityResult(requestCode, resultCode, data);	// 親クラスのonActivityResultを呼ぶ.
-    	
+    	Toast.makeText(this, "0b", Toast.LENGTH_LONG).show();
     	// キャンセルの場合.
     	if (requestCode != REQUEST_CODE_TAB && resultCode == RESULT_CANCELED){	// requestCodeがREQUEST_CODE_TABではなく, resultCodeがRESULT_CANCELEDの場合.
+    		Toast.makeText(this, "0c", Toast.LENGTH_LONG).show();
     		return;	// 何もせず終了.
     	}
+    	Toast.makeText(this, "0d", Toast.LENGTH_LONG).show();
     	
     	// 起動したアクティビティが閉じた時の結果に対する処理.
     	Bundle bundle = null;	// Bundle型bundleをnullで初期化.
     	if (data != null){	// dataがnullでなければ.
     		bundle = data.getExtras();	// data.getExtrasでbundleを取得.
     	}
+    	Toast.makeText(this, "0e", Toast.LENGTH_LONG).show();
     	
     	// 処理の振り分け.
     	switch (requestCode){	// requestCodeごとに振り分け.
@@ -380,7 +386,7 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     		
     		// タブ一覧.
     		case REQUEST_CODE_TAB:	// タブ一覧から戻ってきた場合.
-    			
+    			Toast.makeText(this, "0", Toast.LENGTH_LONG).show();
     			// タブのアイテムが選択されたとき.
     			if (resultCode == RESULT_OK){	// RESULT_OKの場合.
     				if (bundle != null){	// bundleがnullでなければ.
@@ -439,6 +445,78 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     				}
     			}
     			else if (resultCode == RESULT_CANCELED){	// RESULT_CANCELEDの場合.
+    				Toast.makeText(this, "1", Toast.LENGTH_LONG).show();
+    				if (!mApp.mTabMap.containsKey(mCurrentTabName)){
+    					Toast.makeText(this, "2", Toast.LENGTH_LONG).show();
+    					TabInfo tabInfo = mApp.mHlpr.getLastTabInfo();	// 消されたカレントタブ以外で直近のタブを探す.
+    					if (tabInfo != null){	// 直近タブがみつかった.
+    						Toast.makeText(this, "3", Toast.LENGTH_LONG).show();
+    						TabInfo ti = mApp.mTabMap.get(tabInfo.tabName);	// マップから取得.
+    						if (ti != null){	// マップにあった.
+    							Toast.makeText(this, "map exist", Toast.LENGTH_LONG).show();
+    							// SubActivityのIntent作成.
+    							Intent intent = new Intent(this, SubActivity.class);
+    							Bundle args = new Bundle();
+    							args.putString("tag", ti.tabName);
+    							intent.putExtra("args", args);
+    							mFL.removeAllViews();
+    							Window window = mLAM.startActivity(ti.tabName, intent);
+    							View view = window.getDecorView();
+    							mFL.addView(view);
+    							mCurrentTabName = ti.tabName;
+    							ActionBar act = getActionBar();
+    				    		if (act != null){
+    				    			if (ti.title.equals("")){
+    				    				act.setTitle("Zinc");
+    				    			}
+    				    			else{
+    				    				act.setTitle(ti.title);
+    				    			}
+    				    		}    				    		
+    						}
+    						else{	// マップに無い.
+    							
+    							Toast.makeText(this, "db last", Toast.LENGTH_LONG).show();
+    			    			// SubActivityのIntent作成.
+    			    			Intent intent = new Intent(this, SubActivity.class);
+    			    			Bundle args = new Bundle();
+    			    			args.putString("tag", tabInfo.tabName);
+    			    			intent.putExtra("args", args);
+    			    			mFL.removeAllViews();
+    			    			Window window = mLAM.startActivity(tabInfo.tabName, intent);
+    			    			View view = window.getDecorView();
+    			    			mFL.addView(view);
+    			    			mCurrentTabName = tabInfo.tabName;
+    			    			
+    						}
+    					}
+    					else{	// タブがない.
+    						
+    						Toast.makeText(this, "all delete new", Toast.LENGTH_LONG).show();
+    		    			registTab();
+    		    			TabInfo ti2 = mApp.mHlpr.getLastTabInfo();
+    		    			Intent intent = new Intent(this, SubActivity.class);
+    		    			Bundle args = new Bundle();
+    		    			args.putString("tag", ti2.tabName);
+    		    			intent.putExtra("args", args);
+    		    			mLAM.removeAllActivities();
+    		    			Window window = mLAM.startActivity(ti2.tabName, intent);
+    		    			View view = window.getDecorView();
+    		    			mFL.addView(view);
+    		    			mCurrentTabName = ti2.tabName;
+    		    			ActionBar act = getActionBar();
+				    		if (act != null){
+				    			if (ti2.title.equals("")){
+				    				act.setTitle("Zinc");
+				    			}
+				    			else{
+				    				act.setTitle(ti2.title);
+				    			}
+				    		}   
+				    		
+    					}
+    					
+    				}
     				/*
     				if (!mApp.mTabMap.containsKey(mCurrentTabName)){	// 表示していたタブが消えた時.
     					// 直近タブかどうか.
@@ -1197,6 +1275,7 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
 		args.putString("tag", newTabInfo.tabName);
 		intent.putExtra("args", args);
 		mFL.removeAllViews();
+		mLAM.destroyActivity(newTabInfo.tabName, true);
 		Window window = mLAM.startActivity(newTabInfo.tabName, intent);
 		View view = window.getDecorView();
 		mFL.addView(view);
