@@ -403,8 +403,8 @@ public class UrlListDatabaseHelper extends SQLiteOpenHelper {
         // DB‚©‚çƒ^ƒuî•ñ‚ğ“¾‚é.
 		try{	// try‚ÅˆÍ‚Ş.
 			sqlite = getReadableDatabase();	// getReadableDatabase‚Åsqlite‚ğæ“¾.
-			//c = sqlite.query(TABLE_TABS, projection, null, null, null, null, "datemillisec desc");	// sqlite.query‚Åˆê——æ“¾.("datemillisec desc"‚Å“ú~‡.)
-			c = sqlite.query(TABLE_TABS, projection, null, null, null, null, "_id desc");	// sqlite.query‚Åˆê——æ“¾.("_id desc"‚ÅID~‡.)
+			c = sqlite.query(TABLE_TABS, projection, null, null, null, null, "datemillisec desc");	// sqlite.query‚Åˆê——æ“¾.("datemillisec desc"‚Å“ú~‡.)
+			//c = sqlite.query(TABLE_TABS, projection, null, null, null, null, "_id desc");	// sqlite.query‚Åˆê——æ“¾.("_id desc"‚ÅID~‡.)
 			c.moveToFirst();	// æ“ª‚ÉƒZƒbƒg.
 			do{
 				TabInfo tabInfo = new TabInfo();	// tabInfo‚Ì¶¬.
