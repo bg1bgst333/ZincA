@@ -79,7 +79,7 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     	if (mApp.mHlpr != null){
     		TabInfo tabInfo = mApp.mHlpr.getLastTabInfo();
     		if (tabInfo != null){
-    			Toast.makeText(this, "last", Toast.LENGTH_LONG).show();
+    			//Toast.makeText(this, "last", Toast.LENGTH_LONG).show();
     			// SubActivityのIntent作成.
     			Intent intent = new Intent(this, SubActivity.class);
     			Bundle args = new Bundle();
@@ -92,7 +92,7 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     			mCurrentTabName = tabInfo.tabName;
     		}
     		else{
-    			Toast.makeText(this, "new", Toast.LENGTH_LONG).show();
+    			//Toast.makeText(this, "new", Toast.LENGTH_LONG).show();
     			registTab();
     			TabInfo ti = mApp.mHlpr.getLastTabInfo();
     			Intent intent = new Intent(this, SubActivity.class);
@@ -339,7 +339,7 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     @Override
     public void onBackPressed(){
     	
-    	Toast.makeText(this, "Main", Toast.LENGTH_LONG).show();
+    	//Toast.makeText(this, "Main", Toast.LENGTH_LONG).show();
     	
     	// バックキーにおけるウェブビューの動作.
     	onBackPressedWebView();	// onBackPressedWebViewに任せる.
@@ -350,23 +350,23 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
     	
-    	Toast.makeText(this, "0a", Toast.LENGTH_LONG).show();
+    	//Toast.makeText(this, "0a", Toast.LENGTH_LONG).show();
     	// 既定の処理.
     	super.onActivityResult(requestCode, resultCode, data);	// 親クラスのonActivityResultを呼ぶ.
-    	Toast.makeText(this, "0b", Toast.LENGTH_LONG).show();
+    	//Toast.makeText(this, "0b", Toast.LENGTH_LONG).show();
     	// キャンセルの場合.
     	if (requestCode != REQUEST_CODE_TAB && resultCode == RESULT_CANCELED){	// requestCodeがREQUEST_CODE_TABではなく, resultCodeがRESULT_CANCELEDの場合.
-    		Toast.makeText(this, "0c", Toast.LENGTH_LONG).show();
+    		//Toast.makeText(this, "0c", Toast.LENGTH_LONG).show();
     		return;	// 何もせず終了.
     	}
-    	Toast.makeText(this, "0d", Toast.LENGTH_LONG).show();
+    	//Toast.makeText(this, "0d", Toast.LENGTH_LONG).show();
     	
     	// 起動したアクティビティが閉じた時の結果に対する処理.
     	Bundle bundle = null;	// Bundle型bundleをnullで初期化.
     	if (data != null){	// dataがnullでなければ.
     		bundle = data.getExtras();	// data.getExtrasでbundleを取得.
     	}
-    	Toast.makeText(this, "0e", Toast.LENGTH_LONG).show();
+    	//Toast.makeText(this, "0e", Toast.LENGTH_LONG).show();
     	
     	// 処理の振り分け.
     	switch (requestCode){	// requestCodeごとに振り分け.
@@ -388,7 +388,7 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     		
     		// タブ一覧.
     		case REQUEST_CODE_TAB:	// タブ一覧から戻ってきた場合.
-    			Toast.makeText(this, "0", Toast.LENGTH_LONG).show();
+    			//Toast.makeText(this, "0", Toast.LENGTH_LONG).show();
     			// タブのアイテムが選択されたとき.
     			if (resultCode == RESULT_OK){	// RESULT_OKの場合.
     				if (bundle != null){	// bundleがnullでなければ.
@@ -447,15 +447,15 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     				}
     			}
     			else if (resultCode == RESULT_CANCELED){	// RESULT_CANCELEDの場合.
-    				Toast.makeText(this, "1", Toast.LENGTH_LONG).show();
+    				//Toast.makeText(this, "1", Toast.LENGTH_LONG).show();
     				if (!mApp.mTabMap.containsKey(mCurrentTabName)){
-    					Toast.makeText(this, "2", Toast.LENGTH_LONG).show();
+    					//Toast.makeText(this, "2", Toast.LENGTH_LONG).show();
     					TabInfo tabInfo = mApp.mHlpr.getLastTabInfo();	// 消されたカレントタブ以外で直近のタブを探す.
     					if (tabInfo != null){	// 直近タブがみつかった.
-    						Toast.makeText(this, "3", Toast.LENGTH_LONG).show();
+    						//Toast.makeText(this, "3", Toast.LENGTH_LONG).show();
     						TabInfo ti = mApp.mTabMap.get(tabInfo.tabName);	// マップから取得.
     						if (ti != null){	// マップにあった.
-    							Toast.makeText(this, "map exist", Toast.LENGTH_LONG).show();
+    							//Toast.makeText(this, "map exist", Toast.LENGTH_LONG).show();
     							// SubActivityのIntent作成.
     							Intent intent = new Intent(this, SubActivity.class);
     							Bundle args = new Bundle();
@@ -478,7 +478,7 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     						}
     						else{	// マップに無い.
     							
-    							Toast.makeText(this, "db last", Toast.LENGTH_LONG).show();
+    							//Toast.makeText(this, "db last", Toast.LENGTH_LONG).show();
     			    			// SubActivityのIntent作成.
     			    			Intent intent = new Intent(this, SubActivity.class);
     			    			Bundle args = new Bundle();
@@ -494,7 +494,7 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     					}
     					else{	// タブがない.
     						
-    						Toast.makeText(this, "all delete new", Toast.LENGTH_LONG).show();
+    						//Toast.makeText(this, "all delete new", Toast.LENGTH_LONG).show();
     		    			registTab();
     		    			TabInfo ti2 = mApp.mHlpr.getLastTabInfo();
     		    			Intent intent = new Intent(this, SubActivity.class);
@@ -868,7 +868,7 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     	
     	TabInfo tabInfo2 = mApp.mTabMap.get(tabName);
     	if (tabInfo2 != null){    		
-    		Toast.makeText(this, "change", Toast.LENGTH_LONG).show();
+    		//Toast.makeText(this, "change", Toast.LENGTH_LONG).show();
 			// SubActivityのIntent作成.
 			Intent intent = new Intent(this, SubActivity.class);
 			Bundle args = new Bundle();
@@ -1220,15 +1220,15 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     // バックキーが押された時のWebViewの動作.
     public void onBackPressedWebView(){
     	
-    	Toast.makeText(this, "A", Toast.LENGTH_LONG).show();
+    	//Toast.makeText(this, "A", Toast.LENGTH_LONG).show();
     	SubActivity subActivity = (SubActivity)mLAM.getActivity(mCurrentTabName);
     	WebView webView = (WebView)subActivity.findViewById(R.id.webview_sub);
     	if (webView.canGoBack()){	// バック可能な場合.
-    		Toast.makeText(this, "B", Toast.LENGTH_LONG).show();
+    		//Toast.makeText(this, "B", Toast.LENGTH_LONG).show();
     		webView.goBack();	// webView.goBackで戻る.
     	}
     	else{	// そうでない時.
-    		Toast.makeText(this, "C", Toast.LENGTH_LONG).show();
+    		//Toast.makeText(this, "C", Toast.LENGTH_LONG).show();
     		super.onBackPressed();	// 親クラスのonBackPressedを呼ぶ.
     	}
     	/*
@@ -1286,7 +1286,7 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     	tabInfo.view = mFL.findViewById(R.id.layout_sub);
     	mApp.mHlpr.updateTabInfo(mCurrentTabName, tabInfo);
     	
-    	Toast.makeText(this, "newtab", Toast.LENGTH_LONG).show();
+    	//Toast.makeText(this, "newtab", Toast.LENGTH_LONG).show();
     	
     	registTab();
     	TabInfo newTabInfo = mApp.mHlpr.getLastTabInfo();

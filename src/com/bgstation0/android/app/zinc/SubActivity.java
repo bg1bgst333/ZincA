@@ -41,7 +41,7 @@ public class SubActivity extends Activity implements OnEditorActionListener{
         String tag = args.getString("tag");
         //Toast.makeText(this, "tag = " + tag, Toast.LENGTH_LONG).show();
 
-        Toast.makeText(this, "onCreate", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "onCreate", Toast.LENGTH_LONG).show();
         
         // メインアプリケーションの取得.
     	mApp = (MainApplication)getApplicationContext();	// getApplicationContextで取得したMainApplicationオブジェクトをmAppに格納.
@@ -51,13 +51,13 @@ public class SubActivity extends Activity implements OnEditorActionListener{
     	initWebView();
     	TabInfo tabInfo = mApp.mHlpr.getTabInfo(tag);
     	if (tabInfo == null){
-    		Toast.makeText(this, "null", Toast.LENGTH_LONG).show();
+    		//Toast.makeText(this, "null", Toast.LENGTH_LONG).show();
     	}
     	if (tabInfo != null){
     		if (tabInfo.url != null){
-    			Toast.makeText(this, "url = " + tabInfo.url, Toast.LENGTH_LONG).show();
+    			//Toast.makeText(this, "url = " + tabInfo.url, Toast.LENGTH_LONG).show();
     			if (!tabInfo.url.equals("")){
-    				Toast.makeText(this, "url = " + tabInfo.url, Toast.LENGTH_LONG).show();
+    				//Toast.makeText(this, "url = " + tabInfo.url, Toast.LENGTH_LONG).show();
     				setUrlOmit(tabInfo.url);
     				loadUrl();
     			}
@@ -135,15 +135,15 @@ public class SubActivity extends Activity implements OnEditorActionListener{
     @Override
     public void onBackPressed(){
     	
-    	Toast.makeText(this, "Sub", Toast.LENGTH_LONG).show();
+    	//Toast.makeText(this, "Sub", Toast.LENGTH_LONG).show();
     	
     	WebView webView = (WebView)findViewById(R.id.webview_sub);
     	if (webView.canGoBack()){	// バック可能な場合.
-    		Toast.makeText(this, "B", Toast.LENGTH_LONG).show();
+    		//Toast.makeText(this, "B", Toast.LENGTH_LONG).show();
     		webView.goBack();	// webView.goBackで戻る.
     	}
     	else{	// そうでない時.
-    		Toast.makeText(this, "C", Toast.LENGTH_LONG).show();
+    		//Toast.makeText(this, "C", Toast.LENGTH_LONG).show();
     		super.onBackPressed();	// 親クラスのonBackPressedを呼ぶ.
     	}
     	

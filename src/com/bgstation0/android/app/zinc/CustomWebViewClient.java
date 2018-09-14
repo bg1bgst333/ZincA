@@ -94,7 +94,7 @@ public class CustomWebViewClient extends WebViewClient {
 
 		// urlをログに出力.
 		Log.d(TAG, "onPageFinished: url = " + url);	// Log.dでurlを出力.
-		Toast.makeText(mContext, "finished0", Toast.LENGTH_LONG).show();
+		//Toast.makeText(mContext, "finished0", Toast.LENGTH_LONG).show();
 		
 		// タイトルの変更.
 		setActionBarTitle(view.getTitle());	// view.getTitleで取得したタイトルをsetActionBarTitleでセット.
@@ -102,7 +102,7 @@ public class CustomWebViewClient extends WebViewClient {
 		// 履歴登録条件を満たすかどうかを判定.
 		if (url.equals(mStartUrl) && mCount == 0){	// 直近の開始URLで一番最初の時.
 			addHistoryToDB(view, url);	// addHistoryToDBでurlを履歴に登録.
-			Toast.makeText(mContext, "finished", Toast.LENGTH_LONG).show();
+			//Toast.makeText(mContext, "finished", Toast.LENGTH_LONG).show();
 			updateTabInfoToDBAndMap(view.getTitle(), url);	// タブ情報の更新.
 			//SubActivity subActivity = (SubActivity)mContext;
 			//mApp.changeTabTitle(view.getTitle(), subActivity.mTabName);
@@ -309,7 +309,7 @@ public class CustomWebViewClient extends WebViewClient {
 			tabInfo.url = url;
 			tabInfo.date = System.currentTimeMillis();
 			mApp.mHlpr.updateTabInfo(tabInfo.tabName, tabInfo);
-			Toast.makeText(subActivity, "tabInfo.url = " + tabInfo.url, Toast.LENGTH_LONG).show();
+			//Toast.makeText(subActivity, "tabInfo.url = " + tabInfo.url, Toast.LENGTH_LONG).show();
 			TabInfo mapti = mApp.mTabMap.get(tabInfo.tabName);
 			if (mapti != null){
 				mapti.title = title;
