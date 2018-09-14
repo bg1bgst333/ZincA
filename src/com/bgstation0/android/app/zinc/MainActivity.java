@@ -339,6 +339,8 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     @Override
     public void onBackPressed(){
     	
+    	Toast.makeText(this, "Main", Toast.LENGTH_LONG).show();
+    	
     	// バックキーにおけるウェブビューの動作.
     	onBackPressedWebView();	// onBackPressedWebViewに任せる.
     	
@@ -1218,6 +1220,17 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     // バックキーが押された時のWebViewの動作.
     public void onBackPressedWebView(){
     	
+    	Toast.makeText(this, "A", Toast.LENGTH_LONG).show();
+    	SubActivity subActivity = (SubActivity)mLAM.getActivity(mCurrentTabName);
+    	WebView webView = (WebView)subActivity.findViewById(R.id.webview_sub);
+    	if (webView.canGoBack()){	// バック可能な場合.
+    		Toast.makeText(this, "B", Toast.LENGTH_LONG).show();
+    		webView.goBack();	// webView.goBackで戻る.
+    	}
+    	else{	// そうでない時.
+    		Toast.makeText(this, "C", Toast.LENGTH_LONG).show();
+    		super.onBackPressed();	// 親クラスのonBackPressedを呼ぶ.
+    	}
     	/*
     	// 戻れる場合は, 1つ前のページに戻る.
     	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.

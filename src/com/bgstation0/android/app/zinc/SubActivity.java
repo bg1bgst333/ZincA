@@ -131,6 +131,27 @@ public class SubActivity extends Activity implements OnEditorActionListener{
         
     }
     
+    // バックキーが押された時.
+    @Override
+    public void onBackPressed(){
+    	
+    	Toast.makeText(this, "Sub", Toast.LENGTH_LONG).show();
+    	
+    	WebView webView = (WebView)findViewById(R.id.webview_sub);
+    	if (webView.canGoBack()){	// バック可能な場合.
+    		Toast.makeText(this, "B", Toast.LENGTH_LONG).show();
+    		webView.goBack();	// webView.goBackで戻る.
+    	}
+    	else{	// そうでない時.
+    		Toast.makeText(this, "C", Toast.LENGTH_LONG).show();
+    		super.onBackPressed();	// 親クラスのonBackPressedを呼ぶ.
+    	}
+    	
+    	// バックキーにおけるウェブビューの動作.
+    	//onBackPressedWebView();	// onBackPressedWebViewに任せる.
+    	
+    }
+    
     // Activityが開始されたとき.
     protected void onStart() {	// onStartの定義
     	
