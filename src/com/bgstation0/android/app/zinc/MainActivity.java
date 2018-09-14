@@ -1145,7 +1145,10 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     	
     	// bundleからURLを取得しロード.
     	String url = bundle.getString("url");	// bundle.getStringでurlを取得.
-		//setUrlOmit(url);	// setUrlOmitでURLバーにURLをセット.
+    	SubActivity subActivity = (SubActivity)mLAM.getActivity(mCurrentTabName);
+    	subActivity.setUrlOmit(url);
+    	subActivity.loadUrl();
+    	//setUrlOmit(url);	// setUrlOmitでURLバーにURLをセット.
 		//loadUrl();	// loadUrlでURLバーのURLをロード.
 		
     }

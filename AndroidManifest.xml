@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bgstation0.android.app.zinc"
-    android:versionCode="121"
-    android:versionName="0.2.1(Musashi-Takahagi #28)" >
+    android:versionCode="122"
+    android:versionName="0.2.1(Musashi-Takahagi #29)" >
 
     <uses-sdk
         android:minSdkVersion="15"
