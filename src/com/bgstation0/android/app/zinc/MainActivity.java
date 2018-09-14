@@ -985,10 +985,12 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     }
     */
     
-    /*
     // ウェブビューからタイトルを取得.
     public String getWebTitle(){
-    	
+    	SubActivity subActivity = (SubActivity)mLAM.getActivity(mCurrentTabName);
+    	WebView webView = (WebView)subActivity.findViewById(R.id.webview_sub);
+    	return webView.getTitle();
+    	/*
     	// WebViewのURLを取得.
     	String tag = this.getTabHost().getCurrentTabTag();
     	TabInfo ti = mApp.mTabMap.get(tag);
@@ -999,13 +1001,15 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     		}
     	}
     	return "";
+    	*/
     	
     }
-    */
     
     // ウェブビューからURLを取得.
     public String getWebUrl(){
-    	
+    	SubActivity subActivity = (SubActivity)mLAM.getActivity(mCurrentTabName);
+    	WebView webView = (WebView)subActivity.findViewById(R.id.webview_sub);
+    	return webView.getUrl();
     	/*
     	// webViewのURLを取得.
     	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
@@ -1024,7 +1028,7 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     		}
     	}
     	*/
-    	return "";
+    	//return "";
     	
     }
     
@@ -1533,12 +1537,11 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     public void addBookmarkToDB(){
     	
     	// カレントタブからタイトルとURLを取得.
-    	//String title = getWebTitle();
+    	String title = getWebTitle();
     	String url = getWebUrl();
     	long datemillisec = System.currentTimeMillis();	// System.currentTimeMillisで現在時刻を取得し, datemillisecに格納.
     	//Toast.makeText(this, "title = " + title + ", url = " + url, Toast.LENGTH_LONG).show();
     	// このURLをブックマークへ追加.
-		/*
     	long id = mApp.mHlpr.insertRowBookmark(title, url, datemillisec);	// mApp.mHlpr.insertRowBookmarkでtitle, url, datemillisecを追加.
 		if (id <= 0){	// 更新失敗.
 			Toast.makeText(this, getString(R.string.toast_message_bookmark_regist_error), Toast.LENGTH_LONG).show();	// R.string.toast_message_bookmark_regist_errorに定義されたメッセージをToastで表示.
@@ -1546,7 +1549,6 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
 		else{
 			Toast.makeText(this, getString(R.string.toast_message_bookmark_regist_success), Toast.LENGTH_LONG).show();	// R.string.toast_message_bookmark_regist_successに定義されたメッセージをToastで表示.
 		}
-		*/
     	/*
     	// webViewを取得し, URLとタイトルを取得.
     	WebView webView = (WebView)findViewById(R.id.webview);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
