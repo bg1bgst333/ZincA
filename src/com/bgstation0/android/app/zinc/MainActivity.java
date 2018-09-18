@@ -62,7 +62,7 @@ public class MainActivity extends Activity/*ActivityGroup*//*TabActivity*/ imple
 	public Context mContext = null;	// mContextにnullをセット.
 	public LocalActivityManager mLAM = null;	// mLAMにnullをセット.
 	public FrameLayout mFL = null;	// mFLにnullをセット.
-	public TabHost mTabHost = null;
+	//public TabHost mTabHost = null;
 	
 	// アクティビティが作成された時.
     @Override
@@ -75,8 +75,86 @@ public class MainActivity extends Activity/*ActivityGroup*//*TabActivity*/ imple
         // メインアプリケーションの取得.
     	mApp = (MainApplication)getApplicationContext();	// getApplicationContextで取得したMainApplicationオブジェクトをmAppに格納.
     	mApp.mMainActivity = this;
-    	mTabHost = (TabHost)this.findViewById(android.R.id.tabhost);
-    	mTabHost.setup();
+    	mApp.mTabHost = (TabHost)this.findViewById(android.R.id.tabhost);
+    	mApp.mTabHost.setup();
+    	
+    	if (mApp.mHlpr != null){	// mApp.mHlprがnullでない.
+    		//Toast.makeText(this, "1", Toast.LENGTH_LONG).show();
+            //TabHost tabHost = getTabHost();	// getTabHostでtabHostを取得.
+            //mApp.mTabHost = tabHost;	// tabHostをもっておく.
+    		List<TabInfo> tabInfoList = mApp.mHlpr.getTabInfoList();
+    		if (tabInfoList != null){
+    			//Toast.makeText(this, "3", Toast.LENGTH_LONG).show();
+    			int last = tabInfoList.size() - 1;	// tabInfoの数-1をlastに格納.
+    			for (int i = last, j = 0; i >= 0; i--){	// lastから0まで繰り返す.
+    				
+    				TabInfo tabInfo = tabInfoList.get(i);
+    				TabHost.TabSpec tabSpec = mApp.mTabHost.newTabSpec(tabInfo.tabName);	// tabName
+    				//tabSpec.setIndicator(tabInfo.title);	// title.
+    				final String tag = tabInfo.tabName;
+    				final CustomTabWidget widget = new CustomTabWidget(this, tabInfo.title, tabInfo.tabName, new View.OnClickListener() {
+						
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							//Toast.makeText(mContext, "click(1) : " + tag, Toast.LENGTH_LONG).show();
+							removeTab(tag);
+						}
+						
+					});
+    				tabSpec.setIndicator(widget);
+    		        Intent intent = new Intent(this, SubActivity.class);	// intentを生成.
+    		        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    		        //intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+    		        Bundle args = new Bundle();	// args作成.
+    		        args.putString("tag", tabInfo.tabName);	// ("tag", tabInfo.tabName)で登録.
+    		        args.putBoolean("remove", false);
+    		        intent.putExtras(args);	// args登録.
+    		        //tabSpec.setContent(intent);	// intentをセット.
+    		        //tabSpec.setContent(this);
+    		        tabSpec.setContent(R.id.layout_sub);
+    		        mApp.mTabHost.addTab(tabSpec);	// tabSpecを追加.
+    		        mApp.mTabNameList.add(tabInfo.tabName);
+    		        mApp.mTabHost.setCurrentTab(j);
+    		        j++;
+    			}
+    		}
+    		else{
+    			//Toast.makeText(this, "3b", Toast.LENGTH_LONG).show();
+    			registTab();	// registTabで新規タブを登録.
+    			TabInfo tabInfo = mApp.mHlpr.getLastTabInfo();
+    			TabHost.TabSpec tabSpec = mApp.mTabHost.newTabSpec(tabInfo.tabName);	// tabName
+    			//tabSpec.setIndicator(tabInfo.title);	// title.
+				final String tag = tabInfo.tabName;
+				tabInfo.title = tabInfo.tabName;
+				final CustomTabWidget widget = new CustomTabWidget(this, tabInfo.title, tabInfo.tabName, new View.OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						//Toast.makeText(mContext, "click(2) : " + tag, Toast.LENGTH_LONG).show();
+						removeTab(tag);
+					}
+					
+				});
+				tabSpec.setIndicator(widget);
+		        Intent intent = new Intent(this, SubActivity.class);	// intentを生成.
+		        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		        //intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+		        Bundle args = new Bundle();	// args作成.
+		        args.putString("tag", tabInfo.tabName);	// ("tag", tabInfo.tabName)で登録.
+		        args.putBoolean("remove", false);
+		        intent.putExtras(args);	// args登録.
+		        //tabSpec.setContent(intent);	// intentをセット.
+		        //tabSpec.setContent(this);
+		        tabSpec.setContent(R.id.layout_sub);
+		        mApp.mTabHost.addTab(tabSpec);	// tabSpecを追加.
+		        mApp.mTabNameList.add(tabInfo.tabName);
+		        mApp.mHlpr.updateTabInfo(tag, tabInfo);
+    		}
+    	}
+    	//mTabHost = (TabHost)this.findViewById(android.R.id.tabhost);
+    	//mTabHost.setup();
     	
     	/*
     	mLAM = getLocalActivityManager();	// mLAMの取得.

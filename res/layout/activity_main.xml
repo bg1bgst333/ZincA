@@ -16,6 +16,45 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
             
+            
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    			xmlns:tools="http://schemas.android.com/tools"
+    			android:id="@+id/layout_sub"
+    			android:layout_width="match_parent"
+    			android:layout_height="match_parent"
+    			android:orientation="vertical" >
+    
+    			<LinearLayout android:id="@+id/layout_sub_urlbar"
+        			android:layout_width="match_parent"
+        			android:layout_height="36dp"
+        			android:orientation="horizontal" >"
+        
+	    			<EditText android:id="@+id/edittext_sub_urlbar"
+				        android:background="@drawable/shape_urlbar_frame"
+				        android:layout_width="match_parent"
+				        android:layout_height="36dp"
+				        android:imeOptions="actionDone"
+				        android:inputType="textNoSuggestions"
+				        android:padding="5dp"
+				        android:singleLine="true" />
+    
+    			</LinearLayout>
+    
+    			<ProgressBar android:id="@+id/progressbar_sub"
+        			android:background="#ffffff"
+        			android:layout_width="match_parent"
+        			android:layout_height="3dp"
+        			android:indeterminate="false"
+        			android:max="100"
+        			android:progressDrawable="@drawable/layer_list_progressbar_drawable"
+        			style="?android:attr/progressBarStyleHorizontal" />
+    
+    			<WebView android:id="@+id/webview_sub"
+        			android:layout_width="match_parent"
+        			android:layout_height="match_parent" />
+    
+			</LinearLayout>            
+            
         </FrameLayout>
         
     </LinearLayout>
