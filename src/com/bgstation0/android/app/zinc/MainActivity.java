@@ -45,7 +45,7 @@ import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
 
 //メインアクティビティクラスMainActivity
-public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabContentFactory,*/ OnEditorActionListener/*Activity*/ /*implements OnClickListener, OnEditorActionListener*/{	// View.OnClickListener, TextView.OnEditorActionListenerインターフェースの追加.
+public class MainActivity extends Activity/*ActivityGroup*//*TabActivity*/ implements /*TabContentFactory,*/ OnEditorActionListener/*Activity*/ /*implements OnClickListener, OnEditorActionListener*/{	// View.OnClickListener, TextView.OnEditorActionListenerインターフェースの追加.
 
 	// メンバフィールドの初期化.
 	public static final int REQUEST_CODE_BOOKMARK = 1001;	// REQUEST_CODE_BOOKMARKを1001とする.
@@ -62,6 +62,7 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
 	public Context mContext = null;	// mContextにnullをセット.
 	public LocalActivityManager mLAM = null;	// mLAMにnullをセット.
 	public FrameLayout mFL = null;	// mFLにnullをセット.
+	public TabHost mTabHost = null;
 	
 	// アクティビティが作成された時.
     @Override
@@ -74,6 +75,10 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
         // メインアプリケーションの取得.
     	mApp = (MainApplication)getApplicationContext();	// getApplicationContextで取得したMainApplicationオブジェクトをmAppに格納.
     	mApp.mMainActivity = this;
+    	mTabHost = (TabHost)this.findViewById(android.R.id.tabhost);
+    	mTabHost.setup();
+    	
+    	/*
     	mLAM = getLocalActivityManager();	// mLAMの取得.
     	mFL = (FrameLayout)this.findViewById(R.id.frame_main);
     	if (mApp.mHlpr != null){
@@ -106,6 +111,7 @@ public class MainActivity extends ActivityGroup/*TabActivity*/ implements /*TabC
     			mCurrentTabName = ti.tabName;
     		}
     	}
+    	*/
     	/*
     	if (mApp.mHlpr != null){	// mApp.mHlprがnullでない.
     		//Toast.makeText(this, "1", Toast.LENGTH_LONG).show();
