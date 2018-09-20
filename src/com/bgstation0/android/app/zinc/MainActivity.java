@@ -118,7 +118,39 @@ public class MainActivity extends Activity/*ActivityGroup*//*TabActivity*/ imple
     		        mApp.mTabHost.setCurrentTab(j);
     		        initUrlBar();
     		    	initProgressBar();
-    		    	initWebView();
+    		    	initWebView(tag);
+    		    	mApp.mTabHost.setCurrentTab(j);
+    		    	TabInfo ti = mApp.mHlpr.getTabInfo(tag);
+    		    	if (ti == null){
+    		    		//Toast.makeText(this, "null", Toast.LENGTH_LONG).show();
+    		    	}
+    		    	if (ti != null){
+    		    		
+    		    		//setUrlOmit("hoge", ti.tabName);
+        				//loadUrl();
+    		    		//TabInfo ti2 = mApp.mHlpr.getTabInfo(tag);
+    		        	View rootView = getWindow().getDecorView();
+    		    		View content = rootView.findViewById(R.id.layout_sub);
+    		        	ti.view = content;
+    		        	//WebView wv = (WebView)this.findViewById(R.id.webview_sub);
+    		        	//wv.refreshDrawableState();
+    		        	//wv.loadUrl("about:blank");
+    		        	//EditText et = (EditText)this.findViewById(R.id.edittext_sub_urlbar);
+    		        	//et.setText("hoge");
+    		        	mApp.mTabMap.put(tag, ti);
+    		        	if (ti.url != null){
+    		    			//Toast.makeText(this, "url = " + tabInfo.url, Toast.LENGTH_LONG).show();
+    		    			if (!ti.url.equals("")){
+    		    				Toast.makeText(this, "url = " + tabInfo.url, Toast.LENGTH_LONG).show();
+    		    				setUrlOmit(ti.url, ti.tabName);
+    		    				loadUrl();
+    		    			}
+    		    			else{
+    		    				//setUrlOmit("hoge", ti.tabName);
+    		    				//loadUrl();
+    		    			}
+    		    		}
+    		    	}
     		        j++;
     			}
     		}
@@ -158,7 +190,7 @@ public class MainActivity extends Activity/*ActivityGroup*//*TabActivity*/ imple
 		        mApp.mHlpr.updateTabInfo(tag, tabInfo);
 		        initUrlBar();
 		    	initProgressBar();
-		    	initWebView();
+		    	initWebView(tag);
 		        mApp.mTabHost.setCurrentTab(0);
 		    	TabInfo ti = mApp.mHlpr.getTabInfo(tag);
 		    	if (ti == null){
@@ -827,6 +859,26 @@ public class MainActivity extends Activity/*ActivityGroup*//*TabActivity*/ imple
     	//progressBar.setVisibility(View.INVISIBLE);	// progressBar.setVisibilityで非表示にする.
     	progressBar.setVisibility(View.GONE);	// progressBar.setVisibilityで非表示(View.GONE)にする.
     	//progressBar.setVisibility(View.VISIBLE);	// progressBar.setVisibilityで最初から表示にする.
+    	
+    }
+    
+    // ウェブビューの初期化.
+    public void initWebView(String tag){
+    	
+    	// webViewの取得.
+        WebView webView = (WebView)findViewById(R.id.webview_sub);	// findViewByIdでR.id.webviewからWebViewオブジェクトwebViewを取得.
+        // JavaScript有効化.
+        webView.getSettings().setJavaScriptEnabled(true);	// webView.getSettings().setJavaScriptEnabledでJavaScriptを有効にする.
+        // デフォルトのユーザエージェントを取得.
+        mPhoneUA = webView.getSettings().getUserAgentString();	// webView.getSettings().getUserAgentStringで取得したUAをmPhoneUAに格納.(最初は電話用と思われるので, mPhoneUAに格納.)
+        //Toast.makeText(this, mPhoneUA, Toast.LENGTH_LONG).show();	// mPhoneUAをToastで表示.
+        mPCUA = generatePCUserAgentString(mPhoneUA);	// mPhoneUAからPC用ユーザエージェント文字列を生成.
+        //Toast.makeText(this, mPCUA, Toast.LENGTH_LONG).show();	// mPCUAをToastで表示.
+        mCurrentUA = mPhoneUA;	// 現在のユーザエージェントをmPhoneUAとする.
+        // CustomWebViewClientのセット.
+        webView.setWebViewClient(new CustomWebViewClient(this, tag));	// newで生成したCustomWebViewClientオブジェクト(コンストラクタの引数にthisを渡す.)をwebView.setWebViewClientでセット.
+        // CustomWebChromeClientのセット.
+        webView.setWebChromeClient(new CustomWebChromeClient(this, tag));	// newで生成したCustomWebChromeClientオブジェクト(コンストラクタの引数にthisを渡す.)をwebView.setWebChromeClientでセット.
     	
     }
     
