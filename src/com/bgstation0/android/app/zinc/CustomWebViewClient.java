@@ -56,11 +56,11 @@ public class CustomWebViewClient extends WebViewClient {
 		Log.d(TAG, "onPageStarted: url = " + url);	// Log.dでurlを出力.
 		Toast.makeText(this.mContext, "load: " + url, Toast.LENGTH_LONG).show();
 		// URLバーにURLをセット.
-		//setUrl(url, mTag);	// setUrlでurlをセット.
+		setUrl(url, mTag);	// setUrlでurlをセット.
 		//setUrl(url);
 		
 		// プログレスバーを表示.
-		//setProgressBarVisible(true, mTag);	// setProgressBarVisible(true)で表示.
+		setProgressBarVisible(true, mTag);	// setProgressBarVisible(true)で表示.
 		//setProgressBarVisible(true);
 		
 		// ロードを開始したURLを保持しておく.
@@ -77,7 +77,7 @@ public class CustomWebViewClient extends WebViewClient {
 		Log.d(TAG, "shouldOverrideUrlLoading: url = " + url);	// Log.dでurlを出力.
 				
 		// URLバーにURLをセット.
-		//setUrl(url, mTag);	// setUrlでurlをセット.
+		setUrl(url, mTag);	// setUrlでurlをセット.
 		//setUrl(url);
 		
 		// Chromeなど既定のブラウザで開かないようにするにはfalseを返す.
@@ -107,14 +107,14 @@ public class CustomWebViewClient extends WebViewClient {
 			//SubActivity subActivity = (SubActivity)mContext;
 			//mApp.changeTabTitle(view.getTitle(), subActivity.mTabName);
 			//MainActivity mainActivity = (MainActivity)mContext;
-			//mApp.changeTabTitle(view.getTitle(), mTag);
+			mApp.changeTabTitle(view.getTitle(), mTag);
 		}
 		mCount++;	// mCountを1増やす.
 		
 		// プログレスバーを非表示.
-		//setProgressBarVisible(false, mTag);	// setProgressBarVisible(false)で非表示.
+		setProgressBarVisible(false, mTag);	// setProgressBarVisible(false)で非表示.
 		//setProgressBarVisible(false);
-		//setProgress(0, mTag);	// setProgressで進捗度を0にセット.
+		setProgress(0, mTag);	// setProgressで進捗度を0にセット.
 		//setProgress(0);
 		
 	}
@@ -165,6 +165,7 @@ public class CustomWebViewClient extends WebViewClient {
 			//subActivity.setProgressBarVisible(visible);	// subActivity.setProgressBarVisibleにvisibleをセット.
 			MainActivity mainActivity = (MainActivity)mContext;
 			mainActivity.setProgressBarVisible(visible, tag);
+			Toast.makeText(this.mContext, "visible = " + visible, Toast.LENGTH_LONG).show();
 			
 		}
 				
