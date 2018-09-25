@@ -45,7 +45,7 @@ import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
 
 //メインアクティビティクラスMainActivity
-public class MainActivity extends Activity/*ActivityGroup*//*TabActivity*/ implements /*TabContentFactory,*/ OnEditorActionListener/*Activity*/ /*implements OnClickListener, OnEditorActionListener*/{	// View.OnClickListener, TextView.OnEditorActionListenerインターフェースの追加.
+public class MainActivity extends Activity/*ActivityGroup*//*TabActivity*/ implements TabContentFactory, OnEditorActionListener/*Activity*/ /*implements OnClickListener, OnEditorActionListener*/{	// View.OnClickListener, TextView.OnEditorActionListenerインターフェースの追加.
 
 	// メンバフィールドの初期化.
 	public static final int REQUEST_CODE_BOOKMARK = 1001;	// REQUEST_CODE_BOOKMARKを1001とする.
@@ -175,54 +175,13 @@ public class MainActivity extends Activity/*ActivityGroup*//*TabActivity*/ imple
 					
 				});
 				tabSpec.setIndicator(widget);
-		        Intent intent = new Intent(this, SubActivity.class);	// intentを生成.
-		        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		        //intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-		        Bundle args = new Bundle();	// args作成.
-		        args.putString("tag", tabInfo.tabName);	// ("tag", tabInfo.tabName)で登録.
-		        args.putBoolean("remove", false);
-		        intent.putExtras(args);	// args登録.
-		        //tabSpec.setContent(intent);	// intentをセット.
-		        //tabSpec.setContent(this);
-		        tabSpec.setContent(R.id.layout_sub);
+				Toast.makeText(this, "a", Toast.LENGTH_LONG).show();
+				tabSpec.setContent(this);
+				Toast.makeText(this, "b", Toast.LENGTH_LONG).show();
 		        mApp.mTabHost.addTab(tabSpec);	// tabSpecを追加.
 		        mApp.mTabNameList.add(tabInfo.tabName);
 		        mApp.mHlpr.updateTabInfo(tag, tabInfo);
-		        initUrlBar();
-		    	initProgressBar();
-		    	initWebView(tag);
-		        mApp.mTabHost.setCurrentTab(0);
-		    	TabInfo ti = mApp.mHlpr.getTabInfo(tag);
-		    	if (ti == null){
-		    		//Toast.makeText(this, "null", Toast.LENGTH_LONG).show();
-		    	}
-		    	if (ti != null){
-		    		if (ti.url != null){
-		    			//Toast.makeText(this, "url = " + tabInfo.url, Toast.LENGTH_LONG).show();
-		    			if (!ti.url.equals("")){
-		    				//Toast.makeText(this, "url = " + tabInfo.url, Toast.LENGTH_LONG).show();
-		    				setUrlOmit(ti.url, ti.tabName);
-		    				loadUrl();
-		    			}
-		    			else{
-		    				//setUrlOmit("hoge", ti.tabName);
-		    				//loadUrl();
-		    			}
-		    		}
-		    		//setUrlOmit("hoge", ti.tabName);
-    				//loadUrl();
-		    		//TabInfo ti2 = mApp.mHlpr.getTabInfo(tag);
-		        	View rootView = getWindow().getDecorView();
-		    		View content = rootView.findViewById(R.id.layout_sub);
-		        	ti.view = content;
-		        	//WebView wv = (WebView)this.findViewById(R.id.webview_sub);
-		        	//wv.refreshDrawableState();
-		        	//wv.loadUrl("about:blank");
-		        	//EditText et = (EditText)this.findViewById(R.id.edittext_sub_urlbar);
-		        	//et.setText("hoge");
-		        	mApp.mTabMap.put(tag, ti);
-		    	}
-		    	
+		        //mApp.mTabHost.setCurrentTab(0);
     		}
     	}
     	//mTabHost = (TabHost)this.findViewById(android.R.id.tabhost);
@@ -404,6 +363,58 @@ public class MainActivity extends Activity/*ActivityGroup*//*TabActivity*/ imple
         
     }
     
+    public View mDefView = null;
+    @Override
+    public View createTabContent(String tag){
+    	Toast.makeText(this, "1", Toast.LENGTH_LONG).show();
+    	View view = null;
+    	TabInfo ti = mApp.mTabMap.get(tag);
+    	if (ti != null){
+    		Toast.makeText(this, "2", Toast.LENGTH_LONG).show();
+    		view = ti.view;
+    		return view;
+    	}
+    	else{
+    		//View rootView = this.getWindow().getDecorView();
+    		//ViewGroup content = (ViewGroup)rootView.findViewById(R.id.layout_sub);
+    		//content.removeAllViews();
+    		Toast.makeText(this, "3", Toast.LENGTH_LONG).show();
+    		
+    		//LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);//this.getLayoutInflater();
+    		//View root = inflater.inflate(R.layout.activity_main, null);
+    		
+    		/*
+    		if (mDefView == null){
+    			View root = (View)this.getWindow().getDecorView();
+    			mDefView = root.findViewById(R.id.layout_sub);
+    			view = mDefView;
+    		}
+    		else{
+    			LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);//this.getLayoutInflater();
+        		View root = inflater.inflate(R.layout.activity_sub, null, true);
+        		View sub = root.findViewById(R.id.layout_sub);
+        		view = sub;
+    		}*/
+    		LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);//this.getLayoutInflater();
+    		View root = inflater.inflate(R.layout.activity_sub, null, true);
+    		View sub = root.findViewById(R.id.layout_sub);
+    		view = sub;
+    		
+    		initUrlBar2(view);
+    		initProgressBar2(view);
+    		initWebView2(view, tag);
+    		TabInfo ti2 = mApp.mHlpr.getTabInfo(tag);
+    		if (ti2 != null){
+    			if (!ti2.url.equals("")){
+    				setUrlOmit(ti.url, ti.tabName);
+    				loadUrl();
+    			}
+    		}
+    		ti2.view = view;
+    		mApp.mTabMap.put(tag, ti2);
+    		return view;
+    	}
+    }
     /*
     @Override
     public View createTabContent(String tag){
@@ -443,13 +454,83 @@ public class MainActivity extends Activity/*ActivityGroup*//*TabActivity*/ imple
     }
     */
     
+    public void addTabToTabHost(){
+    	
+    	// タブ状態の保存.(簡易的. ロード中の切り替えを考慮していない.)
+    	String tag = mApp.mTabHost.getCurrentTabTag();
+    	//Toast.makeText(mContext, "tag = " + tag, Toast.LENGTH_LONG).show();
+    	TabInfo tabInfo = mApp.mHlpr.getTabInfo(tag);
+    	tabInfo.date = System.currentTimeMillis();
+    	mApp.mHlpr.updateTabInfo(tag, tabInfo);
+    	
+    	registTab();	// registTabで新規タブを登録.
+		TabInfo newTabInfo = mApp.mHlpr.getLastTabInfo();
+		TabHost.TabSpec tabSpec = mApp.mTabHost.newTabSpec(newTabInfo.tabName);	// tabName
+		
+		final String tag2 = newTabInfo.tabName;
+		newTabInfo.title = newTabInfo.tabName;
+		final CustomTabWidget widget = new CustomTabWidget(this, newTabInfo.title, newTabInfo.tabName, new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				//Toast.makeText(mContext, "click(3) : " + tag2, Toast.LENGTH_LONG).show();
+				removeTab(tag2);
+			}
+			
+		});
+    	
+		tabSpec.setIndicator(widget);
+		mApp.mTabNameList.add(newTabInfo.tabName);
+		tabSpec.setContent(this);
+		//initUrlBar2(view);
+     	//initProgressBar2(view);
+     	//initWebView(view, tag2);
+        mApp.mTabHost.addTab(tabSpec);	// tabSpecを追加.
+     	mApp.mTabHost.setCurrentTab(1);
+     	return;
+     	/*
+        //mApp.mTabNameList.add(newTabInfo.tabName);
+        mApp.mHlpr.updateTabInfo(tag2, newTabInfo);
+    	
+    	TabInfo ti = mApp.mHlpr.getTabInfo(tag2);
+    	if (ti != null){
+    		if (ti.url != null){
+    			if (!ti.url.equals("")){
+    				setUrlOmit(ti.url, ti.tabName);
+    				loadUrl();
+    			}
+    		}
+        	//View rootView = getWindow().getDecorView();
+    		//View content = rootView.findViewById(R.id.layout_sub);
+        	LayoutInflater inflater = this.getLayoutInflater();
+        	View v = inflater.inflate(R.layout.activity_main, null);
+    		View sub = v.findViewById(R.id.layout_sub);
+    		ti.view = sub;
+        	mApp.mTabMap.put(tag2, ti);
+        	mApp.mHlpr.updateTabInfo(ti.tabName, ti);
+        	
+        	int i = mApp.mTabNameList.size() - 1;
+        	mApp.mTabHost.setCurrentTab(i);
+        	Toast.makeText(this, "index i = " + i, Toast.LENGTH_LONG).show();
+         	
+    	}
+    	*/
+		
+    }
+    
     // URLバーの初期化.
     public void initUrlBar2(View view){
-    	
+    	try{
+    	Toast.makeText(this, "initUrlbar2", Toast.LENGTH_LONG).show();
     	// etUrlを取得し, OnEditorActionListenerとして自身(this)をセット.
     	EditText etUrl = (EditText)view.findViewById(R.id.edittext_sub_urlbar);	// findViewByIdでR.id.edittext_sub_urlbarからEditTextオブジェクトetUrlを取得.
     	etUrl.setOnEditorActionListener(this);	// etUrl.setOnEditorActionListeneでthis(自身)をセット.
-    	
+    	etUrl.setText("hogw");
+    	}
+    	catch (Exception ex){
+    		Toast.makeText(this, "urlex = " + ex.toString(), Toast.LENGTH_LONG).show();
+    	}
     }
     
     // プログレスバーの初期化.
@@ -745,7 +826,8 @@ public class MainActivity extends Activity/*ActivityGroup*//*TabActivity*/ imple
     		//　新しいタブの追加.
     		//addTab();	// addTabで追加.
     		//addTabToActivity();	// addTabToActivityで追加.
-    		addTabToLAM();
+    		//addTabToLAM();
+    		addTabToTabHost();
     		
     	}
     	else if (id == R.id.menu_item_tabs_show){	// R.id.menu_item_tabs_show("タブ一覧の表示")の時.
@@ -822,14 +904,14 @@ public class MainActivity extends Activity/*ActivityGroup*//*TabActivity*/ imple
     // エディットテキストでEnterキーが押された時.
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event){
-    	
+    	Toast.makeText(this, "onEditor0", Toast.LENGTH_LONG).show();
     	// Enterキーが押された時.
     	if (actionId == EditorInfo.IME_ACTION_DONE){	// Enterキーが押された時.(IME_ACTION_DONE)
     		
     		// ソフトウェアキーボードの非表示.
     		InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(getApplicationContext().INPUT_METHOD_SERVICE);	// getSystemServiceからinputMethodManagerを取得.
     		inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);	// inputMethodManager.hideSoftInputFromWindowで非表示.
-    		
+    		Toast.makeText(this, "onEditor", Toast.LENGTH_LONG).show();
     		// URLのロード.
     		loadUrl();	// loadUrlでURLバーのURLをロード.
     	
